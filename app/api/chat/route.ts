@@ -8,6 +8,8 @@ import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema } from "@/t
 import { NextRequest } from "next/server";
 
 const baseSchemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>) => {
+  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: [], runningStep: 'schemaNames' }) })}\n\n`));
+
   const model = new ChatOpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     modelName: "gpt-4o-2024-11-20",
@@ -28,6 +30,8 @@ const baseSchemaAgent = async (messages: BaseMessage[], writer: WritableStreamDe
 }
 
 const schemaPropsAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, schemNames: string) => {
+  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames'], runningStep: 'schemaProps' }) })}\n\n`));
+
   const model = new ChatOpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     modelName: "gpt-4o-2024-11-20",
@@ -49,6 +53,8 @@ const schemaPropsAgent = async (messages: BaseMessage[], writer: WritableStreamD
 }
 
 const schemaLayoutAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, schemaProps: string) => {
+  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames', 'schemaProps'], runningStep: 'schemaLayouts' }) })}\n\n`));
+
   const model = new ChatOpenAI({
     apiKey: process.env.OPENAI_API_KEY,
     modelName: "gpt-4o-2024-11-20",
@@ -100,6 +106,8 @@ const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaul
     }
   }
   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: `\`\`\`json\n${JSON.stringify(finalSchemaJSON, null, 2)}\n\`\`\`` })}\n\n`));
+
+  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames', 'schemaProps', 'schemaLayouts'], runningStep: '' }) })}\n\n`));
 }
 
 export async function POST(req: NextRequest) {

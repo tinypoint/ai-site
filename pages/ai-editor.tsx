@@ -1,9 +1,10 @@
-import { Layout, Input, Button, message as antdMessage } from 'antd';
+import { Layout, Input, Button, message as antdMessage, Steps } from 'antd';
 import 'antd/dist/reset.css';
 import { HumanMessage } from '@langchain/core/messages';
 import useChatStore from '../store/chatStore';
 
 const { Sider, Content } = Layout;
+const { Step } = Steps;
 
 export default function AIEditorPage() {
   const { messages, inputValue, setMessages, setInputValue, parseStreamResponse } = useChatStore();
@@ -51,6 +52,13 @@ export default function AIEditorPage() {
                 textAlign: msg.type === 'user' ? 'right' : 'left'
               }}>
                 <strong>{msg.type === 'user' ? 'User' : 'AI'}:</strong> {msg.text}
+                {msg.type === 'ai' && msg.progress && (
+                  <Steps direction="vertical" size="small" current={msg.progress.doneSteps.length}>
+                    <Step title="Schema Names" status={msg.progress.doneSteps.includes('schemaNames') ? 'finish' : (msg.progress.runningStep === 'schemaNames' ? 'process' : 'wait')} />
+                    <Step title="Schema Props" status={msg.progress.doneSteps.includes('schemaProps') ? 'finish' : (msg.progress.runningStep === 'schemaProps' ? 'process' : 'wait')} />
+                    <Step title="Schema Layouts" status={msg.progress.doneSteps.includes('schemaLayouts') ? 'finish' : (msg.progress.runningStep === 'schemaLayouts' ? 'process' : 'wait')} />
+                  </Steps>
+                )}
               </div>
             </div>
           ))}
@@ -71,4 +79,4 @@ export default function AIEditorPage() {
       </Content>
     </Layout>
   );
-} 
+}

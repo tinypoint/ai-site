@@ -1,9 +1,20 @@
 import { create } from 'zustand';
 
-interface Message {
-  type: 'user' | 'ai';
+interface AIMessage {
+  type: 'ai';
+  text: string;
+  progress?: {
+    runningStep: string;
+    doneSteps: string[];
+  };
+}
+
+interface UserMessage {
+  type: 'user';
   text: string;
 }
+
+type Message = AIMessage | UserMessage;
 
 interface ChatState {
   messages: Message[];
@@ -44,8 +55,17 @@ const useChatStore = create<ChatState>((set) => ({
           const jsonData = JSON.parse(chunk.slice(6));
           set((state) => {
             const updatedMessages = [...state.messages];
-            if (updatedMessages.length > 0) {
-              updatedMessages[updatedMessages.length - 1].text += jsonData.data;
+            const lastAIMessage = updatedMessages.findLast((message) => message.type === 'ai');
+            if (lastAIMessage) {
+              if (jsonData.type === 'schemaNames' || jsonData.type === 'schemaProps' || jsonData.type === 'schemaLayouts') {
+                // lastAIMessage.text += jsonData.data;
+              } else if (jsonData.type === 'progress') {
+                const { runningStep, doneSteps } = JSON.parse(jsonData.data);
+                lastAIMessage.progress = {
+                  runningStep,
+                  doneSteps,
+                };
+              }
             }
             return { messages: updatedMessages };
           });
