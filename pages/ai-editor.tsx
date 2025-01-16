@@ -15,7 +15,7 @@ export default function AIEditorPage() {
       setInputValue('');
 
       try {
-        const response = await fetch('/api', {
+        const response = await fetch('/api/chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

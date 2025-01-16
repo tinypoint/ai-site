@@ -1,10 +1,11 @@
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
-import { schemaNamesPrompt } from "../../constants/prompt/schemNames";
-import { schemaPropsPrompt } from "../../constants/prompt/schemaProps";
+import { schemaNamesPrompt } from "../../../constants/prompt/schemNames";
+import { schemaPropsPrompt } from "../../../constants/prompt/schemaProps";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
 import { llmJsonParse } from "@/utils";
 import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema } from "@/types";
+import { NextRequest } from "next/server";
 
 const baseSchemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>) => {
   const model = new ChatOpenAI({
@@ -101,11 +102,11 @@ const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaul
   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: `\`\`\`json\n${JSON.stringify(finalSchemaJSON, null, 2)}\n\`\`\`` })}\n\n`));
 }
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: NextRequest) {
   const { readable, writable } = new TransformStream();
   const writer = writable.getWriter();
 
-  const { messages } = await req.json(); // Read the request body once
+  const { messages } = await req.json();
 
   schemaAgent(messages, writer);
 
