@@ -6,6 +6,7 @@ import { UserMessage, AIMessage } from '../store/chatStore';
 import LowCodeRenderer from '@/components/LowCodeRenderer';
 import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
+import '@ant-design/v5-patch-for-react-19';
 
 const { Sider, Content } = Layout;
 
@@ -61,7 +62,7 @@ export default function AIEditorPage() {
         method: 'DELETE',
       });
       setMessages([]);
-      setInputValue('');
+      setInputValue('登录页');
     } catch (error) {
       antdMessage.error('Failed to reset messages');
     }
@@ -105,22 +106,22 @@ export default function AIEditorPage() {
                     <div>
                       <Collapse>
                         <Collapse.Panel header="Schema Names Details" extra={
-                          msg.progress.doneSteps.includes('schemaNames') ? <CheckCircleOutlined style={{ color: 'green' }} /> : <LoadingOutlined style={{ color: 'gray' }} />
+                          msg.progress.doneSteps.includes('schemaNames') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'schemaNames' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
                         } key="1">
                           <ReactMarkdown>{msg.artifact?.schemaNames || ''}</ReactMarkdown>
                         </Collapse.Panel>
-                        <Collapse.Panel header="Schema Props Details" extra={
-                          msg.progress.doneSteps.includes('schemaProps') ? <CheckCircleOutlined style={{ color: 'green' }} /> : null
-                        } key="2">
-                          <ReactMarkdown>{msg.artifact?.schemaProps || ''}</ReactMarkdown>
-                        </Collapse.Panel>
                         <Collapse.Panel header="Schema Layouts Details" extra={
-                          msg.progress.doneSteps.includes('schemaLayouts') ? <CheckCircleOutlined style={{ color: 'green' }} /> : null
-                        } key="3">
+                          msg.progress.doneSteps.includes('schemaLayouts') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'schemaLayouts' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="2">
                           <ReactMarkdown>{msg.artifact?.schemaLayouts || ''}</ReactMarkdown>
                         </Collapse.Panel>
+                        <Collapse.Panel header="Schema Props Details" extra={
+                          msg.progress.doneSteps.includes('schemaProps') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'schemaProps' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="3">
+                          <ReactMarkdown>{msg.artifact?.schemaProps || ''}</ReactMarkdown>
+                        </Collapse.Panel>
                         <Collapse.Panel header="Final Schema Details" extra={
-                          msg.progress.doneSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : null
+                          msg.progress.doneSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'finalSchema' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
                         } key="4">
                           <ReactMarkdown>{msg.artifact?.finalSchema || ''}</ReactMarkdown>
                         </Collapse.Panel>

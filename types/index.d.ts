@@ -6,9 +6,9 @@ export type IWeightType = string;
 
 export interface IWeightLayout {
   rowStart: number;
-  rowEnd: number;
+  rowSpan: number;
   colStart: number;
-  colEnd: number;
+  colSpan: number;
 }
 
 export type IWeightStyle = Pick<CSSProperties, 'color' | 'fontSize' | 'fontWeight' | 'border' | 'borderRadius' | 'backgroundColor' | 'boxShadow' | 'opacity'>;
