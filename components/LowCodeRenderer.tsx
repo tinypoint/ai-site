@@ -21,19 +21,19 @@ const AISiteLayoutSystemContainer = ({ children }: { children: React.ReactNode }
 }
 
 const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?: boolean, layout: IWeightLayout, children: React.ReactNode }) => {
-  const { rowStart, rowSpan, colStart, colSpan } = layout;
-  const marginTop = (rowStart - 1) * 8;
-  const height = autoHeight ? 'auto' : (rowSpan) * 8;
+  const { rowStartToParentContainer, rowSpanToParentContainer, colStartToParentContainer, colSpanToParentContainer } = layout;
+  const marginTop = (rowStartToParentContainer - 1) * 8;
+  const height = autoHeight ? 'auto' : (rowSpanToParentContainer) * 8;
   return (
     <div
-      data-ai-site-grid-item={`rowStart: ${rowStart}; rowSpan: ${rowSpan}; colStart: ${colStart}; colSpan: ${colSpan}; autoHeight: ${autoHeight}`}
+      data-ai-site-grid-item={`rowStartToParentContainer: ${rowStartToParentContainer}; rowSpanToParentContainer: ${rowSpanToParentContainer}; colStartToParentContainer: ${colStartToParentContainer}; colSpanToParentContainer: ${colSpanToParentContainer}; autoHeight: ${autoHeight}`}
       style={{
         position: 'relative',
         top: 0,
         left: 0,
-        marginLeft: `${(colStart - 1) / 24 * 100}%`,
+        marginLeft: `${(colStartToParentContainer - 1) / 24 * 100}%`,
         marginTop,
-        width: `${(colSpan) / 24 * 100}%`,
+        width: `${(colSpanToParentContainer) / 24 * 100}%`,
         height,
         display: 'flex',
         flexDirection: 'column',
@@ -70,13 +70,15 @@ const componentMap: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  Form: ({ title, children, layout, style }) => {
+  Form: ({ title, children, layout, style, labelCol, wrapperCol }) => {
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
         <Form
+          labelCol={labelCol}
+          wrapperCol={wrapperCol}
           style={style}
+          labelAlign='left'
         >
-          <h3>{title}</h3>
           <AISiteLayoutSystemContainer>
             {children}
           </AISiteLayoutSystemContainer>
@@ -174,7 +176,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
     const childrenKeys = Object.keys(data).filter(childKey => data[childKey].parent === key);
     // console.log(key, type, props, layout, style);
     return (
-      <Component key={key} {...props} layout={layout || {}} style={style}>
+      <Component key={key} {...props} layout={layout || {}} style={style || {}}>
         {childrenKeys.map(renderComponent)}
       </Component>
     );

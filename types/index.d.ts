@@ -5,10 +5,10 @@ export type IWeightName = string;
 export type IWeightType = string;
 
 export interface IWeightLayout {
-  rowStart: number;
-  rowSpan: number;
-  colStart: number;
-  colSpan: number;
+  rowStartToParentContainer: number;
+  rowSpanToParentContainer: number;
+  colStartToParentContainer: number;
+  colSpanToParentContainer: number;
 }
 
 export type IWeightStyle = Pick<CSSProperties, 'color' | 'fontSize' | 'fontWeight' | 'border' | 'borderRadius' | 'backgroundColor' | 'boxShadow' | 'opacity'>;

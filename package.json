@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@langchain/core": "^0.3.30",
+    "@langchain/langgraph": "^0.2.40",
     "@langchain/openai": "^0.3.17",
     "antd": "^5.23.1",
     "eventsource": "^3.0.2",

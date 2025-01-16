@@ -19,7 +19,8 @@ interface IContainerProps {
 }
 
 interface IFormProps {
-  title: string;
+  labelCol: { span: number; } span 从 0 到 24,  labelCol.span + wrapperCol.span = 24
+  wrapperCol: { span: number; } span 从 0 到 24,  labelCol.span + wrapperCol.span = 24
 }
 
 interface IModalProps {
