@@ -1,5 +1,9 @@
 import { create } from 'zustand';
 
+interface SystemMessage {
+  role: 'system';
+  content: string;
+}
 interface UserMessage {
   role: 'user';
   content: string;
@@ -20,7 +24,7 @@ interface AIMessage {
   };
 }
 
-type Message = UserMessage | AIMessage;
+type Message = SystemMessage | UserMessage | AIMessage;
 
 interface ChatState {
   messages: Message[];
@@ -34,7 +38,7 @@ interface ChatState {
 
 const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
-  inputValue: '',
+  inputValue: '登录页',
   setMessages: (messages: Message[]) => set(() => ({ messages })),
   setInputValue: (value: string) => set(() => ({ inputValue: value })),
   updateLastMessage: (text: string) => set((state) => {
@@ -99,4 +103,4 @@ const useChatStore = create<ChatState>((set, get) => ({
 
 export default useChatStore;
 
-export type { UserMessage, AIMessage }; 
+export type { UserMessage, AIMessage, Message }; 

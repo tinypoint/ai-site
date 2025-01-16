@@ -4,17 +4,26 @@ import useChatStore from '../store/chatStore';
 import ReactMarkdown from 'react-markdown';
 import { UserMessage, AIMessage } from '../store/chatStore';
 import LowCodeRenderer from '@/components/LowCodeRenderer';
-import { CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 
 const { Sider, Content } = Layout;
 
 export default function AIEditorPage() {
-  const { messages, inputValue, setMessages, setInputValue, parseStreamResponse } = useChatStore();
+  const { messages, inputValue, setMessages, setInputValue, parseStreamResponse, getLastAIMessage } = useChatStore();
 
   const handleSend = async (): Promise<void> => {
     if (inputValue.trim()) {
       const userMessage: UserMessage = { role: 'user', content: inputValue };
+
+      await fetch('/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userMessage),
+      });
+
       const aiMessage: AIMessage = { role: 'ai', content: '' };
       setMessages([...messages, userMessage, aiMessage]);
       setInputValue('');
@@ -29,10 +38,32 @@ export default function AIEditorPage() {
         });
 
         const reader = response.body!.getReader();
-        parseStreamResponse(reader);
+        await parseStreamResponse(reader);
+
+        const lastAIMessage = getLastAIMessage();
+
+        await fetch('/api/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(lastAIMessage),
+        });
       } catch (error) {
         antdMessage.error('Failed to get AI response');
       }
+    }
+  };
+
+  const handleReset = async () => {
+    try {
+      await fetch('/api/messages', {
+        method: 'DELETE',
+      });
+      setMessages([]);
+      setInputValue('');
+    } catch (error) {
+      antdMessage.error('Failed to reset messages');
     }
   };
 
@@ -100,16 +131,19 @@ export default function AIEditorPage() {
               </div>
             ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', padding: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-end', background: '#fff', padding: '10px' }}>
             <Input.TextArea
-              rows={1}
+              autoSize={{ minRows: 3, maxRows: 10 }}
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
               placeholder="Type your message..."
               style={{ flex: 1, marginRight: '10px' }}
             />
-            <Button type="primary" onClick={handleSend}>
+            <Button type="primary" icon={<SendOutlined />} onClick={handleSend}>
               Send
+            </Button>
+            <Button type="default" icon={<RedoOutlined />} onClick={handleReset}>
+              Reset
             </Button>
           </div>
         </div>

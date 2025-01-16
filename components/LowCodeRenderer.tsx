@@ -34,9 +34,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
   const data = useMemo(() => {
     const parsedData = llmJsonParse(lastAIMessage?.artifact?.finalSchema || '{}');
     return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalSchema : {};
-  }, [lastAIMessage]);
-
-  console.log(data);
+  }, [lastAIMessage?.artifact?.finalSchema]);
 
   const renderComponent = (key: string): React.ReactNode => {
     const node = data[key];
@@ -57,7 +55,6 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   // Find root components (those without a parent)
   const rootComponents = Object.keys(data).filter(key => data[key].parent === null);
-  console.log(rootComponents);
 
   return (
     <div className="low-code-renderer">
