@@ -1,20 +1,26 @@
 import { create } from 'zustand';
 
+interface UserMessage {
+  role: 'user';
+  content: string;
+}
+
 interface AIMessage {
-  type: 'ai';
-  text: string;
+  role: 'ai';
+  content: string;
+  artifact?: {
+    schemaNames?: string;
+    schemaProps?: string;
+    schemaLayouts?: string;
+    finalSchema?: string;
+  };
   progress?: {
     runningStep: string;
     doneSteps: string[];
   };
 }
 
-interface UserMessage {
-  type: 'user';
-  text: string;
-}
-
-type Message = AIMessage | UserMessage;
+type Message = UserMessage | AIMessage;
 
 interface ChatState {
   messages: Message[];
@@ -23,9 +29,10 @@ interface ChatState {
   setInputValue: (value: string) => void;
   updateLastMessage: (text: string) => void;
   parseStreamResponse: (reader: ReadableStreamDefaultReader<Uint8Array>) => void;
+  getLastAIMessage: () => AIMessage | undefined;
 }
 
-const useChatStore = create<ChatState>((set) => ({
+const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
   inputValue: '',
   setMessages: (messages: Message[]) => set(() => ({ messages })),
@@ -33,13 +40,14 @@ const useChatStore = create<ChatState>((set) => ({
   updateLastMessage: (text: string) => set((state) => {
     const updatedMessages = [...state.messages];
     if (updatedMessages.length > 0) {
-      updatedMessages[updatedMessages.length - 1].text = text;
+      updatedMessages[updatedMessages.length - 1].content = text;
     }
     return { messages: updatedMessages };
   }),
   parseStreamResponse: async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     const decoder = new TextDecoder();
     let buffer = '';
+    let aiMessageReceived: { progress?: { runningStep: string; doneSteps: string[] } } & Record<string, string> = {};
 
     while (true) {
       const { done, value } = await reader.read();
@@ -55,17 +63,25 @@ const useChatStore = create<ChatState>((set) => ({
           const jsonData = JSON.parse(chunk.slice(6));
           set((state) => {
             const updatedMessages = [...state.messages];
-            const lastAIMessage = updatedMessages.findLast((message) => message.type === 'ai');
+            const lastAIMessage = updatedMessages.findLast((message) => message.role === 'ai');
             if (lastAIMessage) {
-              if (jsonData.type === 'schemaNames' || jsonData.type === 'schemaProps' || jsonData.type === 'schemaLayouts') {
-                // lastAIMessage.text += jsonData.data;
-              } else if (jsonData.type === 'progress') {
+
+              if (jsonData.type === 'progress') {
                 const { runningStep, doneSteps } = JSON.parse(jsonData.data);
-                lastAIMessage.progress = {
-                  runningStep,
-                  doneSteps,
+                aiMessageReceived.progress = {
+                  runningStep, doneSteps
                 };
+              } else {
+                if (aiMessageReceived[jsonData.type] === undefined) {
+                  aiMessageReceived[jsonData.type] = '';
+                }
+                aiMessageReceived[jsonData.type] += jsonData.data;
               }
+
+              const { progress, plan, ...rest } = aiMessageReceived;
+              lastAIMessage.content = plan;
+              lastAIMessage.artifact = rest;
+              lastAIMessage.progress = progress;
             }
             return { messages: updatedMessages };
           });
@@ -75,6 +91,12 @@ const useChatStore = create<ChatState>((set) => ({
       }
     }
   },
+  getLastAIMessage: () => {
+    const messages = get().messages;
+    return messages.slice().reverse().find((message) => message.role === 'ai');
+  },
 }));
 
-export default useChatStore; 
+export default useChatStore;
+
+export type { UserMessage, AIMessage }; 

@@ -1,13 +1,36 @@
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { ChatOpenAI } from "@langchain/openai";
-import { schemaNamesPrompt } from "../../../constants/prompt/schemNames";
+import { schemaNamesPrompt } from "../../../constants/prompt/schemaNames";
 import { schemaPropsPrompt } from "../../../constants/prompt/schemaProps";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
 import { llmJsonParse } from "@/utils";
 import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema } from "@/types";
 import { NextRequest } from "next/server";
+import { planPrompt } from "@/constants/prompt/plan";
 
-const baseSchemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>) => {
+const planSiteProduction = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>) => {
+  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: [], runningStep: 'planSiteProduction' }) })}\n\n`));
+
+  const model = new ChatOpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+    modelName: "gpt-4o-2024-11-20",
+  });
+
+  const stream = model.stream([
+    new SystemMessage(planPrompt),
+    ...messages,
+  ]);
+
+  let aiMessage = '';
+  for await (const chunk of await stream) {
+    aiMessage += chunk.content;
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'plan', data: chunk.content })}\n\n`));
+  }
+
+  return aiMessage;
+}
+
+const baseSchemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, guihua1: string) => {
   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: [], runningStep: 'schemaNames' }) })}\n\n`));
 
   const model = new ChatOpenAI({
@@ -18,18 +41,19 @@ const baseSchemaAgent = async (messages: BaseMessage[], writer: WritableStreamDe
   const stream = model.stream([
     new SystemMessage(schemaNamesPrompt),
     ...messages,
+    new AIMessage(guihua1),
   ]);
 
   let aiMessage = '';
   for await (const chunk of await stream) {
     aiMessage += chunk.content;
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemNames', data: chunk.content })}\n\n`));
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaNames', data: chunk.content })}\n\n`));
   }
 
   return aiMessage;
 }
 
-const schemaPropsAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, schemNames: string) => {
+const schemaPropsAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, sitePlan: string, schemaNames: string) => {
   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames'], runningStep: 'schemaProps' }) })}\n\n`));
 
   const model = new ChatOpenAI({
@@ -40,7 +64,8 @@ const schemaPropsAgent = async (messages: BaseMessage[], writer: WritableStreamD
   const stream = model.stream([
     new SystemMessage(schemaPropsPrompt),
     ...messages,
-    new AIMessage(schemNames),
+    new AIMessage(sitePlan),
+    new AIMessage(schemaNames),
   ]);
 
   let aiMessage = '';
@@ -52,7 +77,7 @@ const schemaPropsAgent = async (messages: BaseMessage[], writer: WritableStreamD
   return aiMessage;
 }
 
-const schemaLayoutAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, schemaProps: string) => {
+const schemaLayoutAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>, sitePlan: string, schemaProps: string) => {
   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames', 'schemaProps'], runningStep: 'schemaLayouts' }) })}\n\n`));
 
   const model = new ChatOpenAI({
@@ -63,6 +88,7 @@ const schemaLayoutAgent = async (messages: BaseMessage[], writer: WritableStream
   const stream = model.stream([
     new SystemMessage(schemaLayoutPrompt),
     ...messages,
+    new AIMessage(sitePlan),
     new AIMessage(schemaProps),
   ]);
 
@@ -76,8 +102,11 @@ const schemaLayoutAgent = async (messages: BaseMessage[], writer: WritableStream
 }
 
 const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>) => {
-  const schemNames = await baseSchemaAgent(messages, writer);
-  const baseSchemaJSON = llmJsonParse(schemNames) as IBaseSchema;
+
+  const sitePlan = await planSiteProduction(messages, writer);
+
+  const schemaNames = await baseSchemaAgent(messages, writer, sitePlan);
+  const baseSchemaJSON = llmJsonParse(schemaNames) as IBaseSchema;
 
   let finalSchemaJSON: IFinalSchema = {};
 
@@ -88,7 +117,7 @@ const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaul
     };
   }
 
-  const schemaProps = await schemaPropsAgent(messages, writer, JSON.stringify(finalSchemaJSON));
+  const schemaProps = await schemaPropsAgent(messages, writer, sitePlan, JSON.stringify(finalSchemaJSON));
   const schemaPropsJSON = llmJsonParse(schemaProps) as ISchemaProps;
 
   for (const key in schemaPropsJSON) {
@@ -97,7 +126,7 @@ const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaul
     }
   }
 
-  const schemaLayouts = await schemaLayoutAgent(messages, writer, JSON.stringify(finalSchemaJSON));
+  const schemaLayouts = await schemaLayoutAgent(messages, writer, sitePlan, JSON.stringify(finalSchemaJSON));
   const schemaLayoutJSON = llmJsonParse(schemaLayouts) as ISchemaLayout;
   for (const key in schemaLayoutJSON) {
     if (finalSchemaJSON[key]) {
@@ -107,7 +136,7 @@ const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaul
   }
   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: `\`\`\`json\n${JSON.stringify(finalSchemaJSON, null, 2)}\n\`\`\`` })}\n\n`));
 
-  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames', 'schemaProps', 'schemaLayouts'], runningStep: '' }) })}\n\n`));
+  writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ doneSteps: ['schemaNames', 'schemaProps', 'schemaLayouts', 'finalSchema'], runningStep: '' }) })}\n\n`));
 }
 
 export async function POST(req: NextRequest) {

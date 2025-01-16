@@ -1,18 +1,22 @@
-import { Layout, Input, Button, message as antdMessage, Steps } from 'antd';
+import { Layout, Input, Button, message as antdMessage, Steps, Collapse } from 'antd';
 import 'antd/dist/reset.css';
-import { HumanMessage } from '@langchain/core/messages';
 import useChatStore from '../store/chatStore';
+import ReactMarkdown from 'react-markdown';
+import { UserMessage, AIMessage } from '../store/chatStore';
+import LowCodeRenderer from '@/components/LowCodeRenderer';
+import { CheckCircleOutlined, LoadingOutlined } from '@ant-design/icons';
+import { useEffect } from 'react';
 
 const { Sider, Content } = Layout;
-const { Step } = Steps;
 
 export default function AIEditorPage() {
   const { messages, inputValue, setMessages, setInputValue, parseStreamResponse } = useChatStore();
 
   const handleSend = async (): Promise<void> => {
     if (inputValue.trim()) {
-      const userMessage = new HumanMessage(inputValue);
-      setMessages([...messages, { type: 'user', text: inputValue }, { type: 'ai', text: '' }]);
+      const userMessage: UserMessage = { role: 'user', content: inputValue };
+      const aiMessage: AIMessage = { role: 'ai', content: '' };
+      setMessages([...messages, userMessage, aiMessage]);
       setInputValue('');
 
       try {
@@ -32,50 +36,86 @@ export default function AIEditorPage() {
     }
   };
 
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch('/api/messages');
+        const data = await response.json();
+        setMessages(data);
+      } catch (error) {
+        antdMessage.error('Failed to load messages');
+      }
+    };
+
+    fetchMessages();
+  }, [setMessages]);
+
   return (
     <Layout style={{ height: '100vh' }}>
-      <Sider width={300} style={{ background: '#fff', padding: '20px' }}>
-        <h2>AI Chat Room</h2>
-        <div style={{ marginBottom: '10px' }}>
-          {messages.map((msg, index) => (
-            <div key={index} style={{
-              display: 'flex',
-              justifyContent: msg.type === 'user' ? 'flex-end' : 'flex-start',
-              marginBottom: '10px'
-            }}>
-              <div style={{
-                maxWidth: '60%',
-                padding: '10px',
-                borderRadius: '10px',
-                backgroundColor: msg.type === 'user' ? '#1890ff' : '#f0f0f0',
-                color: msg.type === 'user' ? '#fff' : '#000',
-                textAlign: msg.type === 'user' ? 'right' : 'left'
+      <Sider width={600} >
+        <div style={{ background: '#fff', padding: '20px', display: 'flex', flexDirection: 'column', height: '100vh' }}>
+          <div style={{ flex: 1, overflowY: 'auto', marginBottom: '10px' }}>
+            {messages.map((msg, index) => (
+              <div key={index} style={{
+                display: 'flex',
+                justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                marginBottom: '10px'
               }}>
-                <strong>{msg.type === 'user' ? 'User' : 'AI'}:</strong> {msg.text}
-                {msg.type === 'ai' && msg.progress && (
-                  <Steps direction="vertical" size="small" current={msg.progress.doneSteps.length}>
-                    <Step title="Schema Names" status={msg.progress.doneSteps.includes('schemaNames') ? 'finish' : (msg.progress.runningStep === 'schemaNames' ? 'process' : 'wait')} />
-                    <Step title="Schema Props" status={msg.progress.doneSteps.includes('schemaProps') ? 'finish' : (msg.progress.runningStep === 'schemaProps' ? 'process' : 'wait')} />
-                    <Step title="Schema Layouts" status={msg.progress.doneSteps.includes('schemaLayouts') ? 'finish' : (msg.progress.runningStep === 'schemaLayouts' ? 'process' : 'wait')} />
-                  </Steps>
-                )}
+                <div style={{
+                  maxWidth: '90%',
+                  padding: '10px',
+                  borderRadius: '10px',
+                  backgroundColor: msg.role === 'user' ? '#1890ff' : '#f0f0f0',
+                  color: msg.role === 'user' ? '#fff' : '#000',
+                  textAlign: msg.role === 'user' ? 'right' : 'left'
+                }}>
+                  <strong>{msg.role === 'user' ? 'User' : 'AI'}:</strong> <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  {msg.role === 'ai' && msg.progress && (
+                    <div>
+                      <Collapse>
+                        <Collapse.Panel header="Schema Names Details" extra={
+                          msg.progress.doneSteps.includes('schemaNames') ? <CheckCircleOutlined style={{ color: 'green' }} /> : <LoadingOutlined style={{ color: 'gray' }} />
+                        } key="1">
+                          <ReactMarkdown>{msg.artifact?.schemaNames || ''}</ReactMarkdown>
+                        </Collapse.Panel>
+                        <Collapse.Panel header="Schema Props Details" extra={
+                          msg.progress.doneSteps.includes('schemaProps') ? <CheckCircleOutlined style={{ color: 'green' }} /> : null
+                        } key="2">
+                          <ReactMarkdown>{msg.artifact?.schemaProps || ''}</ReactMarkdown>
+                        </Collapse.Panel>
+                        <Collapse.Panel header="Schema Layouts Details" extra={
+                          msg.progress.doneSteps.includes('schemaLayouts') ? <CheckCircleOutlined style={{ color: 'green' }} /> : null
+                        } key="3">
+                          <ReactMarkdown>{msg.artifact?.schemaLayouts || ''}</ReactMarkdown>
+                        </Collapse.Panel>
+                        <Collapse.Panel header="Final Schema Details" extra={
+                          msg.progress.doneSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : null
+                        } key="4">
+                          <ReactMarkdown>{msg.artifact?.finalSchema || ''}</ReactMarkdown>
+                        </Collapse.Panel>
+                      </Collapse>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', background: '#fff', padding: '10px' }}>
+            <Input.TextArea
+              rows={1}
+              value={inputValue}
+              onChange={e => setInputValue(e.target.value)}
+              placeholder="Type your message..."
+              style={{ flex: 1, marginRight: '10px' }}
+            />
+            <Button type="primary" onClick={handleSend}>
+              Send
+            </Button>
+          </div>
         </div>
-        <Input.TextArea
-          rows={4}
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          placeholder="Type your message..."
-        />
-        <Button type="primary" onClick={handleSend} style={{ marginTop: '10px' }}>
-          Send
-        </Button>
       </Sider>
-      <Content style={{ padding: '20px' }}>
-        <h2>Editor</h2>
-        <Input.TextArea rows={20} placeholder="Start typing..." />
+      <Content style={{ padding: '20px', maxWidth: '80%' }}>
+        <LowCodeRenderer />
       </Content>
     </Layout>
   );
