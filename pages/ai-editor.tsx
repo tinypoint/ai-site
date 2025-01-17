@@ -62,7 +62,7 @@ export default function AIEditorPage() {
         method: 'DELETE',
       });
       setMessages([]);
-      setInputValue('登录页');
+      setInputValue('学生列表查询页');
     } catch (error) {
       antdMessage.error('Failed to reset messages');
     }
@@ -105,24 +105,29 @@ export default function AIEditorPage() {
                   {msg.role === 'ai' && msg.progress && (
                     <div>
                       <Collapse>
-                        <Collapse.Panel header="Schema Names Details" extra={
-                          msg.progress.doneSteps.includes('schemaNames') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'schemaNames' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="1">
+                        <Collapse.Panel header="names" extra={
+                          msg.progress.compeleteSteps.includes('schemaNames') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaNames') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="names">
                           <ReactMarkdown>{msg.artifact?.schemaNames || ''}</ReactMarkdown>
                         </Collapse.Panel>
-                        <Collapse.Panel header="Schema Layouts Details" extra={
-                          msg.progress.doneSteps.includes('schemaLayouts') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'schemaLayouts' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="2">
+                        <Collapse.Panel header="querys" extra={
+                          msg.progress.compeleteSteps.includes('querys') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaNames') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="querys">
+                          <ReactMarkdown>{msg.artifact?.querys || ''}</ReactMarkdown>
+                        </Collapse.Panel>
+                        <Collapse.Panel header="layouts" extra={
+                          msg.progress.compeleteSteps.includes('schemaLayouts') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaLayouts') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="layouts">
                           <ReactMarkdown>{msg.artifact?.schemaLayouts || ''}</ReactMarkdown>
                         </Collapse.Panel>
-                        <Collapse.Panel header="Schema Props Details" extra={
-                          msg.progress.doneSteps.includes('schemaProps') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'schemaProps' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="3">
+                        <Collapse.Panel header="props" extra={
+                          msg.progress.compeleteSteps.includes('schemaProps') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaProps') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="props">
                           <ReactMarkdown>{msg.artifact?.schemaProps || ''}</ReactMarkdown>
                         </Collapse.Panel>
-                        <Collapse.Panel header="Final Schema Details" extra={
-                          msg.progress.doneSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningStep === 'finalSchema' ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="4">
+                        <Collapse.Panel header="finalSchema" extra={
+                          msg.progress.compeleteSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('finalSchema') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="finalSchema">
                           <ReactMarkdown>{msg.artifact?.finalSchema || ''}</ReactMarkdown>
                         </Collapse.Panel>
                       </Collapse>

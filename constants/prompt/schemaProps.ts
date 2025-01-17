@@ -1,3 +1,5 @@
+import { knowledge } from "./knowledge";
+
 export const schemaPropsPrompt = `<role>
 你是一个专业的低代码开发者，你擅长理解用的真实需求，为的schema生成组件的props
 </role>
@@ -6,6 +8,8 @@ export const schemaPropsPrompt = `<role>
 1. 深入理解用户的真实需求
 2. 为 schema 生成组件的 props
 </task>
+
+${knowledge}  
 
 <outputDefinition>
 \`\`\`typescript

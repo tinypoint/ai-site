@@ -42,6 +42,7 @@ const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?:
         gridColumnEnd: 2,
         gridRowStart: 1,
         gridRowEnd: 2,
+        padding: '4px 8px',
 
         // gridColumnStart: colStart,
         // gridColumnEnd: colSpan,
@@ -112,45 +113,55 @@ const componentMap: Record<IWeightType, React.FC<ComponentProps>> = {
     )
   },
   Modal: ({ title, children, style }) => <Modal title={title} open={false} style={style}>{children}</Modal>,
-  Table: ({ children, layout, style }) => {
+  Table: ({ children, layout, style, columns }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Table style={style}>{children}</Table>
+        <Table style={style} columns={columns}>{children}</Table>
       </AISiteLayoutSystemItem>
     )
   },
-  Select: ({ options, layout, style }) => {
+  Select: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Select options={options} style={style} />
+        <Form.Item label={label} style={style}>
+          <Select options={options} />
+        </Form.Item>
       </AISiteLayoutSystemItem>
     )
   },
-  RadioList: ({ options, layout, style }) => {
+  RadioList: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Radio.Group options={options} style={style} />
+        <Form.Item label={label} style={style}>
+          <Radio.Group options={options} />
+        </Form.Item>
       </AISiteLayoutSystemItem>
     )
   },
-  Switch: ({ layout, style }) => {
+  Switch: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Switch style={style} />
+        <Form.Item label={label} style={style}>
+          <Switch />
+        </Form.Item>
       </AISiteLayoutSystemItem>
     )
   },
-  Slider: ({ layout, style }) => {
+  Slider: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Slider style={style} />
+        <Form.Item label={label} style={style}>
+          <Slider />
+        </Form.Item>
       </AISiteLayoutSystemItem>
     )
   },
-  DatePicker: ({ layout, style }) => {
+  DatePicker: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <DatePicker style={style} />
+        <Form.Item label={label} style={style}>
+          <DatePicker />
+        </Form.Item>
       </AISiteLayoutSystemItem>
     )
   },

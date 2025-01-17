@@ -1,3 +1,5 @@
+import { knowledge } from "./knowledge";
+
 export const schemaLayoutPrompt = `<role>
 你是一个专业的低代码开发者，你擅长理解用的真实需求，为的schema生成组件的layout 和 style
 </role>
@@ -11,6 +13,8 @@ export const schemaLayoutPrompt = `<role>
 6. layout 是一种特殊的布局系统，类似 grid，1份宽度的实际大小是父容器宽度的1/24,会随着父级容器的宽度发生变化，高度的1个单位是固定的8px，不会随着父容器的高度而变化
 7. 为每个组件生成合理的layout和style
 </task>
+
+${knowledge}
 
 <outputDefinition>
 \`\`\`typescript

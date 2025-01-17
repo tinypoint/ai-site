@@ -14,13 +14,14 @@ interface AIMessage {
   content: string;
   artifact?: {
     schemaNames?: string;
+    querys?: string;
     schemaProps?: string;
     schemaLayouts?: string;
     finalSchema?: string;
   };
   progress?: {
-    runningStep: string;
-    doneSteps: string[];
+    runningSteps: string[];
+    compeleteSteps: string[];
   };
 }
 
@@ -38,7 +39,7 @@ interface ChatState {
 
 const useChatStore = create<ChatState>((set, get) => ({
   messages: [],
-  inputValue: '登录页',
+  inputValue: '学生列表查询页',
   setMessages: (messages: Message[]) => set(() => ({ messages })),
   setInputValue: (value: string) => set(() => ({ inputValue: value })),
   updateLastMessage: (text: string) => set((state) => {
@@ -51,7 +52,12 @@ const useChatStore = create<ChatState>((set, get) => ({
   parseStreamResponse: async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     const decoder = new TextDecoder();
     let buffer = '';
-    let aiMessageReceived: { progress?: { runningStep: string; doneSteps: string[] } } & Record<string, string> = {};
+    let aiMessageReceived: Record<string, string> = {};
+
+    const progress: { runningSteps: string[]; compeleteSteps: string[] } = {
+      runningSteps: [],
+      compeleteSteps: []
+    }
 
     while (true) {
       const { done, value } = await reader.read();
@@ -71,10 +77,14 @@ const useChatStore = create<ChatState>((set, get) => ({
             if (lastAIMessage) {
 
               if (jsonData.type === 'progress') {
-                const { runningStep, doneSteps } = JSON.parse(jsonData.data);
-                aiMessageReceived.progress = {
-                  runningStep, doneSteps
-                };
+                const { runningStep, compeleteStep } = JSON.parse(jsonData.data);
+                if (runningStep) {
+                  progress.runningSteps.push(runningStep);
+                }
+                if (compeleteStep) {
+                  progress.runningSteps = progress.runningSteps.filter((step) => step !== compeleteStep);
+                  progress.compeleteSteps.push(compeleteStep);
+                }
               } else {
                 if (aiMessageReceived[jsonData.type] === undefined) {
                   aiMessageReceived[jsonData.type] = '';
@@ -82,10 +92,10 @@ const useChatStore = create<ChatState>((set, get) => ({
                 aiMessageReceived[jsonData.type] += jsonData.data;
               }
 
-              const { progress, plan, ...rest } = aiMessageReceived;
+              const { plan, ...rest } = aiMessageReceived;
               lastAIMessage.content = plan;
               lastAIMessage.artifact = rest;
-              lastAIMessage.progress = progress;
+              lastAIMessage.progress = { ...progress };
             }
             return { messages: updatedMessages };
           });
