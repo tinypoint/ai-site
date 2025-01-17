@@ -3,6 +3,7 @@ import useChatStore from '@/store/chatStore';
 import { llmJsonParse } from '@/utils';
 import { IFinalSchema } from '@/types';
 import { weightMaps } from './WeightMaps';
+import { createEventHandlers } from '@/utils/event';
 
 const LowCodeRenderer: React.FC<{}> = ({ }) => {
   const { messages } = useChatStore();
@@ -16,13 +17,14 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
   const renderComponent = (key: string): React.ReactNode => {
     const node = data[key];
     if (!node) return null;
-    const { type, props, layout, style } = node;
+    const { type, props, layout, style, events } = node;
     const Component = weightMaps[type];
     if (!Component) return null;
 
     const childrenKeys = Object.keys(data).filter(childKey => data[childKey].parent === key);
+    const eventHandlers = createEventHandlers(events || {});
     return (
-      <Component key={key} {...props} layout={layout || {}} style={style || {}}>
+      <Component key={key} {...props} layout={layout || {}} style={style || {}} eventHandlers={eventHandlers}>
         {childrenKeys.map(renderComponent)}
       </Component>
     );

@@ -19,13 +19,15 @@ export type IWeight = {
   props?: any;
   layout?: IWeightLayout;
   style?: IWeightStyle;
+  events?: any;
 }
 
 export type IBaseSchema = Record<IWeightName, Pick<IWeight, 'type' | 'parent'>>;
 
 export type ISchemaProps = Record<IWeightName, Pick<IWeight, 'props'>>;
 
+export type ISchemaEvents = Record<IWeightName, Pick<IWeight, 'events'>>;
+
 export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'layout' | 'style'>>;
 
 export type IFinalSchema = Record<IWeightName, IWeight>;
-

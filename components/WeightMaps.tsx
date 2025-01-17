@@ -70,7 +70,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  Form: ({ title, children, layout, style, labelCol, wrapperCol }) => {
+  Form: ({ eventHandlers, children, layout, style, labelCol, wrapperCol }) => {
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
         <Form
@@ -78,6 +78,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
           wrapperCol={wrapperCol}
           style={style}
           labelAlign='left'
+          onFinish={eventHandlers.onSubmit || undefined}
         >
           <AISiteLayoutSystemContainer>
             {children}
@@ -137,10 +138,10 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  Button: ({ text, layout, style }) => {
+  Button: ({ text, layout, style, eventHandlers }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Button style={style}>{text}</Button>
+        <Button style={style} onClick={eventHandlers.onClick || undefined}>{text}</Button>
       </AISiteLayoutSystemItem>
     )
   },

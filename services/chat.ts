@@ -4,10 +4,11 @@ import { schemaTypesPrompt } from "@/constants/prompt/schemaTypes";
 import { schemaPropsPrompt } from "@/constants/prompt/schemaProps";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
 import { llmJsonParse } from "@/utils";
-import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema } from "@/types";
+import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema, ISchemaEvents } from "@/types";
 import { planPrompt } from "@/constants/prompt/plan";
 import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { queryPrompt } from "@/constants/prompt/query";
+import { schemaEventsPrompt } from "@/constants/prompt/schemaEvents";
 
 
 const StateAnnotation = Annotation.Root({
@@ -38,7 +39,16 @@ const StateAnnotation = Annotation.Root({
   schemaPropsJSON: Annotation<ISchemaProps>({
     value: () => ({} as ISchemaProps),
   }),
-  finalSchema: Annotation<IFinalSchema>({
+  schemaEvents: Annotation<string>({
+    value: () => '',
+  }),
+  schemaEventsJSON: Annotation<ISchemaEvents>({
+    value: () => ({} as ISchemaEvents),
+  }),
+  finalSchema: Annotation<string>({
+    value: () => '',
+  }),
+  finalSchemaJSON: Annotation<IFinalSchema>({
     value: () => ({} as IFinalSchema),
   }),
 });
@@ -57,14 +67,11 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       ...messages,
     ]);
 
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'planSiteProduction' }) })}\n\n`));
     let sitePlan = '';
     for await (const chunk of await stream) {
       sitePlan += chunk.content;
       writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'plan', data: chunk.content })}\n\n`));
     }
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'planSiteProduction' }) })}\n\n`));
 
     return {
       sitePlan,
@@ -74,8 +81,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
   const schemaTypesAgent = async (state: typeof StateAnnotation.State) => {
     const { messages } = state;
-
-    console.log('messages', messages)
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -143,8 +148,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const schemaLayoutsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, schemaTypesJSON } = state;
-
+    const { messages } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -164,26 +168,16 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     }
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaLayouts' }) })}\n\n`));
     const schemaLayoutsJSON = llmJsonParse(schemaLayouts);
-    const finalSchemaJSON: IFinalSchema = {};
-    for (const key in schemaTypesJSON) {
-      finalSchemaJSON[key] = {
-        type: schemaTypesJSON[key].type,
-        parent: schemaTypesJSON[key].parent,
-        layout: schemaLayoutsJSON[key]?.layout || { rowStart: 0, rowSpan: 0, colStart: 0, colSpan: 0 },
-        style: schemaLayoutsJSON[key]?.style || {},
-      };
-    }
 
     return {
       schemaLayouts,
       schemaLayoutsJSON,
-      finalSchemaJSON,
       messages: [...messages, new AIMessage(schemaLayouts)]
     };
   }
 
   const schemaPropsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, schemaTypesJSON, schemaLayoutsJSON } = state;
+    const { messages } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -203,6 +197,59 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     }
 
     const schemaPropsJSON = llmJsonParse(schemaProps);
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaProps' }) })}\n\n`));
+
+    return {
+      schemaProps,
+      schemaPropsJSON,
+      messages: [...messages, new AIMessage(schemaProps)]
+    };
+  }
+
+  const schemaEventsAgent = async (state: typeof StateAnnotation.State) => {
+    const { messages } = state;
+
+    const model = new ChatOpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      modelName: "gpt-4o-2024-11-20",
+      temperature: 1,
+    });
+
+    const stream = model.stream([
+      new SystemMessage(schemaEventsPrompt),
+      ...messages,
+    ]);
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaEvents' }) })}\n\n`));
+    let schemaEvents = '';
+    for await (const chunk of await stream) {
+      schemaEvents += chunk.content;
+      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaEvents', data: chunk.content })}\n\n`));
+    }
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaEvents' }) })}\n\n`));
+
+    const schemaEventsJSON = llmJsonParse(schemaEvents);
+
+    return {
+      schemaEvents,
+      schemaEventsJSON,
+      messages: [...messages, new AIMessage(schemaEvents)]
+    };
+  }
+
+  const schemaMergeAgent = async (state: typeof StateAnnotation.State) => {
+    const {
+      messages,
+      schemaTypesJSON,
+      schemaLayoutsJSON,
+      schemaPropsJSON,
+      schemaEventsJSON,
+    } = state;
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'finalSchema' }) })}\n\n`));
+
     const finalSchemaJSON: IFinalSchema = {};
     for (const key in schemaTypesJSON) {
       finalSchemaJSON[key] = {
@@ -211,33 +258,38 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
         layout: schemaLayoutsJSON[key]?.layout,
         style: schemaLayoutsJSON[key]?.style,
         props: schemaPropsJSON[key]?.props,
+        events: schemaEventsJSON[key],
       };
     }
+    const finalSchema = `\`\`\`json\n${JSON.stringify(finalSchemaJSON, null, 2)}\n\`\`\``;
 
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: `\`\`\`json\n${JSON.stringify(finalSchemaJSON, null, 2)}\n\`\`\`` })}\n\n`));
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: finalSchema })}\n\n`));
 
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaProps' }) })}\n\n`));
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'finalSchema' }) })}\n\n`));
 
     return {
-      schemaProps,
-      schemaPropsJSON,
+      finalSchema,
       finalSchemaJSON,
-      messages: [...messages, new AIMessage(schemaProps)]
+      messages: [...messages, new AIMessage(finalSchema)]
     };
   }
+
   const workflow = new StateGraph(StateAnnotation)
     .addNode("sitePlanAgent", sitePlanAgent)
     .addNode("schemaTypesAgent", schemaTypesAgent)
     .addNode('querysAgent', querysAgent)
     .addNode("schemaLayoutsAgent", schemaLayoutsAgent)
     .addNode("schemaPropsAgent", schemaPropsAgent)
+    .addNode("schemaEventsAgent", schemaEventsAgent)
+    .addNode("schemaMergeAgent", schemaMergeAgent)
     .addEdge(START, "sitePlanAgent")
     .addEdge("sitePlanAgent", "schemaTypesAgent")
     .addEdge("schemaTypesAgent", "querysAgent")
     .addEdge("querysAgent", "schemaLayoutsAgent")
     .addEdge("schemaLayoutsAgent", "schemaPropsAgent")
-    .addEdge("schemaPropsAgent", END);
+    .addEdge("schemaPropsAgent", "schemaEventsAgent")
+    .addEdge("schemaEventsAgent", "schemaMergeAgent")
+    .addEdge("schemaMergeAgent", END);
 
   const app = workflow.compile({});
 

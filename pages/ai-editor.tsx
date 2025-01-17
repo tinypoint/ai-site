@@ -105,7 +105,25 @@ export default function AIEditorPage() {
                   {msg.role === 'ai' && msg.progress && (
                     <div>
                       <Collapse>
-                        <Collapse.Panel header="types" extra={
+                        {
+                          msg.progress.compeleteSteps.map(step => (
+                            <Collapse.Panel header={step} extra={
+                              msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                            } key={step}>
+                              <ReactMarkdown>{msg.artifact?.[step as keyof typeof msg.artifact] || ''}</ReactMarkdown>
+                            </Collapse.Panel>
+                          ))
+                        }
+                        {
+                          msg.progress.runningSteps.map(step => (
+                            <Collapse.Panel header={step} extra={
+                              msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                            } key={step}>
+                              <ReactMarkdown>{msg.artifact?.[step as keyof typeof msg.artifact] || ''}</ReactMarkdown>
+                            </Collapse.Panel>
+                          ))
+                        }
+                        {/* <Collapse.Panel header="types" extra={
                           msg.progress.compeleteSteps.includes('schemaTypes') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaTypes') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
                         } key="types">
                           <ReactMarkdown>{msg.artifact?.schemaTypes || ''}</ReactMarkdown>
@@ -129,7 +147,7 @@ export default function AIEditorPage() {
                           msg.progress.compeleteSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('finalSchema') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
                         } key="finalSchema">
                           <ReactMarkdown>{msg.artifact?.finalSchema || ''}</ReactMarkdown>
-                        </Collapse.Panel>
+                        </Collapse.Panel> */}
                       </Collapse>
                     </div>
                   )}
