@@ -14,12 +14,16 @@ const ComponentWrapper = (context: { component: React.ComponentType<any>, node: 
   const expressionContext = useLowCodeStore(state => state.expressionContext);
   const callWeightMethod = useLowCodeStore(state => state.callWeightMethod);
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
-  const eventHandlers = createEventHandlers(events || {}, callWeightMethod, updateExpressionContext, expressionContext);
+  const getExpressionContext = useLowCodeStore(state => state.getExpressionContext);
+  const eventHandlers = createEventHandlers(events || {}, callWeightMethod, updateExpressionContext, getExpressionContext);
 
   const parsedProps = parseObjectExpressions(props, expressionContext);
 
-  console.log('expressionContext', expressionContext)
-  console.log(name, 'parsedProps', parsedProps)
+  if (name.startsWith('Table')) {
+    // console.log('expressionContext', expressionContext)
+    // console.log(name, 'props', props)
+    console.log(name, 'parsedProps', parsedProps)
+  }
 
   return (
     <Component
@@ -52,7 +56,8 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
       updateExpressionContext(queryName, {
         ...querys[queryName],
         loading: false,
-        data: null,
+        response: null,
+        mockResponse: querys[queryName]?.response,
       });
     });
 

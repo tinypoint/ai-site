@@ -205,10 +205,10 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </Modal>
     )
   },
-  Table: ({ children, layout, style, columns }) => {
+  Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Table className={styles['ai-site-table']} style={style} columns={columns}>{children}</Table>
+        <Table className={styles['ai-site-table']} style={style} columns={columns} dataSource={dataSource} loading={loading}>{children}</Table>
       </AISiteLayoutSystemItem>
     )
   },

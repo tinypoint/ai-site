@@ -8,6 +8,7 @@ interface LowCodeState {
   unregisterWeight: (name: string) => void;
   callWeightMethod: (method: string, ...args: any[]) => void;
   updateExpressionContext: (name: string, state: any) => void;
+  getExpressionContext: (name: string) => any;
 }
 
 const useLowCodeStore = create<LowCodeState>((set, get) => ({
@@ -29,6 +30,9 @@ const useLowCodeStore = create<LowCodeState>((set, get) => ({
   },
   updateExpressionContext: (name: string, expressionContext: any) => {
     return set((state) => ({ expressionContext: { ...state.expressionContext, [name]: expressionContext } }))
+  },
+  getExpressionContext: (name: string) => {
+    return get().expressionContext[name];
   }
 }));
 

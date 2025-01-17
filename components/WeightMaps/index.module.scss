@@ -1,9 +1,5 @@
 .ai-site-table,
 .ai-site-table :global(.ant-spin-nested-loading),
-.ai-site-table :global(.ant-spin-container),
-.ai-site-table :global(.ant-table),
-.ai-site-table :global(.ant-table-container),
-.ai-site-table :global(.ant-table-content),
-.ai-site-table :global(.ant-table-content) table {
+.ai-site-table :global(.ant-spin-container) {
   height: 100%;
 }

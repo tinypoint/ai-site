@@ -45,16 +45,18 @@ export type ISchemaExpressions = {
   querys: Record<IQueryName, IQueryExpression>;
 };
 
-
 export type IQuery = {
   url?: string;
   method?: string;
   headers?: Record<string, string>;
   body?: Record<string, string>;
   cookies?: Record<string, string>;
+  response?: any;
 }
 
 export type IQuerys = Record<IQueryName, IQuery>;
+
+export type IQueryMockResponse = Record<IQueryName, any>;
 
 export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'layout' | 'style'>>;
 

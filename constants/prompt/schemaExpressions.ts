@@ -23,8 +23,11 @@ type IExpression = string; // 语法是 双花括号包裹的javascript表达式
 type IWeightExpression = Record<string, IExpression>;
 
 type IQueryExpression = {
-  url: IExpression;;
-  body: Record<string, IExpression>;
+  url?: IExpression;
+  params?: Record<string, IExpression>;
+  body?: Record<string, IExpression>;
+  headers?: Record<string, IExpression>;
+  cookies?: Record<string, IExpression>;
 };
 
 type IOutput = {
@@ -39,26 +42,33 @@ type IOutput = {
 {
   "weights": {
     "Chart1": {
-      "values": "{{ Query2.data }}"
+      "values": "{{ Query2.response.chartDatas[0].value }}"
     },
     "Table1": {
       "loading": "{{ Query3.loading }}",
-      "dataSource": "{{ Query3.data.list }}"
+      "dataSource": "{{ Query3.response.data.taskList }}"
     },
     "Select3": {
-      "options": "{{ Query4.data.options }}"
+      "options": "{{ Query4.response.statusList }}"
     }
   },
   "querys": {
     "Query1": {
-      "url": "https://api.example.com/api/v1/book?bookId={{ BookIdInput1.url }}",
+      "params": {
+        "bookId": "{{ BookIdInput1.value }}"
+      }
     },
     "Query2": {
-      "url": "https://api.example.com/api/v1/updatebook",
       "body": {
         "bookId": "{{ BookIdInput5.value }}",
         "name": "{{ BookNameInput2.value }}",
         "author": "{{ BookAuthorSelect3.value }}"
+      }
+    },
+    "Query3": {
+      "url": "https://api.example.com/api/v1/car/{{ carIdInput1.value }}/delete",
+      "headers": {
+        "token": "{{ TokenInput1.value }}"
       }
     }
   }

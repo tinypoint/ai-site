@@ -17,3 +17,17 @@ export function llmJsonParse(input: string): any {
     return null;
   }
 }
+
+export const mergeObjects = (target: any, source: any) => {
+  for (const key in source) {
+    if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      if (!target[key]) {
+        target[key] = {};
+      }
+      mergeObjects(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+};

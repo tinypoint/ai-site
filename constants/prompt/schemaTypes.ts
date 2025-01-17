@@ -15,7 +15,7 @@ export const schemaTypesPrompt = `${knowledge}
 <outputDefinition>
 \`\`\`typescript
 
-type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
+type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数字，例如 Page1, Button1, Form2, Button2, 等等
 
 ${WeightType}
 

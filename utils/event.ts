@@ -29,7 +29,7 @@ export function createEventHandlers(
   eventObject: { [key: string]: EventData },
   callWeightMethod: (method: string, ...args: any[]) => void,
   updateState: (name: string, state: any) => void,
-  expressionContext: Record<string, any>
+  getExpressionContext: (name: string) => any,
 ) {
   const handlers: { [key: string]: () => void } = {};
 
@@ -48,24 +48,36 @@ export function createEventHandlers(
           break;
         case 'executeQuery':
           // Execute query logic
-          console.log(`Executing query: ${node.options.queryName}`);
+
+
+
+          const expressionContext = { ...(getExpressionContext(node.options.queryName) || {}) };
+          console.log(`Executing query: ${node.options.queryName}`, expressionContext);
+
+          updateState(node.options.queryName, {
+            ...expressionContext,
+            loading: true,
+            response: null,
+          });
+
+          const url = expressionContext.method.toLowerCase() === 'get' ? expressionContext.url + '?' + new URLSearchParams(expressionContext.params) : expressionContext.url;
+
+          fetch(url, {
+            method: expressionContext.method,
+            body: expressionContext.method.toLowerCase() === 'get' ? undefined : JSON.stringify(expressionContext.body),
+          });
+
           setTimeout(() => {
-            const mockData = {
-              status: 'success',
-              data: [
-                {
-                  id: '1',
-                  name: 'test',
-                  age: 18
-                },
-                {
-                  id: '2',
-                  name: 'test2',
-                  age: 19
-                }
-              ]
-            };
-            updateState(node.options.queryName, mockData);
+            updateState(node.options.queryName, {
+              ...expressionContext,
+              loading: false,
+              response: expressionContext.mockResponse,
+            });
+            console.log({
+              ...expressionContext,
+              loading: false,
+              response: expressionContext.mockResponse,
+            });
           }, 1000);
           break;
         case 'setComponentProps':
