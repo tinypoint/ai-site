@@ -82,7 +82,7 @@ export default function AIEditorPage() {
 
   return (
     <Layout style={{ height: '100vh' }}>
-      <Sider width={400} >
+      <Sider width={600} >
         <div style={{ background: '#fff', padding: '20px', display: 'flex', flexDirection: 'column', height: '100vh' }}>
           <div style={{ flex: 1, overflowY: 'auto', marginBottom: '10px' }}>
             {messages.map((msg, index) => (

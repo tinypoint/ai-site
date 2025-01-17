@@ -25,7 +25,12 @@ interface EventData {
   edges: Edge[];
 }
 
-export function createEventHandlers(eventObject: { [key: string]: EventData }) {
+export function createEventHandlers(
+  eventObject: { [key: string]: EventData },
+  callWeightMethod: (method: string, ...args: any[]) => void,
+  updateState: (name: string, state: any) => void,
+  expressionContext: Record<string, any>
+) {
   const handlers: { [key: string]: () => void } = {};
 
   for (const eventName in eventObject) {
@@ -33,7 +38,7 @@ export function createEventHandlers(eventObject: { [key: string]: EventData }) {
     const nodeMap = new Map<string, Node>();
     eventData.nodes.forEach(node => nodeMap.set(node.id, node));
 
-    const executeNode = (nodeId: string, context: any) => {
+    const executeNode = (nodeId: string) => {
       const node = nodeMap.get(nodeId);
       if (!node) return;
 
@@ -44,7 +49,24 @@ export function createEventHandlers(eventObject: { [key: string]: EventData }) {
         case 'executeQuery':
           // Execute query logic
           console.log(`Executing query: ${node.options.queryName}`);
-          context[node.id] = { data: 'mockData' }; // Mock response
+          setTimeout(() => {
+            const mockData = {
+              status: 'success',
+              data: [
+                {
+                  id: '1',
+                  name: 'test',
+                  age: 18
+                },
+                {
+                  id: '2',
+                  name: 'test2',
+                  age: 19
+                }
+              ]
+            };
+            updateState(node.options.queryName, mockData);
+          }, 1000);
           break;
         case 'setComponentProps':
           // Set component properties logic
@@ -56,6 +78,7 @@ export function createEventHandlers(eventObject: { [key: string]: EventData }) {
         case 'controlComponent':
           // Control component logic
           console.log(`Controlling component: ${node.options.weightName}`);
+          callWeightMethod(node.options.weightName, node.options.method, node.options.args);
           break;
         default:
           console.warn(`Unknown node type: ${node.type}`);
@@ -64,12 +87,11 @@ export function createEventHandlers(eventObject: { [key: string]: EventData }) {
       // Find and execute next nodes
       eventData.edges
         .filter(edge => edge.source.id === nodeId && edge.source.outputHandle === 'next')
-        .forEach(edge => executeNode(edge.target.id, context));
+        .forEach(edge => executeNode(edge.target.id));
     };
 
     handlers[eventName] = () => {
-      const context: any = {};
-      executeNode('start', context);
+      executeNode('start');
     };
   }
 

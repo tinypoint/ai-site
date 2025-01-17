@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Checkbox, Button, Modal, Table, Select, Radio, Switch, Slider, DatePicker } from 'antd';
 import { IWeightType, IWeightLayout } from '@/types';
 import styles from './index.module.scss';
+import useLowCodeStore from '@/store/lowcodeStore';
 
 type ComponentProps = any;
 
@@ -70,10 +71,37 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  Form: ({ eventHandlers, children, layout, style, labelCol, wrapperCol }) => {
+  Form: ({ name, eventHandlers, children, layout, style, labelCol, wrapperCol }) => {
+    const registerWeight = useLowCodeStore(state => state.registerWeight);
+    const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
+    const [form] = Form.useForm();
+
+    useEffect(() => {
+      registerWeight(
+        name,
+        {
+          methods: {
+            submit: async () => {
+              await form.validateFields()
+              form.submit();
+            },
+            reset: () => {
+              form.resetFields();
+            },
+            validate: () => {
+              form.validateFields();
+            },
+          }
+        }
+      )
+      return () => {
+        unregisterWeight(name);
+      }
+    });
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
         <Form
+          form={form}
           labelCol={labelCol}
           wrapperCol={wrapperCol}
           style={style}
@@ -145,7 +173,38 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  Modal: ({ title, children, style }) => <Modal title={title} open={false} style={style}>{children}</Modal>,
+  Modal: ({ name, title, children, style, eventHandlers }) => {
+    const registerWeight = useLowCodeStore(state => state.registerWeight);
+    const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
+    const [open, setOpen] = useState(false);
+    useEffect(() => {
+      registerWeight(
+        name,
+        {
+          methods: {
+            open: () => {
+              setOpen(true);
+            },
+            close: () => {
+              setOpen(false);
+            }
+          }
+        }
+      )
+      return () => {
+        unregisterWeight(name);
+      }
+    });
+    return (
+      <Modal
+        title={title}
+        open={open}
+        onOk={eventHandlers.onOk || undefined}
+        onCancel={eventHandlers.onCancel || undefined}
+      >{children}
+      </Modal>
+    )
+  },
   Table: ({ children, layout, style, columns }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>

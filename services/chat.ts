@@ -4,11 +4,12 @@ import { schemaTypesPrompt } from "@/constants/prompt/schemaTypes";
 import { schemaPropsPrompt } from "@/constants/prompt/schemaProps";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
 import { llmJsonParse } from "@/utils";
-import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema, ISchemaEvents } from "@/types";
+import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema, ISchemaEvents, ISchemaExpressions, IQuerys } from "@/types";
 import { planPrompt } from "@/constants/prompt/plan";
 import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { queryPrompt } from "@/constants/prompt/query";
 import { schemaEventsPrompt } from "@/constants/prompt/schemaEvents";
+import { schemaExpressionsPrompt } from "@/constants/prompt/schemaExpressions";
 
 
 const StateAnnotation = Annotation.Root({
@@ -27,6 +28,12 @@ const StateAnnotation = Annotation.Root({
   schemaTypesJSON: Annotation<IBaseSchema>({
     value: () => ({} as IBaseSchema),
   }),
+  querys: Annotation<string>({
+    value: () => '',
+  }),
+  querysJSON: Annotation<IQuerys>({
+    value: () => ({} as IQuerys),
+  }),
   schemaLayouts: Annotation<string>({
     value: () => '',
   }),
@@ -44,6 +51,12 @@ const StateAnnotation = Annotation.Root({
   }),
   schemaEventsJSON: Annotation<ISchemaEvents>({
     value: () => ({} as ISchemaEvents),
+  }),
+  schemaExpressions: Annotation<string>({
+    value: () => '',
+  }),
+  schemaExpressionsJSON: Annotation<ISchemaExpressions>({
+    value: () => ({} as ISchemaExpressions),
   }),
   finalSchema: Annotation<string>({
     value: () => '',
@@ -239,6 +252,37 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     };
   }
 
+  const schemaExpressionsAgent = async (state: typeof StateAnnotation.State) => {
+    const { messages } = state;
+
+    const model = new ChatOpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+      modelName: "gpt-4o-2024-11-20",
+      temperature: 1,
+    });
+
+    const stream = model.stream([
+      new SystemMessage(schemaExpressionsPrompt),
+      ...messages,
+    ]);
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaExpressions' }) })}\n\n`));
+    let schemaExpressions = '';
+    for await (const chunk of await stream) {
+      schemaExpressions += chunk.content;
+      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaExpressions', data: chunk.content })}\n\n`));
+    }
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaExpressions' }) })}\n\n`));
+    const schemaExpressionsJSON = llmJsonParse(schemaExpressions);
+
+    return {
+      schemaExpressions,
+      schemaExpressionsJSON,
+      messages: [...messages, new AIMessage(schemaExpressions)]
+    };
+  }
+
   const schemaMergeAgent = async (state: typeof StateAnnotation.State) => {
     const {
       messages,
@@ -246,12 +290,16 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       schemaLayoutsJSON,
       schemaPropsJSON,
       schemaEventsJSON,
+      schemaExpressionsJSON,
+      querysJSON,
     } = state;
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'finalSchema' }) })}\n\n`));
 
     const finalSchemaJSON: IFinalSchema = {};
+    const { querys, weights } = schemaExpressionsJSON;
     for (const key in schemaTypesJSON) {
+      const weightExpressions = weights[key];
       finalSchemaJSON[key] = {
         type: schemaTypesJSON[key].type,
         parent: schemaTypesJSON[key].parent,
@@ -260,8 +308,31 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
         props: schemaPropsJSON[key]?.props,
         events: schemaEventsJSON[key],
       };
+
+      if (weightExpressions) {
+        finalSchemaJSON[key].props = {
+          ...(finalSchemaJSON[key].props || {}),
+          ...weightExpressions,
+        };
+      }
     }
-    const finalSchema = `\`\`\`json\n${JSON.stringify(finalSchemaJSON, null, 2)}\n\`\`\``;
+
+    const finalQuerysJSON: IQuerys = {};
+    for (const key in querys) {
+      const querysExpressions = querys[key];
+      finalQuerysJSON[key] = querys[key];
+      if (querysExpressions) {
+        finalQuerysJSON[key] = {
+          ...(finalQuerysJSON[key] || {}),
+          ...querysExpressions,
+        };
+      }
+    }
+
+    const finalSchema = `\`\`\`json\n${JSON.stringify({
+      weights: finalSchemaJSON,
+      querys: finalQuerysJSON,
+    }, null, 2)}\n\`\`\``;
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: finalSchema })}\n\n`));
 
@@ -281,6 +352,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     .addNode("schemaLayoutsAgent", schemaLayoutsAgent)
     .addNode("schemaPropsAgent", schemaPropsAgent)
     .addNode("schemaEventsAgent", schemaEventsAgent)
+    .addNode("schemaExpressionsAgent", schemaExpressionsAgent)
     .addNode("schemaMergeAgent", schemaMergeAgent)
     .addEdge(START, "sitePlanAgent")
     .addEdge("sitePlanAgent", "schemaTypesAgent")
@@ -288,7 +360,8 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     .addEdge("querysAgent", "schemaLayoutsAgent")
     .addEdge("schemaLayoutsAgent", "schemaPropsAgent")
     .addEdge("schemaPropsAgent", "schemaEventsAgent")
-    .addEdge("schemaEventsAgent", "schemaMergeAgent")
+    .addEdge("schemaEventsAgent", "schemaExpressionsAgent")
+    .addEdge("schemaExpressionsAgent", "schemaMergeAgent")
     .addEdge("schemaMergeAgent", END);
 
   const app = workflow.compile({});

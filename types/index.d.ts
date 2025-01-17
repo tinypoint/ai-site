@@ -28,6 +28,39 @@ export type ISchemaProps = Record<IWeightName, Pick<IWeight, 'props'>>;
 
 export type ISchemaEvents = Record<IWeightName, Pick<IWeight, 'events'>>;
 
+export type IQueryName = string;
+
+export type IWeightExpression = Record<string, IExpression>;
+
+export type IQueryExpression = {
+  url?: string;
+  method?: string;
+  headers?: Record<string, string>;
+  body?: Record<string, string>;
+  cookies?: Record<string, string>;
+};
+
+export type ISchemaExpressions = {
+  weights: Record<IWeightName, IWeightExpression>;
+  querys: Record<IQueryName, IQueryExpression>;
+};
+
+
+export type IQuery = {
+  url?: string;
+  method?: string;
+  headers?: Record<string, string>;
+  body?: Record<string, string>;
+  cookies?: Record<string, string>;
+}
+
+export type IQuerys = Record<IQueryName, IQuery>;
+
 export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'layout' | 'style'>>;
 
 export type IFinalSchema = Record<IWeightName, IWeight>;
+
+export type IFinalData = {
+  weights: Record<IWeightName, IWeight>;
+  querys: Record<IQueryName, IQuery>;
+};

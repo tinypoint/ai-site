@@ -20,6 +20,9 @@ type IQueryName = string;
 type IQuery = {
   url: string;
   method: string;
+  headers?: Record<string, string>;
+  body?: Record<string, string>;
+  cookies?: Record<string, string>;
 };
 
 type IOutput = Record<IQueryName, IQuery>

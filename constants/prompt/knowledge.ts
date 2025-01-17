@@ -30,7 +30,6 @@ export const knowledge = `<knowledge>
         5. FormSwitch // 必须在表单内使用的switch
         6. FormSlider // 必须在表单内使用的slider
         7. FormDatePicker // 必须在表单内使用的datePicker
-        8. FormSubmitButton // 必须在表单内使用的submitButton
     4. Table
     5. Modal
     6. Text

@@ -37,14 +37,32 @@ interface ITableProps {
 
 interface IButtonProps {
   text: string;
+  htmlType?: 'submit' | 'reset' | 'button';
+}
+
+interface IFormInputProps {
+  label: string;
+  fieldName: string;
 }
 
 interface IInputProps {
   label: string;
 }
 
+interface IFormSelectProps {
+  label: string;
+  fieldName: string;
+  options: { label: string; value: string }[];
+}
+
 interface ISelectProps {
   label: string;
+  options: { label: string; value: string }[];
+}
+
+interface IFormRadioListProps {
+  label: string;
+  fieldName: string;
   options: { label: string; value: string }[];
 }
 
@@ -53,17 +71,38 @@ interface ICheckboxListProps {
   options: { label: string; value: string }[];
 }
 
+interface IFormCheckboxListProps {
+  label: string;
+  fieldName: string;
+  options: { label: string; value: string }[];
+}
+
 interface IRadioListProps {
   label: string;
   options: { label: string; value: string }[];
+}
+
+interface IFormSwitchProps {
+  label: string;
+  fieldName: string;
 }
 
 interface ISwitchProps {
   label: string;
 }
 
+interface IFormSliderProps {
+  label: string;
+  fieldName: string;
+}
+
 interface ISliderProps {
   label: string;
+}
+
+interface IFormDatePickerProps {
+  label: string;
+  fieldName: string;
 }
 
 interface IDatePickerProps {
@@ -75,7 +114,8 @@ type WeightName = string; // 组件的唯一标识，格式为：英文组件类
 
 type IWeightProps = IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps
     | IInputProps | IButtonProps | ISelectProps | ICheckboxListProps | IRadioListProps | ISwitchProps
-    | ISliderProps | IDatePickerProps;
+    | ISliderProps | IDatePickerProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxListProps
+    | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps;
 
 type IWeight = {
   props: IWeightProps
