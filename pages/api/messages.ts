@@ -3,7 +3,11 @@ import fs from 'fs';
 import path from 'path';
 import { Message } from '../../store/chatStore';
 
-const messagesFilePath = path.resolve(process.cwd(), 'data', 'messages.json');
+const messagesFilePath = path.resolve(process.cwd(), 'messages.json');
+
+if (!fs.existsSync(messagesFilePath)) {
+  fs.writeFileSync(messagesFilePath, JSON.stringify([]));
+}
 
 const getMessages = () => {
   try {
