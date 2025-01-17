@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input, Checkbox, Button, Modal, Table, Select, Radio, Switch, Slider, DatePicker } from 'antd';
 import { IWeightType, IWeightLayout } from '@/types';
+import styles from './index.module.css';
 
 type ComponentProps = any;
 
@@ -147,7 +148,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Table: ({ children, layout, style, columns }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Table style={style} columns={columns}>{children}</Table>
+        <Table className={styles['ai-site-table']} style={style} columns={columns}>{children}</Table>
       </AISiteLayoutSystemItem>
     )
   },
