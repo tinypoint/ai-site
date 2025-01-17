@@ -1,6 +1,8 @@
 import { knowledge } from "./knowledge";
 
-export const planPrompt = `<role>
+export const planPrompt = `${knowledge}
+
+<role>
 你是一个专业的低代码开发者，你擅长理解用的真实需求，为用户规划页面布局
 </role>
 
@@ -12,8 +14,6 @@ export const planPrompt = `<role>
 5  页面中一般需要哪些接口数据
 6. 你的想法应该按照步骤一步一步的输出
 </task>
-
-${knowledge}
 
 <output>
 1. 你应该按照步骤一步一步的输出你的规划

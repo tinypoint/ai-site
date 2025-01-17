@@ -6,7 +6,8 @@ export const knowledge = `<knowledge>
     2. AI会根据站点生产计划，生成组件类型映射表，key是站点所有会用到的组件的名称，value中包含组件自身的类型和父级组件的名称(Page组件没有父级组件)
     3. AI会根据站点生产计划、组件类型映射表，生成组件布局映射表，key是站点所有组件的名称，value中包含组件的布局和样式
     4. AI会根据站点生产计划、组件类型映射表、组件布局映射表，生成组件属性映射表，key是站点所有组件的名称，value中包含组件的属性
-    5. AI会将组件类型映射表、组件布局映射表、组件属性映射表，合并为最终的站点schema，schema的key是站点所有组件的名称，value中包含组件所有信息，包括组件类型、布局、样式、属性等
+    5. AI会根据站点生产计划、组件类型映射表、组件布局映射表、组件属性映射表，生成组件事件映射表，key是站点所有组件的名称，value中包含组件的事件
+    6. AI会将组件类型映射表、组件布局映射表、组件属性映射表、组件事件映射表，合并为最终的站点schema，schema的key是站点所有组件的名称，value中包含组件所有信息，包括组件类型、布局、样式、属性、事件等
 4. AI SITE 生产的站点包含以下特点
     1. 只能生成一个页面，页面无法跳转，所以遇到需要生成多个页面的情况，AI SITE只能将其他页面中的组件放到弹窗中，将跳转页面改为打开弹窗的行为，在弹窗中完成本应该在其他页面中完成的事情
     2. AI SITE 的组件布局系统是特殊的系统
@@ -21,16 +22,30 @@ export const knowledge = `<knowledge>
 5. AI SITE 目前支持以下组件
     1. Page
     2. Container
-    3. Form
-    4. Modal
-    5. Button
-    6. Input
-    7. Select
-    8. Table
-    9. CheckboxList
-    10. RadioList
-    11. Switch
-    12. Slider
-    13. DatePicker
-    14. Text
+    3. Form 表单容器组件
+        1. FormInput // 必须在表单内使用的input
+        2. FormSelect // 必须在表单内使用的select
+        3. FormRadioList // 必须在表单内使用的radioList
+        4. FormCheckboxList // 必须在表单内使用的checkboxList
+        5. FormSwitch // 必须在表单内使用的switch
+        6. FormSlider // 必须在表单内使用的slider
+        7. FormDatePicker // 必须在表单内使用的datePicker
+        8. FormSubmitButton // 必须在表单内使用的submitButton
+    4. Table
+    5. Modal
+    6. Text
+    7. Input // 可以独立使用的 input
+    8. Select // 可以独立使用的 select
+    9. RadioList // 可以独立使用的 radioList
+    10. CheckboxList // 可以独立使用的 checkboxList
+    11. Switch // 可以独立使用的 switch
+    12. Slider // 可以独立使用的 slider
+    13. DatePicker // 可以独立使用的 datePicker
+    14. Button // 可以独立使用的 button
+    
 </knowledge>`
+
+
+export const WeightType = `
+type IWeightType = 'Page' | 'Container' | 'Form' | 'Modal' | 'Table' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckboxList' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'Button' | 'Input' | 'Select' | 'CheckboxList' | 'RadioList' | 'Switch' | 'Slider' | 'DatePicker'
+`

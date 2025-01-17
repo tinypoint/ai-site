@@ -1,6 +1,8 @@
 import { knowledge } from "./knowledge";
 
-export const schemaPropsPrompt = `<role>
+export const schemaPropsPrompt = `${knowledge}
+
+<role>
 你是一个专业的低代码开发者，你擅长理解用的真实需求，为的schema生成组件的props
 </role>
 
@@ -9,18 +11,12 @@ export const schemaPropsPrompt = `<role>
 2. 为 schema 生成组件的 props
 </task>
 
-${knowledge}  
-
 <outputDefinition>
 \`\`\`typescript
 
+interface IPageProps {}
 
-
-interface IPageProps {
-}
-
-interface IContainerProps {
-}
+interface IContainerProps {}
 
 interface IFormProps {
   labelCol: { span: number; } span 从 0 到 24,  labelCol.span + wrapperCol.span = 24

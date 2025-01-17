@@ -105,13 +105,13 @@ export default function AIEditorPage() {
                   {msg.role === 'ai' && msg.progress && (
                     <div>
                       <Collapse>
-                        <Collapse.Panel header="names" extra={
-                          msg.progress.compeleteSteps.includes('schemaNames') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaNames') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="names">
-                          <ReactMarkdown>{msg.artifact?.schemaNames || ''}</ReactMarkdown>
+                        <Collapse.Panel header="types" extra={
+                          msg.progress.compeleteSteps.includes('schemaTypes') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaTypes') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                        } key="types">
+                          <ReactMarkdown>{msg.artifact?.schemaTypes || ''}</ReactMarkdown>
                         </Collapse.Panel>
                         <Collapse.Panel header="querys" extra={
-                          msg.progress.compeleteSteps.includes('querys') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaNames') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                          msg.progress.compeleteSteps.includes('querys') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaTypes') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
                         } key="querys">
                           <ReactMarkdown>{msg.artifact?.querys || ''}</ReactMarkdown>
                         </Collapse.Panel>

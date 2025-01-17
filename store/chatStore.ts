@@ -13,7 +13,7 @@ interface AIMessage {
   role: 'ai';
   content: string;
   artifact?: {
-    schemaNames?: string;
+    schemaTypes?: string;
     querys?: string;
     schemaProps?: string;
     schemaLayouts?: string;

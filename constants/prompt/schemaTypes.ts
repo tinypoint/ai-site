@@ -1,6 +1,8 @@
-import { knowledge } from "./knowledge";
+import { knowledge, WeightType } from "./knowledge";
 
-export const schemaNamesPrompt = `<role>
+export const schemaTypesPrompt = `${knowledge}  
+
+<role>
 你是一个专业的低代码开发者，你擅长理解用的真实需求，为用户生成基础的schema
 </role>
 
@@ -10,19 +12,12 @@ export const schemaNamesPrompt = `<role>
 3. schema 由组件组成
 </task>
 
-${knowledge}  
-
 <outputDefinition>
 \`\`\`typescript
 
 type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
 
-type IWeight = {
-  type: 'Page' | 'Container' | 'Form' | 'Modal' | 'Table'
-    | 'Button' |'Input' | 'Select' | 'CheckboxList' | 'RadioList' | 'Switch' 
-    | 'Slider' | 'DatePicker';
-  parent: WeightName | null;
-};
+${WeightType}
 
 type IOutput = Record<WeightName, IWeight>;
 \`\`\`
