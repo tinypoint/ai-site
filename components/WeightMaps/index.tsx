@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Input, Checkbox, Button, Modal, Table, Select, Radio, Switch, Slider, DatePicker } from 'antd';
 import { IWeightType, IWeightLayout } from '@/types';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 
 type ComponentProps = any;
 

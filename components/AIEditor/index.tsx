@@ -1,12 +1,10 @@
 import { Layout, Input, Button, message as antdMessage, Steps, Collapse } from 'antd';
-import 'antd/dist/reset.css';
-import useChatStore from '../store/chatStore';
+import useChatStore from '../../store/chatStore';
 import ReactMarkdown from 'react-markdown';
-import { UserMessage, AIMessage } from '../store/chatStore';
-import LowCodeRenderer from '@/components/LowCodeRenderer';
+import { UserMessage, AIMessage } from '../../store/chatStore';
 import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
-import '@ant-design/v5-patch-for-react-19';
+import LowCodeRenderer from '../LowCodeRenderer';
 
 const { Sider, Content } = Layout;
 
@@ -84,7 +82,7 @@ export default function AIEditorPage() {
 
   return (
     <Layout style={{ height: '100vh' }}>
-      <Sider width={600} >
+      <Sider width={400} >
         <div style={{ background: '#fff', padding: '20px', display: 'flex', flexDirection: 'column', height: '100vh' }}>
           <div style={{ flex: 1, overflowY: 'auto', marginBottom: '10px' }}>
             {messages.map((msg, index) => (
@@ -123,31 +121,6 @@ export default function AIEditorPage() {
                             </Collapse.Panel>
                           ))
                         }
-                        {/* <Collapse.Panel header="types" extra={
-                          msg.progress.compeleteSteps.includes('schemaTypes') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaTypes') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="types">
-                          <ReactMarkdown>{msg.artifact?.schemaTypes || ''}</ReactMarkdown>
-                        </Collapse.Panel>
-                        <Collapse.Panel header="querys" extra={
-                          msg.progress.compeleteSteps.includes('querys') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaTypes') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="querys">
-                          <ReactMarkdown>{msg.artifact?.querys || ''}</ReactMarkdown>
-                        </Collapse.Panel>
-                        <Collapse.Panel header="layouts" extra={
-                          msg.progress.compeleteSteps.includes('schemaLayouts') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaLayouts') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="layouts">
-                          <ReactMarkdown>{msg.artifact?.schemaLayouts || ''}</ReactMarkdown>
-                        </Collapse.Panel>
-                        <Collapse.Panel header="props" extra={
-                          msg.progress.compeleteSteps.includes('schemaProps') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('schemaProps') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="props">
-                          <ReactMarkdown>{msg.artifact?.schemaProps || ''}</ReactMarkdown>
-                        </Collapse.Panel>
-                        <Collapse.Panel header="finalSchema" extra={
-                          msg.progress.compeleteSteps.includes('finalSchema') ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress.runningSteps.includes('finalSchema') ? <LoadingOutlined style={{ color: 'gray' }} /> : null
-                        } key="finalSchema">
-                          <ReactMarkdown>{msg.artifact?.finalSchema || ''}</ReactMarkdown>
-                        </Collapse.Panel> */}
                       </Collapse>
                     </div>
                   )}
@@ -172,8 +145,14 @@ export default function AIEditorPage() {
           </div>
         </div>
       </Sider>
-      <Content style={{ padding: '20px', maxWidth: '80%' }}>
-        <LowCodeRenderer />
+      <Content style={{
+        padding: '20px',
+        maxWidth: '80%',
+        overflowX: 'auto'
+      }}>
+        <div style={{ minWidth: '600px', width: '100%', height: '100%', background: '#fff' }}>
+          <LowCodeRenderer />
+        </div>
       </Content>
     </Layout>
   );
