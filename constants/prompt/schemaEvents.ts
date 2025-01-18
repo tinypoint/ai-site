@@ -82,7 +82,9 @@ interface IWeightEventFlow = {
   edges: IActionEdge[];
 };
 
-interface IPageEvents {}
+interface IPageEvents {
+  onPageLoad: IWeightEventFlow;
+}
 
 interface IContainerEvents {}
 
