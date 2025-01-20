@@ -36,7 +36,7 @@ export function createEventHandlers(
   for (const eventName in eventObject) {
     const eventData = eventObject[eventName];
     const nodeMap = new Map<string, Node>();
-    eventData.nodes.forEach(node => nodeMap.set(node.id, node));
+    (eventData.nodes || []).forEach(node => nodeMap.set(node.id, node));
 
     const executeNode = (nodeId: string) => {
       const node = nodeMap.get(nodeId);
@@ -62,9 +62,14 @@ export function createEventHandlers(
 
           const url = expressionContext.method.toLowerCase() === 'get' ? expressionContext.url + '?' + new URLSearchParams(expressionContext.params) : expressionContext.url;
 
+
           fetch(url, {
             method: expressionContext.method,
             body: expressionContext.method.toLowerCase() === 'get' ? undefined : JSON.stringify(expressionContext.body),
+          }).then(response => response.json()).then(data => {
+            console.log('response', data);
+          }).catch(error => {
+            console.log('Error fetching data:', error);
           });
 
           setTimeout(() => {
@@ -97,8 +102,7 @@ export function createEventHandlers(
       }
 
       // Find and execute next nodes
-      eventData.edges
-        .filter(edge => edge.source.id === nodeId && edge.source.outputHandle === 'next')
+      (eventData.edges || []).filter(edge => edge.source.id === nodeId && edge.source.outputHandle === 'next')
         .forEach(edge => executeNode(edge.target.id));
     };
 

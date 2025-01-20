@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Checkbox, Button, Modal, Table, Select, Radio, Switch, Slider, DatePicker } from 'antd';
-import { IWeightType, IWeightLayout } from '@/types';
+import { IWeightType, IWeightLayoutForRender } from '@/types';
 import styles from './index.module.scss';
 import useLowCodeStore from '@/store/lowcodeStore';
 import { DataTable } from 'primereact/datatable';
@@ -20,21 +20,27 @@ const AISiteLayoutSystemContainer = ({ children }: { children: React.ReactNode }
   )
 }
 
-const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?: boolean, layout: IWeightLayout, children: React.ReactNode }) => {
-  const { rowStartToParentContainer, rowSpanToParentContainer, colStartToParentContainer, colSpanToParentContainer } = layout;
-  const marginTop = (rowStartToParentContainer) * 8;
+const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?: boolean, layout: IWeightLayoutForRender, children: React.ReactNode }) => {
+  const { rowStartToParentContainer,
+    rowSpanToParentContainer,
+    colStartToParentContainer,
+    colSpanToParentContainer,
+    gridRow = 1,
+    rowStartToParentContainerWithDiff = 0
+  } = layout;
+  const marginTop = (rowStartToParentContainerWithDiff) * 8;
   const height = autoHeight ? 'max-content' : (rowSpanToParentContainer) * 8;
   // const height = rowSpanToParentContainer * 8;
   return (
     <div
-      data-ai-site-grid-item={`rowStartToParentContainer: ${rowStartToParentContainer}; rowSpanToParentContainer: ${rowSpanToParentContainer}; colStartToParentContainer: ${colStartToParentContainer}; colSpanToParentContainer: ${colSpanToParentContainer}; autoHeight: ${autoHeight}`}
+      data-ai-site-grid-item={`rowStartToParentContainerWithDiff: ${rowStartToParentContainerWithDiff}; gridRow: ${gridRow}; rowStartToParentContainer: ${rowStartToParentContainer}; rowSpanToParentContainer: ${rowSpanToParentContainer}; colStartToParentContainer: ${colStartToParentContainer}; colSpanToParentContainer: ${colSpanToParentContainer}; autoHeight: ${autoHeight}`}
       className='relative top-0 left-0 px-2 py-1 flex'
       style={{
         marginLeft: `${(colStartToParentContainer) / 24 * 100}%`,
         marginTop,
         width: `${(colSpanToParentContainer) / 24 * 100}%`,
         height,
-        gridArea: '1 / 1 / 2 / 2',
+        gridArea: `${gridRow} / 1 / ${gridRow + 1} / 2`,
       }}>
       {children}
     </div>
@@ -137,8 +143,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     return (
       <AISiteLayoutSystemItem layout={layout}>
         <Form.Item
+          className='flex-1 w-0'
           label={label}
-          style={style}>
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Checkbox.Group options={options} />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -148,8 +158,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     return (
       <AISiteLayoutSystemItem layout={layout}>
         <Form.Item
+          className='flex-1 w-0'
           label={label}
-          style={style}>
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Checkbox.Group options={options} />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -208,51 +222,15 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       <AISiteLayoutSystemItem layout={layout}>
         {/* <Table className={styles['ai-site-table']} style={style} columns={columns} dataSource={dataSource} loading={loading}>{children}</Table>
          */}
-        {/* <DataTable
-          stripedRows
-          showGridlines
-          // paginator
-          value={[
-            {
-              code: 'f230fh0g3',
-              name: 'Bamboo Watch',
-              category: 'Accessories',
-              quantity: 24,
-            },
-            {
-              code: 'nvklal433',
-              name: 'Black Watch',
-              category: 'Accessories',
-              quantity: 61,
-            },
-            {
-              code: 'zz21cz3c3',
-              name: 'Blue Band',
-              category: 'Fitness',
-              quantity: 2,
-            },
-            {
-              code: 'f3s4a2s3',
-              name: 'Blue T-Shirt',
-              category: 'Clothing',
-              quantity: 25,
-            },
-            {
-              code: 'h456wer53',
-              name: 'Bracelet',
-              category: 'Accessories',
-              quantity: 73,
-            },
-          ]}
-          scrollable
-          scrollHeight="flex"
-        >
-          <Column field="code" header="Code"></Column>
-          <Column field="name" header="Name"></Column>
-          <Column field="category" header="Category"></Column>
-          <Column field="quantity" header="Quantity"></Column>
-        </DataTable> */}
-        <PrimeTable loading={loading} style={style}/>
+
+        <PrimeTable
+          loading={loading}
+          columns={columns}
+          dataSource={dataSource}
+          style={{
+            ...style,
+            overflow: 'hidden',
+          }} />
       </AISiteLayoutSystemItem>
     )
   },
@@ -289,7 +267,14 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   FormRadioList: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item
+          className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}
+        >
           <Radio.Group options={options} />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -298,7 +283,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   RadioList: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Radio.Group options={options} />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -307,7 +297,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   FormSwitch: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Switch />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -316,7 +311,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Switch: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Switch />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -325,7 +325,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   FormSlider: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Slider />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -334,7 +339,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Slider: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Slider />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -343,7 +353,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   FormDatePicker: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <DatePicker />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -352,7 +367,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   DatePicker: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item className='flex-1 w-0'
+          label={label}
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <DatePicker />
         </Form.Item>
       </AISiteLayoutSystemItem>

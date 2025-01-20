@@ -30,7 +30,13 @@ interface Product {
   rating: number;
 }
 
-export function Table({ loading, style }: { loading: boolean, style: React.CSSProperties }) {
+export function Table({
+  loading,
+  style,
+  columns,
+  dataSource
+}: { loading: boolean, style: React.CSSProperties, columns: any, dataSource: any }) {
+  console.log('Table', columns, dataSource)
   let emptyProduct: Product = {
     id: null,
     code: '',
@@ -310,7 +316,7 @@ export function Table({ loading, style }: { loading: boolean, style: React.CSSPr
   return (
     <DataTable
       ref={dt}
-      value={products}
+      value={dataSource}
       selection={selectedProducts}
       onSelectionChange={(e) => {
         if (Array.isArray(e.value)) {
@@ -332,15 +338,21 @@ export function Table({ loading, style }: { loading: boolean, style: React.CSSPr
       loading={loading}
       style={style}
     >
+
       <Column selectionMode="multiple" exportable={false}></Column>
-      <Column field="code" header="Code" sortable></Column>
+      {
+        Array.isArray(columns) && columns.map((column, index) => (
+          <Column key={index} field={column.dataIndex} header={column.title}></Column>
+        ))
+      }
+      {/* <Column field="code" header="Code" sortable></Column>
       <Column field="name" header="Name" sortable className='min-w-[16rem]'></Column>
       <Column field="image" header="Image" body={imageBodyTemplate}></Column>
       <Column field="price" header="Price" body={priceBodyTemplate} sortable ></Column>
       <Column field="category" header="Category" sortable ></Column>
       <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable></Column>
       <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable></Column>
-      <Column body={actionBodyTemplate} exportable={false}></Column>
+      <Column body={actionBodyTemplate} exportable={false}></Column> */}
     </DataTable>
     // <div>
     //   <Toast ref={toast} />

@@ -11,6 +11,11 @@ export interface IWeightLayout {
   colSpanToParentContainer: number;
 }
 
+export interface IWeightLayoutForRender extends IWeightLayout {
+  gridRow?: number;
+  rowStartToParentContainerWithDiff?: number;
+}
+
 export type IWeightStyle = Pick<CSSProperties, 'color' | 'fontSize' | 'fontWeight' | 'border' | 'borderRadius' | 'backgroundColor' | 'boxShadow' | 'opacity'>;
 
 export type IWeight = {

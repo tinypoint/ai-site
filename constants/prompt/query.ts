@@ -12,6 +12,35 @@ export const queryPrompt = `${knowledge}
 3. 请求要合理，不要出现不合理的请求
 </task>
 
+<example>
+\`\`\`json
+{
+  "queryName1": {
+    "url": "https://api.example.com/data",
+    "method": "GET",
+    "params": {
+      "page": 1,
+      "pageSize": 10
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "queryName2": {
+    "url": "https://api.example.com/data",
+    "method": "POST",
+    "body": {
+      "name": "test",
+      "age": 18
+    },
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
+\`\`\`
+</example>
+
 <outputDefinition>
 \`\`\`typescript
 
@@ -31,9 +60,9 @@ type IOutput = Record<IQueryName, IQuery>
 </outputDefinition>
 
 <output>
-1. 输出合法的JSON
-2. 要符合IOutput的定义
-3. 用\`\`\`json\`\`\`包裹
+1. 输出合法的 json，不允许包含解释
+2. 输出需要符合上方IOutput的类型定义
+3. 输出以\`\`\`json开头，以\`\`\`json结尾
 </output>
 `;
 
@@ -51,6 +80,7 @@ export const queryMockResponsePrompt = `${knowledge}
 </task>
 
 <example>
+\`\`\`json
 {
   "queryName1": {
     "response": {
@@ -88,6 +118,7 @@ export const queryMockResponsePrompt = `${knowledge}
     }
   }
 }
+\`\`\`
 </example>
 
 <outputDefinition>
@@ -105,7 +136,7 @@ type IOutput = Record<IQueryName, IQueryMockResponse>
 
 <output>
 1. 输出合法的 json，不允许包含解释
-2. 要符合IOutput的定义
-3. 用\`\`\`json\`\`\`包裹
+2. 输出需要符合上方IOutput的类型定义
+3. 输出以\`\`\`json开头，以\`\`\`json结尾
 </output>
 `;

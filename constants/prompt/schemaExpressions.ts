@@ -80,4 +80,5 @@ type IOutput = {
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
 3. 输出以\`\`\`json开头，以\`\`\`json结尾
+</output>
 `

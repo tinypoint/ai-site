@@ -12,17 +12,6 @@ export const schemaLayoutPrompt = `${knowledge}
 3. 为页面生成组件，指定组件类型和父级
 4. 为每个组件设置合理美观的 layout 和 style
 5. 每类组件可以使用的 style 属性有差别，请严格按照下方定义来生成组件 style
-6. 组件 layout 属性：
-    1. colSpanToParentContainer：组件宽度为父级容器宽度的 1/24 到 24/24。
-    2. colStartToParentContainer：组件左边距为父级容器宽度的 0/24 到 23/24。
-    3. rowSpanToParentContainer：组件高度为 8px 的整数倍。
-    4. rowStartToParentContainer：组件顶部距离为 8px 的整数倍。
-    5. Page：根容器组件，宽度充满屏幕，高度由所有组件决定。
-    6. Container，Form：容器组件，高度由内部组件决定。
-    7. Container 可嵌套，嵌套的 colSpanToParentContainer 和 colStartToParentContainer 按父级 Container 宽度计算。
-    8. Input, Select, RadioList, CheckboxList, Switch, Slider, DatePicker 的最小高度为 32px。
-    9. Table 最小高度为 400px。
-    10. 假设屏幕宽度为 1920px，如果 Input1 的父级组件是 Container1，Container1 的 父级组件是 Page1, 那么 Input1的实际宽度是 1920px * (Container1.colSpanToParentContainer / 24) * (Input1.colSpanToParentContainer / 24)。
 </task>
 
 <outputDefinition>

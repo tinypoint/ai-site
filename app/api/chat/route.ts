@@ -1,6 +1,6 @@
 import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { NextRequest } from "next/server";
-import { Message } from "@/store/chatStore";
+import { Message } from "@/types";
 import { schemaAgent } from "@/services/chat";
 
 export async function POST(req: NextRequest) {

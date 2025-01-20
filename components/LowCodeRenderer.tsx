@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { llmJsonParse } from '@/utils';
-import { IFinalData, IWeight, Message } from '@/types';
+import { IFinalData, IWeight, IWeightLayout, IWeightLayoutForRender, Message } from '@/types';
 import { weightMaps } from './WeightMaps';
 import { createEventHandlers } from '@/utils/event';
 import useLowCodeStore from '@/store/lowcodeStore';
@@ -97,6 +97,42 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
     if (!Component) return null;
 
     const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parent === key);
+    let rowStartIndex = 0;
+    let topLeiji = 0;
+    let maxTopLeiji = 0;
+    const childrenList = childrenKeys.sort((a, b) => {
+      return (weights[a]?.layout?.rowStartToParentContainer || 0) - (weights[b]?.layout?.rowStartToParentContainer || 0);
+    });
+    childrenList.reduce<IWeightLayoutForRender | undefined>((prevLayout, childKey) => {
+      const currentLayout = weights[childKey]?.layout as IWeightLayoutForRender;
+      if (currentLayout) {
+        if (weights[childKey].type !== 'Modal') {
+          if (prevLayout) {
+            if (currentLayout.rowStartToParentContainer >= (prevLayout.rowStartToParentContainer + prevLayout.rowSpanToParentContainer)) {
+              rowStartIndex += 1
+              currentLayout.gridRow = rowStartIndex
+              topLeiji = maxTopLeiji
+              currentLayout.rowStartToParentContainerWithDiff = currentLayout.rowStartToParentContainer - topLeiji
+              maxTopLeiji = currentLayout.rowStartToParentContainer + currentLayout.rowSpanToParentContainer
+            } else {
+              currentLayout.gridRow = prevLayout.gridRow
+              currentLayout.rowStartToParentContainerWithDiff = currentLayout.rowStartToParentContainer - topLeiji
+              if (currentLayout.rowStartToParentContainer + currentLayout.rowSpanToParentContainer > maxTopLeiji) {
+                maxTopLeiji = currentLayout.rowStartToParentContainer + currentLayout.rowSpanToParentContainer
+              }
+            }
+          } else {
+            rowStartIndex += 1
+            currentLayout.gridRow = rowStartIndex
+            currentLayout.rowStartToParentContainerWithDiff = currentLayout.rowStartToParentContainer;
+            maxTopLeiji = currentLayout.rowStartToParentContainer + currentLayout.rowSpanToParentContainer;
+          }
+        } else {
+          return prevLayout;
+        }
+      }
+      return currentLayout || prevLayout;
+    }, undefined);
     return (
       <ComponentWrapper component={Component} node={node} name={key} key={key}>
         {childrenKeys.map(renderComponent)}

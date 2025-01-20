@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
-import { Message } from '../../store/chatStore';
+import { Message } from '@/types';
 
 const messagesFilePath = path.resolve(process.cwd(), 'messages.json');
 
