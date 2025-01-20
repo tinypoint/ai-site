@@ -30,7 +30,7 @@ interface Product {
   rating: number;
 }
 
-export function Table({ loading }: { loading: boolean }) {
+export function Table({ loading, style }: { loading: boolean, style: React.CSSProperties }) {
   let emptyProduct: Product = {
     id: null,
     code: '',
@@ -330,16 +330,17 @@ export function Table({ loading }: { loading: boolean }) {
       scrollable
       className='flex-1 w-0'
       loading={loading}
+      style={style}
     >
       <Column selectionMode="multiple" exportable={false}></Column>
-      <Column field="code" header="Code" sortable className='min-w-[12rem]'></Column>
+      <Column field="code" header="Code" sortable></Column>
       <Column field="name" header="Name" sortable className='min-w-[16rem]'></Column>
       <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-      <Column field="price" header="Price" body={priceBodyTemplate} sortable className='min-w-[8rem]'></Column>
-      <Column field="category" header="Category" sortable className='min-w-[10rem]'></Column>
-      <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable className='min-w-[12rem]'></Column>
-      <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable className='min-w-[12rem]'></Column>
-      <Column body={actionBodyTemplate} exportable={false} className='min-w-[12rem]'></Column>
+      <Column field="price" header="Price" body={priceBodyTemplate} sortable ></Column>
+      <Column field="category" header="Category" sortable ></Column>
+      <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable></Column>
+      <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable></Column>
+      <Column body={actionBodyTemplate} exportable={false}></Column>
     </DataTable>
     // <div>
     //   <Toast ref={toast} />

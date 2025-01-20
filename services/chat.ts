@@ -22,12 +22,6 @@ const StateAnnotation = Annotation.Root({
   sitePlan: Annotation<string>({
     value: () => '',
   }),
-  schemaTypes: Annotation<string>({
-    value: () => '',
-  }),
-  schemaTypesJSON: Annotation<IBaseSchema>({
-    value: () => ({} as IBaseSchema),
-  }),
   querys: Annotation<string>({
     value: () => '',
   }),
@@ -128,49 +122,49 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     };
   }
 
-  const schemaTypesAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querys } = state;
+  // const schemaTypesAgent = async (state: typeof StateAnnotation.State) => {
+  //   const { messages, sitePlan, querys } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
-      temperature: 1,
-    });
+  //   const model = new ChatOpenAI({
+  //     apiKey: process.env.OPENAI_API_KEY,
+  //     modelName: "gpt-4o-2024-11-20",
+  //     temperature: 1,
+  //   });
 
-    const stream = model.stream([
-      new SystemMessage(schemaTypesPrompt),
-      ...messages,
-      new AIMessage(sitePlan),
-      new HumanMessage('请按照规划，生成页面请求映射表'),
-      new AIMessage(querys),
-      new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表')
-    ]);
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaTypes' }) })}\n\n`));
-    let schemaTypes = '';
-    for await (const chunk of await stream) {
-      schemaTypes += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaTypes', data: chunk.content })}\n\n`));
-    }
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaTypes' }) })}\n\n`));
+  //   const stream = model.stream([
+  //     new SystemMessage(schemaTypesPrompt),
+  //     ...messages,
+  //     new AIMessage(sitePlan),
+  //     new HumanMessage('请按照规划，生成页面请求映射表'),
+  //     new AIMessage(querys),
+  //     new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表')
+  //   ]);
+  //   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaTypes' }) })}\n\n`));
+  //   let schemaTypes = '';
+  //   for await (const chunk of await stream) {
+  //     schemaTypes += chunk.content;
+  //     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaTypes', data: chunk.content })}\n\n`));
+  //   }
+  //   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaTypes' }) })}\n\n`));
 
-    const schemaTypesJSON = llmJsonParse(schemaTypes);
-    const finalSchemaJSON: IFinalSchema = {};
-    for (const key in schemaTypesJSON) {
-      finalSchemaJSON[key] = {
-        type: schemaTypesJSON[key].type,
-        parent: schemaTypesJSON[key].parent,
-      };
-    }
+  //   const schemaTypesJSON = llmJsonParse(schemaTypes);
+  //   const finalSchemaJSON: IFinalSchema = {};
+  //   for (const key in schemaTypesJSON) {
+  //     finalSchemaJSON[key] = {
+  //       type: schemaTypesJSON[key].type,
+  //       parent: schemaTypesJSON[key].parent,
+  //     };
+  //   }
 
-    return {
-      schemaTypes,
-      schemaTypesJSON,
-      finalSchemaJSON,
-    };
-  }
+  //   return {
+  //     schemaTypes,
+  //     schemaTypesJSON,
+  //     finalSchemaJSON,
+  //   };
+  // }
 
   const schemaLayoutsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querys, schemaTypes } = state;
+    const { messages, sitePlan, querys } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -184,9 +178,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new AIMessage(sitePlan),
       new HumanMessage('请按照规划，生成页面请求映射表'),
       new AIMessage(querys),
-      new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表'),
-      new AIMessage(schemaTypes),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表，生成组件布局映射表')
+      new HumanMessage('请按照规划、请求映射表，生成组件类型、组件父级、组件布局和组件样式映射表')
     ]);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaLayouts' }) })}\n\n`));
     let schemaLayouts = '';
@@ -204,7 +196,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const schemaPropsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querys, schemaTypes, schemaLayouts } = state;
+    const { messages, sitePlan, querys, schemaLayouts } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -217,11 +209,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new AIMessage(sitePlan),
       new HumanMessage('请按照规划，生成页面请求映射表'),
       new AIMessage(querys),
-      new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表'),
-      new AIMessage(schemaTypes),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表，生成组件布局映射表'),
+      new HumanMessage('请按照规划、请求映射表，生成组件类型，组件父级，组件布局和组件样式映射表'),
       new AIMessage(schemaLayouts),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表，生成组件属性映射表')
+      new HumanMessage('请按照规划、请求映射表、组件映射表，生成组件属性映射表')
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaProps' }) })}\n\n`));
@@ -242,7 +232,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const schemaEventsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querys, schemaTypes, schemaLayouts, schemaProps } = state;
+    const { messages, sitePlan, querys, schemaLayouts, schemaProps } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -257,12 +247,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new HumanMessage('请按照规划，生成页面请求映射表'),
       new AIMessage(querys),
       new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表'),
-      new AIMessage(schemaTypes),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表，生成组件布局映射表'),
       new AIMessage(schemaLayouts),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表，生成组件属性映射表'),
+      new HumanMessage('请按照规划、请求映射表、组件映射表，生成组件属性映射表'),
       new AIMessage(schemaProps),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表和组件属性映射表，生成组件事件映射表')
+      new HumanMessage('请按照规划、请求映射表、组件映射表、组件属性映射表，生成组件事件映射表')
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaEvents' }) })}\n\n`));
@@ -283,7 +271,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const queryMockResponseAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querys, schemaTypes, schemaLayouts, schemaProps, schemaEvents } = state;
+    const { messages, sitePlan, querys, schemaLayouts, schemaProps, schemaEvents } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -298,14 +286,12 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new HumanMessage('请按照规划，生成页面请求映射表'),
       new AIMessage(querys),
       new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表'),
-      new AIMessage(schemaTypes),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表，生成组件布局映射表'),
       new AIMessage(schemaLayouts),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表，生成组件属性映射表'),
+      new HumanMessage('请按照规划、请求映射表、组件映射表，生成组件属性映射表'),
       new AIMessage(schemaProps),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表和组件属性映射表，生成组件事件映射表'),
+      new HumanMessage('请按照规划、请求映射表、组件映射表、组件属性映射表，生成组件事件映射表'),
       new AIMessage(schemaEvents),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表和组件属性映射表和组件事件映射表，生成请求mock响应数据的映射表')
+      new HumanMessage('请按照规划、请求映射表、组件映射表、组件属性映射表、组件事件映射表、，生成请求mock响应数据的映射表')
     ]);
 
     let queryMockResponse = '';
@@ -326,7 +312,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const schemaExpressionsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, schemaTypes, schemaLayouts, schemaProps, schemaEvents, querys, queryMockResponse } = state;
+    const { messages, sitePlan, schemaLayouts, schemaProps, schemaEvents, querys, queryMockResponse } = state;
 
     const model = new ChatOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -341,16 +327,14 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new HumanMessage('请按照规划，生成页面请求映射表'),
       new AIMessage(querys),
       new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表'),
-      new AIMessage(schemaTypes),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表，生成组件布局映射表'),
       new AIMessage(schemaLayouts),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表，生成组件属性映射表'),
+      new HumanMessage('请按照规划、请求映射表、组件映射表，生成组件属性映射表'),
       new AIMessage(schemaProps),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表和组件属性映射表，生成组件事件映射表'),
+      new HumanMessage('请按照规划、请求映射表、组件映射表、组件属性映射表，生成组件事件映射表'),
       new AIMessage(schemaEvents),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表和组件属性映射表和组件事件映射表，生成请求mock响应数据的映射表'),
+      new HumanMessage('请按照规划、请求映射表、组件映射表、组件属性映射表、组件事件映射表、，生成请求mock响应数据的映射表'),
       new AIMessage(queryMockResponse),
-      new HumanMessage('请按照规划和请求映射表和组件类型和父级映射表和组件布局映射表和组件属性映射表和组件事件映射表和页面请求映射表和请求mock响应数据的映射表，生成组件和请求的表达式映射表')
+      new HumanMessage('请按照规划、请求映射表、组件映射表、组件属性映射表、组件事件映射表、请求mock响应数据的映射表，生成组件和请求的表达式映射表')
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaExpressions' }) })}\n\n`));
@@ -371,7 +355,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
   const schemaMergeAgent = async (state: typeof StateAnnotation.State) => {
     const {
-      schemaTypesJSON,
       schemaLayoutsJSON,
       schemaPropsJSON,
       schemaEventsJSON,
@@ -384,11 +367,11 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
     const finalSchemaJSON: IFinalSchema = {};
     const { querys, weights } = schemaExpressionsJSON;
-    for (const key in schemaTypesJSON) {
+    for (const key in schemaLayoutsJSON) {
       const weightExpressions = weights[key];
       finalSchemaJSON[key] = {
-        type: schemaTypesJSON[key].type,
-        parent: schemaTypesJSON[key].parent,
+        type: schemaLayoutsJSON[key].type,
+        parent: schemaLayoutsJSON[key].parent,
         layout: schemaLayoutsJSON[key]?.layout,
         style: schemaLayoutsJSON[key]?.style,
         props: schemaPropsJSON[key]?.props,
@@ -430,7 +413,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const workflow = new StateGraph(StateAnnotation)
     .addNode("sitePlanAgent", sitePlanAgent)
     .addNode('querysAgent', querysAgent)
-    .addNode("schemaTypesAgent", schemaTypesAgent)
     .addNode("schemaLayoutsAgent", schemaLayoutsAgent)
     .addNode("schemaPropsAgent", schemaPropsAgent)
     .addNode("schemaEventsAgent", schemaEventsAgent)
@@ -439,8 +421,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     .addNode("schemaMergeAgent", schemaMergeAgent)
     .addEdge(START, "sitePlanAgent")
     .addEdge("sitePlanAgent", "querysAgent")
-    .addEdge("querysAgent", "schemaTypesAgent")
-    .addEdge("schemaTypesAgent", "schemaLayoutsAgent")
+    .addEdge("querysAgent", "schemaLayoutsAgent")
     .addEdge("schemaLayoutsAgent", "schemaPropsAgent")
     .addEdge("schemaPropsAgent", "schemaEventsAgent")
     .addEdge("schemaEventsAgent", "queryMockResponseAgent")

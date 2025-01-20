@@ -18,7 +18,7 @@ export const knowledge = `<knowledge>
         5. Page：根容器组件，宽度充满屏幕，高度由所有组件决定。
         6. Container，Form：容器组件，高度由内部组件决定。
         7. Container 可嵌套，嵌套的 colSpanToParentContainer 和 colStartToParentContainer 按父级 Container 宽度计算。
-        8. Input, Select, RadioList, CheckboxList, Switch, Slider, DatePicker 的最小高度为 32px。
+        8. Button, Input, Select, RadioList, CheckboxList, Switch, Slider, DatePicker 的最小高度为 40px。
         9. Table 最小高度为 400px。
     3. 假设屏幕宽度为 1920px，如果 Input1 的父级组件是 Container1，Container1 的 父级组件是 Page1, 那么 Input1的实际宽度是 1920px * (Container1.colSpanToParentContainer / 24) * (Input1.colSpanToParentContainer / 24)。
 5. AI SITE 目前支持以下组件

@@ -1,17 +1,18 @@
-import { knowledge } from "./knowledge";
+import { knowledge, WeightType } from "./knowledge";
 
 export const schemaLayoutPrompt = `${knowledge}
 
 <role>
-你是一个专业的低代码开发者，你擅长理解用的真实需求，为组件生成合理美观的 的layout 属性 和 style 和属性
+你是一个专业的低代码开发者，你擅长理解用的真实需求，为页面生成组件，设置组件的类型，父级，并为组件生成合理美观的 的layout 属性 和 style 和属性
 </role>
 
 <task>
 1. 深入理解用户的真实需求
 2. 深入理解页面规划中布局的相关信息
-3. 为每个组件生成合理美观的 layout 和 style
-4. 每类组件可以使用的 style 属性有差别，请严格按照下方定义来生成组件 style
-5. 组件 layout 属性：
+3. 为页面生成组件，指定组件类型和父级
+4. 为每个组件设置合理美观的 layout 和 style
+5. 每类组件可以使用的 style 属性有差别，请严格按照下方定义来生成组件 style
+6. 组件 layout 属性：
     1. colSpanToParentContainer：组件宽度为父级容器宽度的 1/24 到 24/24。
     2. colStartToParentContainer：组件左边距为父级容器宽度的 0/24 到 23/24。
     3. rowSpanToParentContainer：组件高度为 8px 的整数倍。
@@ -23,53 +24,6 @@ export const schemaLayoutPrompt = `${knowledge}
     9. Table 最小高度为 400px。
     10. 假设屏幕宽度为 1920px，如果 Input1 的父级组件是 Container1，Container1 的 父级组件是 Page1, 那么 Input1的实际宽度是 1920px * (Container1.colSpanToParentContainer / 24) * (Input1.colSpanToParentContainer / 24)。
 </task>
-
-<example>
-
-<example1>
-比如一个位于表单左上角的 Input
-\`\`\`json
-{
-  "Input1": {
-    "layout": {
-      "rowStartToParentContainer": 0,
-      "rowSpanToParentContainer": 5,
-      "colStartToParentContainer": 0,
-      "colSpanToParentContainer": 8
-    },
-    "style": {}
-  }
-}
-\`\`\`
-</example1>
-
-<example2>
-比如一个宽度充满父级的按钮 Button1
-\`\`\`json
-{
-  "Container1": {
-    "layout": {
-      "rowStartToParentContainer": 5,
-      "rowSpanToParentContainer": 20,
-      "colStartToParentContainer": 2,
-      "colSpanToParentContainer": 20
-    },
-    "style": {}
-  },
-  "Button1": {
-    "layout": {
-      "rowStartToParentContainer": 0,
-      "rowSpanToParentContainer": 5,
-      "colStartToParentContainer": 0,
-      "colSpanToParentContainer": 24
-    },
-    "style": {}
-  }
-}
-\`\`\`
-</example2>
-
-</example>
 
 <outputDefinition>
 \`\`\`typescript
@@ -107,7 +61,10 @@ type IFormStyle = {
 
 type IModalStyle = {}
 
-type ITableStyle = {}
+type ITableStyle = {
+  border: string;
+  borderRadius: string;
+}
 
 type IButtonStyle = {}
 
@@ -129,7 +86,11 @@ type IWeightStyle = IPageStyle | IContainerStyle | IFormStyle | IModalStyle | IT
     | IButtonStyle | IInputStyle | ISelectStyle | ICheckboxListStyle | IRadioListStyle | ISwitchStyle
     | ISliderStyle | IDatePickerStyle;
 
+${WeightType}
+
 type IWeight = {
+  type: IWeightType;
+  parent: WeightName | null;
   layout: IWeightLayout;
   style: IWeightStyle;
 };
