@@ -26,7 +26,7 @@ export default function ListPage() {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div className='p-2'>
       <Typography.Title level={2}>List Management</Typography.Title>
       <List
         bordered

@@ -13,10 +13,7 @@ const AISiteLayoutSystemContainer = ({ children }: { children: React.ReactNode }
   return (
     <div
       data-ai-site-grid-container
-      style={{
-        position: 'relative',
-        display: 'grid',
-      }}
+      className='relative grid w-full'
     >
       {children}
     </div>
@@ -30,27 +27,13 @@ const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?:
   return (
     <div
       data-ai-site-grid-item={`rowStartToParentContainer: ${rowStartToParentContainer}; rowSpanToParentContainer: ${rowSpanToParentContainer}; colStartToParentContainer: ${colStartToParentContainer}; colSpanToParentContainer: ${colSpanToParentContainer}; autoHeight: ${autoHeight}`}
+      className='relative top-0 left-0 px-2 py-1 flex'
       style={{
-        position: 'relative',
-        top: 0,
-        left: 0,
         marginLeft: `${(colStartToParentContainer - 1) / 24 * 100}%`,
         marginTop,
         width: `${(colSpanToParentContainer) / 24 * 100}%`,
         height,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'stretch',
-        gridColumnStart: 1,
-        gridColumnEnd: 2,
-        gridRowStart: 1,
-        gridRowEnd: 2,
-        padding: '4px 8px',
-
-        // gridColumnStart: colStart,
-        // gridColumnEnd: colSpan,
-        // gridRowStart: rowStart,
-        // gridrowSpan: rowSpan,
+        gridArea: '1 / 1 / 2 / 2',
       }}>
       {children}
     </div>
@@ -257,7 +240,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
           <Column field="category" header="Category"></Column>
           <Column field="quantity" header="Quantity"></Column>
         </DataTable> */}
-        <PrimeTable />
+        <PrimeTable loading={loading} />
       </AISiteLayoutSystemItem>
     )
   },

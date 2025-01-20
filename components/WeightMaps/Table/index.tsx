@@ -30,7 +30,7 @@ interface Product {
   rating: number;
 }
 
-export function Table() {
+export function Table({ loading }: { loading: boolean }) {
   let emptyProduct: Product = {
     id: null,
     code: '',
@@ -326,18 +326,20 @@ export function Table() {
       globalFilter={globalFilter}
       // header={header}
       selectionMode="multiple"
-      scrollHeight='400px'
+      scrollHeight="flex"
       scrollable
+      className='flex-1 w-0'
+      loading={loading}
     >
       <Column selectionMode="multiple" exportable={false}></Column>
-      <Column field="code" header="Code" sortable style={{ minWidth: '12rem' }}></Column>
-      <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
+      <Column field="code" header="Code" sortable className='min-w-[12rem]'></Column>
+      <Column field="name" header="Name" sortable className='min-w-[16rem]'></Column>
       <Column field="image" header="Image" body={imageBodyTemplate}></Column>
-      <Column field="price" header="Price" body={priceBodyTemplate} sortable style={{ minWidth: '8rem' }}></Column>
-      <Column field="category" header="Category" sortable style={{ minWidth: '10rem' }}></Column>
-      <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-      <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable style={{ minWidth: '12rem' }}></Column>
-      <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>
+      <Column field="price" header="Price" body={priceBodyTemplate} sortable className='min-w-[8rem]'></Column>
+      <Column field="category" header="Category" sortable className='min-w-[10rem]'></Column>
+      <Column field="rating" header="Reviews" body={ratingBodyTemplate} sortable className='min-w-[12rem]'></Column>
+      <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable className='min-w-[12rem]'></Column>
+      <Column body={actionBodyTemplate} exportable={false} className='min-w-[12rem]'></Column>
     </DataTable>
     // <div>
     //   <Toast ref={toast} />

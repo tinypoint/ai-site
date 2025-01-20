@@ -5,6 +5,7 @@ import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from
 import { useEffect, useRef } from 'react';
 import { Vessel } from "@opensea/vessel"
 import { UserMessage, AIMessage } from '@/types';
+import cls from 'classnames';
 
 const { Sider, Content } = Layout;
 
@@ -102,37 +103,22 @@ export default function AIEditorPage() {
   }, [setMessages]);
 
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout className='h-screen'>
       <Sider width={600} >
-        <div style={{ background: '#fff', padding: '20px', display: 'flex', flexDirection: 'column', height: '100vh' }}>
-          <div style={{ flex: 1, overflowY: 'auto', marginBottom: '10px' }}>
+        <div className='bg-white p-2 flex flex-col h-full'>
+          <div className='flex-1 overflow-y-auto mb-2'>
             {messages.map((msg, index) => (
-              <div key={index} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                marginBottom: '10px'
-              }}>
+              <div key={index} className={cls('flex flex-col mb-2', msg.role === 'user' ? 'items-end' : 'items-start')}>
                 <div
-                  className='rounded-md p-4 relative max-w-[90%]'
-                  style={{
-                    backgroundColor: msg.role === 'user' ? '#1890ff' : '#f0f0f0',
-                    color: msg.role === 'user' ? '#fff' : '#000',
-                  }}>
+                  className={cls('rounded-md p-4 relative max-w-[90%]', msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
+                >
                   <Avatar
-                    style={{
-                      // backgroundColor: msg.role === 'user' ? '#1890ff' : '#f0f0f0',
-                      color: msg.role === 'user' ? '#fff' : '#000',
-                    }}
+                    className={cls(msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
                   >
                     {msg.role === 'user' ? 'U' : 'AI'}
                   </Avatar>
                   <div
-                    style={
-                      {
-                        textAlign: msg.role === 'user' ? 'right' : 'left',
-                      }
-                    }
+                    className={cls('text-sm', msg.role === 'user' ? 'text-right' : 'text-left')}
                   >
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                     {msg.role === 'ai' && msg.progress && (
@@ -141,7 +127,7 @@ export default function AIEditorPage() {
                           {
                             msg.progress.compeleteSteps.map(step => (
                               <Collapse.Panel header={step} extra={
-                                msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                                msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined className='text-green-500' /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined className='text-gray-500' /> : null
                               } key={step}>
                                 <ReactMarkdown>{msg.artifact?.[step as keyof typeof msg.artifact] || ''}</ReactMarkdown>
                               </Collapse.Panel>
@@ -150,7 +136,7 @@ export default function AIEditorPage() {
                           {
                             msg.progress.runningSteps.map(step => (
                               <Collapse.Panel header={step} extra={
-                                msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined style={{ color: 'green' }} /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined style={{ color: 'gray' }} /> : null
+                                msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined className='text-green-500' /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined className='text-gray-500' /> : null
                               } key={step}>
                                 <ReactMarkdown>{msg.artifact?.[step as keyof typeof msg.artifact] || ''}</ReactMarkdown>
                               </Collapse.Panel>
@@ -198,12 +184,12 @@ export default function AIEditorPage() {
         maxWidth: '80%',
         overflowX: 'auto'
       }}>
-        <div style={{ minWidth: '600px', width: '100%', height: '100%', background: '#fff' }}>
+        <div className='min-w-[600px] w-full h-full bg-white'>
           {/* <LowCodeRenderer /> */}
           <iframe
             ref={iframeRef}
             src="/ai-preview"
-            style={{ width: '100%', height: '100%' }}
+            className='w-full h-full'
           />
         </div>
       </Content>

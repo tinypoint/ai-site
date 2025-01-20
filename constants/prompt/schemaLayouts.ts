@@ -16,6 +16,22 @@ export const schemaLayoutPrompt = `${knowledge}
 7. 为每个组件生成合理的layout和style
 </task>
 
+<example>
+\`\`\`json
+{
+  "Table1": {
+    "layout": {
+      "rowStartToParentContainer": 11,
+      "rowSpanToParentContainer": 50,
+      "colStartToParentContainer": 1,
+      "colSpanToParentContainer": 24
+    },
+    "style": {}
+  }
+}
+\`\`\`
+</example>
+
 <outputDefinition>
 \`\`\`typescript
 
