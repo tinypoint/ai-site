@@ -1,15 +1,36 @@
 import { Layout, Input, Button, message as antdMessage, Steps, Collapse, Avatar } from 'antd';
 import useChatStore from '../../store/chatStore';
 import ReactMarkdown from 'react-markdown';
-import { UserMessage, AIMessage } from '../../store/chatStore';
 import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from '@ant-design/icons';
-import { useEffect } from 'react';
-import LowCodeRenderer from '../LowCodeRenderer';
+import { useEffect, useRef } from 'react';
+import { Vessel } from "@opensea/vessel"
+import { UserMessage, AIMessage } from '@/types';
 
 const { Sider, Content } = Layout;
 
 export default function AIEditorPage() {
   const { messages, inputValue, setMessages, setInputValue, parseStreamResponse, getLastAIMessage } = useChatStore();
+
+  const vessel = useRef<Vessel | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    if (!vessel.current) {
+      vessel.current = new Vessel({
+        iframe: iframeRef.current!,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    vessel.current?.send({
+      type: 'updateMessages',
+      messages
+    }).then((res) => {
+
+    }).catch((err) => {
+
+    });
+  }, [messages]);
 
   const handleSend = async (): Promise<void> => {
     if (inputValue.trim()) {
@@ -180,6 +201,7 @@ export default function AIEditorPage() {
         <div style={{ minWidth: '600px', width: '100%', height: '100%', background: '#fff' }}>
           {/* <LowCodeRenderer /> */}
           <iframe
+            ref={iframeRef}
             src="/ai-preview"
             style={{ width: '100%', height: '100%' }}
           />

@@ -66,3 +66,30 @@ export type IFinalData = {
   weights: Record<IWeightName, IWeight>;
   querys: Record<IQueryName, IQuery>;
 };
+
+export interface SystemMessage {
+  role: 'system';
+  content: string;
+}
+export interface UserMessage {
+  role: 'user';
+  content: string;
+}
+
+export interface AIMessage {
+  role: 'ai';
+  content: string;
+  artifact?: {
+    schemaTypes?: string;
+    querys?: string;
+    schemaProps?: string;
+    schemaLayouts?: string;
+    finalSchema?: string;
+  };
+  progress?: {
+    runningSteps: string[];
+    compeleteSteps: string[];
+  };
+}
+
+export type Message = SystemMessage | UserMessage | AIMessage;

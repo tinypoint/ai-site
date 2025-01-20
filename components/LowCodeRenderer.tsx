@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
-import useChatStore from '@/store/chatStore';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { llmJsonParse } from '@/utils';
-import { IFinalData, IWeight } from '@/types';
+import { IFinalData, IWeight, Message } from '@/types';
 import { weightMaps } from './WeightMaps';
 import { createEventHandlers } from '@/utils/event';
 import useLowCodeStore from '@/store/lowcodeStore';
 import { parseObjectExpressions } from '@/utils/expression';
+import { Vessel } from '@opensea/vessel';
 
 const ComponentWrapper = (context: { component: React.ComponentType<any>, node: IWeight, name: string, children: React.ReactNode }) => {
   const { component: Component, node, name, children } = context;
@@ -39,7 +39,9 @@ const ComponentWrapper = (context: { component: React.ComponentType<any>, node: 
 };
 
 const LowCodeRenderer: React.FC<{}> = ({ }) => {
-  const { messages } = useChatStore();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const vessel = useRef<Vessel | null>(null);
+
   const lastAIMessage = messages.findLast((msg) => msg.role === 'ai');
 
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
@@ -50,6 +52,24 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
   }, [lastAIMessage?.artifact?.finalSchema]);
 
   const { weights = {}, querys = {} } = data;
+
+  useEffect(() => {
+    if (!vessel.current) {
+      vessel.current = new Vessel({});
+      vessel.current.addListener('message', (message, reply) => {
+        if (typeof message.payload === 'object') {
+          const payload = message.payload as { type: string, messages: Message[] };
+          if (payload.type === 'updateMessages') {
+            setMessages(payload.messages);
+          }
+        }
+        const result = 'hi'
+        reply(result)
+        return true
+
+      })
+    }
+  }, []);
 
   useEffect(() => {
     Object.keys(querys).forEach(queryName => {

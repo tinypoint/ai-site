@@ -1,31 +1,5 @@
+import { Message, AIMessage } from '@/types';
 import { create } from 'zustand';
-
-interface SystemMessage {
-  role: 'system';
-  content: string;
-}
-interface UserMessage {
-  role: 'user';
-  content: string;
-}
-
-interface AIMessage {
-  role: 'ai';
-  content: string;
-  artifact?: {
-    schemaTypes?: string;
-    querys?: string;
-    schemaProps?: string;
-    schemaLayouts?: string;
-    finalSchema?: string;
-  };
-  progress?: {
-    runningSteps: string[];
-    compeleteSteps: string[];
-  };
-}
-
-type Message = SystemMessage | UserMessage | AIMessage;
 
 interface ChatState {
   messages: Message[];
@@ -112,5 +86,3 @@ const useChatStore = create<ChatState>((set, get) => ({
 }));
 
 export default useChatStore;
-
-export type { UserMessage, AIMessage, Message }; 
