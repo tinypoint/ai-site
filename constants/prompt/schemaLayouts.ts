@@ -40,81 +40,81 @@ type WeightName = string; // 组件的唯一标识，格式为：英文组件类
 type IPageLayout = {}
 
 type IContainerLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number;
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type IFormLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number;
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type IModalLayout = {}
 
 type ITableLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number;
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type IButtonLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number;
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type IInputLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type ISelectLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type ICheckboxListLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type IRadioListLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type ISwitchLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type ISliderLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 
 type IDatePickerLayout = {
-  rowStartToParentContainer: number; //从1开始
+  rowStartToParentContainer: number; //从0开始
   rowSpanToParentContainer: number; // 至少为4
-  colStartToParentContainer: number; // 从1开始
+  colStartToParentContainer: number; // 从0开始
   colSpanToParentContainer: number; 
 }
 

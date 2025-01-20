@@ -22,14 +22,15 @@ const AISiteLayoutSystemContainer = ({ children }: { children: React.ReactNode }
 
 const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?: boolean, layout: IWeightLayout, children: React.ReactNode }) => {
   const { rowStartToParentContainer, rowSpanToParentContainer, colStartToParentContainer, colSpanToParentContainer } = layout;
-  const marginTop = (rowStartToParentContainer - 1) * 8;
-  const height = autoHeight ? 'auto' : (rowSpanToParentContainer) * 8;
+  const marginTop = (rowStartToParentContainer) * 8;
+  // const height = autoHeight ? 'max-content' : (rowSpanToParentContainer) * 8;
+  const height = rowSpanToParentContainer * 8;
   return (
     <div
       data-ai-site-grid-item={`rowStartToParentContainer: ${rowStartToParentContainer}; rowSpanToParentContainer: ${rowSpanToParentContainer}; colStartToParentContainer: ${colStartToParentContainer}; colSpanToParentContainer: ${colSpanToParentContainer}; autoHeight: ${autoHeight}`}
-      className='relative top-0 left-0 px-2 py-1 flex'
+      className='relative top-0 left-0 px-2 flex'
       style={{
-        marginLeft: `${(colStartToParentContainer - 1) / 24 * 100}%`,
+        marginLeft: `${(colStartToParentContainer) / 24 * 100}%`,
         marginTop,
         width: `${(colSpanToParentContainer) / 24 * 100}%`,
         height,
@@ -87,6 +88,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
         <Form
+          className='flex-1 w-0'
           form={form}
           labelCol={labelCol}
           wrapperCol={wrapperCol}
@@ -187,7 +189,10 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         open={open}
         onOk={eventHandlers.onOk || undefined}
         onCancel={eventHandlers.onCancel || undefined}
-      >{children}
+      >
+        <AISiteLayoutSystemContainer>
+          {children}
+        </AISiteLayoutSystemContainer>
       </Modal>
     )
   },
