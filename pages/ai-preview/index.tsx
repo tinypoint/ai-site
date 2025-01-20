@@ -1,13 +1,11 @@
-import 'antd/dist/reset.css';
-import '@ant-design/v5-patch-for-react-19';
 import { PrimeReactProvider } from 'primereact/api';
-import AIEditor from '@/components/AIEditor';
 import './index.scss';
+import LowCodeRenderer from '@/components/LowCodeRenderer';
 
 export default function AIEditorPage() {
   return (
     <PrimeReactProvider>
-      <AIEditor />
+      <LowCodeRenderer />
     </PrimeReactProvider>
   )
 }

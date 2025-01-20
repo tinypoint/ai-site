@@ -178,7 +178,11 @@ export default function AIEditorPage() {
         overflowX: 'auto'
       }}>
         <div style={{ minWidth: '600px', width: '100%', height: '100%', background: '#fff' }}>
-          <LowCodeRenderer />
+          {/* <LowCodeRenderer /> */}
+          <iframe
+            src="/ai-preview"
+            style={{ width: '100%', height: '100%' }}
+          />
         </div>
       </Content>
     </Layout>

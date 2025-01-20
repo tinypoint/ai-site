@@ -3,6 +3,9 @@ import { Form, Input, Checkbox, Button, Modal, Table, Select, Radio, Switch, Sli
 import { IWeightType, IWeightLayout } from '@/types';
 import styles from './index.module.scss';
 import useLowCodeStore from '@/store/lowcodeStore';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Table as PrimeTable } from './Table';
 
 type ComponentProps = any;
 
@@ -208,7 +211,53 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Table className={styles['ai-site-table']} style={style} columns={columns} dataSource={dataSource} loading={loading}>{children}</Table>
+        {/* <Table className={styles['ai-site-table']} style={style} columns={columns} dataSource={dataSource} loading={loading}>{children}</Table>
+         */}
+        {/* <DataTable
+          stripedRows
+          showGridlines
+          // paginator
+          value={[
+            {
+              code: 'f230fh0g3',
+              name: 'Bamboo Watch',
+              category: 'Accessories',
+              quantity: 24,
+            },
+            {
+              code: 'nvklal433',
+              name: 'Black Watch',
+              category: 'Accessories',
+              quantity: 61,
+            },
+            {
+              code: 'zz21cz3c3',
+              name: 'Blue Band',
+              category: 'Fitness',
+              quantity: 2,
+            },
+            {
+              code: 'f3s4a2s3',
+              name: 'Blue T-Shirt',
+              category: 'Clothing',
+              quantity: 25,
+            },
+            {
+              code: 'h456wer53',
+              name: 'Bracelet',
+              category: 'Accessories',
+              quantity: 73,
+            },
+          ]}
+          scrollable
+          scrollHeight="flex"
+        >
+          <Column field="code" header="Code"></Column>
+          <Column field="name" header="Name"></Column>
+          <Column field="category" header="Category"></Column>
+          <Column field="quantity" header="Quantity"></Column>
+        </DataTable> */}
+        <PrimeTable />
       </AISiteLayoutSystemItem>
     )
   },

@@ -17,6 +17,7 @@
     "jsonrepair": "^3.11.2",
     "langchain": "^0.3.11",
     "next": "15.1.4",
+    "primereact": "^10.9.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-markdown": "^9.0.3",
