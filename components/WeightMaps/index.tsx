@@ -28,7 +28,7 @@ const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?:
   return (
     <div
       data-ai-site-grid-item={`rowStartToParentContainer: ${rowStartToParentContainer}; rowSpanToParentContainer: ${rowSpanToParentContainer}; colStartToParentContainer: ${colStartToParentContainer}; colSpanToParentContainer: ${colSpanToParentContainer}; autoHeight: ${autoHeight}`}
-      className='relative top-0 left-0 px-2 flex'
+      className='relative top-0 left-0 px-2 py-1 flex'
       style={{
         marginLeft: `${(colStartToParentContainer) / 24 * 100}%`,
         marginTop,
@@ -107,8 +107,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     return (
       <AISiteLayoutSystemItem layout={layout}>
         <Form.Item
+          className='flex-1 w-0'
           label={label}
-          style={style}>
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Input />
         </Form.Item>
       </AISiteLayoutSystemItem>
@@ -147,17 +151,16 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  FormSubmitButton: ({ text, layout, style }) => {
-    return (
-      <AISiteLayoutSystemItem layout={layout}>
-        <Button style={style} htmlType='submit'>{text}</Button>
-      </AISiteLayoutSystemItem>
-    )
-  },
   Button: ({ text, layout, style, eventHandlers }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Button style={style} onClick={eventHandlers.onClick || undefined}>{text}</Button>
+        <Button
+          className='flex-1 w-0'
+          style={style}
+          onClick={eventHandlers.onClick || undefined}
+        >
+          {text}
+        </Button>
       </AISiteLayoutSystemItem>
     )
   },
@@ -252,7 +255,13 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   FormSelect: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item label={label} style={style}>
+        <Form.Item
+          label={label}
+          className='flex-1 w-0'
+          style={{
+            ...style,
+            marginBottom: 0,
+          }}>
           <Select options={options} />
         </Form.Item>
       </AISiteLayoutSystemItem>
