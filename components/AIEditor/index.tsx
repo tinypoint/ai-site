@@ -190,7 +190,7 @@ export default function AIEditorPage() {
           <iframe
             ref={iframeRef}
             src="/ai-preview"
-            className='w-full h-full'
+            className='w-full h-full border-none'
           />
         </div>
       </Content>

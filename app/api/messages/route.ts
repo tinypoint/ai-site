@@ -26,7 +26,7 @@ export async function GET() {
   return Response.json(messages)
 }
 
-export async function Post(req: Request) {
+export async function POST(req: Request) {
   const newMessage = await req.json();
   const messages = getMessages();
   messages.push(newMessage);
