@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { llmJsonParse } from '@/utils';
 import { IFinalData, IWeight, IWeightLayout, IWeightLayoutForRender, Message } from '@/types';

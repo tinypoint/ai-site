@@ -1,3 +1,4 @@
+"use client"
 import { Layout, Input, Button, message as antdMessage, Steps, Collapse, Avatar } from 'antd';
 import useChatStore from '../../store/chatStore';
 import ReactMarkdown from 'react-markdown';
