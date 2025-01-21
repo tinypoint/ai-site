@@ -27,12 +27,23 @@ interface IModalProps {
   title: string;
 }
 
+interface ITableColumnBase {
+  title: string;
+  dataIndex: string;
+  key: string;
+}
+
+interface ITableColumnText extends ITableColumnBase {
+  renderType: 'text';
+}
+
+interface ITableColumnTag extends ITableColumnBase {
+  renderType: 'tag';
+  colorsMap: Record<string, "success" | "warning" | "danger" | "info" | "secondary" | "contrast">;
+}
+
 interface ITableProps {
-  columns: {
-    title: string;
-    dataIndex: string;
-    key: string;
-  }[];
+  columns: <ITableColumnText | ITableColumnTag>[];
 }
 
 interface IButtonProps {

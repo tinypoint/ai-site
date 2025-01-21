@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef, ChangeEvent } from 'react';
 import { classNames } from 'primereact/utils';
 import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import { Column, ColumnBodyOptions } from 'primereact/column';
 import { Toast } from 'primereact/toast';
 import { Button } from 'primereact/button';
 import { FileUpload } from 'primereact/fileupload';
@@ -36,7 +36,6 @@ export function Table({
   columns,
   dataSource
 }: { loading: boolean, style: React.CSSProperties, columns: any, dataSource: any }) {
-  console.log('Table', columns, dataSource)
   let emptyProduct: Product = {
     id: null,
     code: '',
@@ -256,8 +255,10 @@ export function Table({
     return <Rating value={rowData.rating} readOnly cancel={false} />;
   };
 
-  const statusBodyTemplate = (rowData: Product) => {
-    return <Tag value={rowData.inventoryStatus} severity={getSeverity(rowData)}></Tag>;
+  const statusBodyTemplate = (rowData: any, columnBodyOptions: ColumnBodyOptions) => {
+    const column = Array.isArray(columns) ? columns.find(column => column.dataIndex === columnBodyOptions.field) : null;
+    const colorsMap = column?.colorsMap || {};
+    return <Tag value={rowData[columnBodyOptions.field]} severity={colorsMap[rowData[columnBodyOptions.field]]}></Tag>;
   };
 
   const actionBodyTemplate = (rowData: Product) => {
@@ -341,9 +342,22 @@ export function Table({
 
       <Column selectionMode="multiple" exportable={false}></Column>
       {
-        Array.isArray(columns) && columns.map((column, index) => (
-          <Column key={index} field={column.dataIndex} header={column.title}></Column>
-        ))
+        Array.isArray(columns) && columns.map((column, index) => {
+
+          if (column.renderType === 'tag') {
+            return (
+              <Column key={index}
+                field={column.dataIndex}
+                header={column.title}
+                body={statusBodyTemplate}
+              ></Column>
+            )
+          }
+
+          return (
+            <Column key={index} field={column.dataIndex} header={column.title}></Column>
+          )
+        })
       }
       {/* <Column field="code" header="Code" sortable></Column>
       <Column field="name" header="Name" sortable className='min-w-[16rem]'></Column>
