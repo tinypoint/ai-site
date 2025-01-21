@@ -50,5 +50,5 @@ export const knowledge = `<knowledge>
 
 
 export const WeightType = `
-type IWeightType = 'Page' | 'Container' | 'Form' | 'Modal' | 'Table' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckboxList' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'Button' | 'Input' | 'Select' | 'CheckboxList' | 'RadioList' | 'Switch' | 'Slider' | 'DatePicker'
+type IWeightType = 'Page' | 'Container' | 'Text' | 'Form' | 'Modal' | 'Table' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckboxList' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'Button' | 'Input' | 'Select' | 'CheckboxList' | 'RadioList' | 'Switch' | 'Slider' | 'DatePicker'
 `

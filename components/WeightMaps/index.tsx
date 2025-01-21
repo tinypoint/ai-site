@@ -48,7 +48,12 @@ const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?:
 }
 
 export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
-  Page: ({ children, style }) => {
+  Page: ({ children, eventHandlers, style }) => {
+
+    useEffect(() => {
+      eventHandlers.onPageLoad && eventHandlers.onPageLoad();
+    }, [children]);
+
     return (
       <AISiteLayoutSystemContainer>
         {children}
@@ -61,6 +66,13 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         <AISiteLayoutSystemContainer>
           {children}
         </AISiteLayoutSystemContainer>
+      </AISiteLayoutSystemItem>
+    )
+  },
+  Text: ({ content, layout, style }) => {
+    return (
+      <AISiteLayoutSystemItem layout={layout}>
+        <div style={style}>{content}</div>
       </AISiteLayoutSystemItem>
     )
   },

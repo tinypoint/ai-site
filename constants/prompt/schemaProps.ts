@@ -60,6 +60,10 @@ interface IInputProps {
   label: string;
 }
 
+interface ITextProps {
+  content: string;
+}
+
 interface IFormSelectProps {
   label: string;
   fieldName: string;
@@ -126,7 +130,7 @@ type WeightName = string; // 组件的唯一标识，格式为：英文组件类
 type IWeightProps = IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps
     | IInputProps | IButtonProps | ISelectProps | ICheckboxListProps | IRadioListProps | ISwitchProps
     | ISliderProps | IDatePickerProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxListProps
-    | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps;
+    | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps | ITextProps;
 
 type IWeight = {
   props: IWeightProps

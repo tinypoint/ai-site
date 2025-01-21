@@ -55,6 +55,12 @@ type ITableStyle = {
   borderRadius: string;
 }
 
+type ITextStyle = {
+  fontSize: string;
+  fontWeight: string;
+  color: string;
+}
+
 type IButtonStyle = {}
 
 type IInputStyle = {}
@@ -71,7 +77,7 @@ type ISliderStyle = {}
 
 type IDatePickerStyle = {}
 
-type IWeightStyle = IPageStyle | IContainerStyle | IFormStyle | IModalStyle | ITableStyle
+type IWeightStyle = IPageStyle | IContainerStyle | ITextStyle | IFormStyle | IModalStyle | ITableStyle
     | IButtonStyle | IInputStyle | ISelectStyle | ICheckboxListStyle | IRadioListStyle | ISwitchStyle
     | ISliderStyle | IDatePickerStyle;
 

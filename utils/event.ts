@@ -60,17 +60,21 @@ export function createEventHandlers(
             response: null,
           });
 
-          const url = expressionContext.method.toLowerCase() === 'get' ? expressionContext.url + '?' + new URLSearchParams(expressionContext.params) : expressionContext.url;
+          try {
+            const url = expressionContext.method.toLowerCase() === 'get' ? expressionContext.url + '?' + new URLSearchParams(expressionContext.params) : expressionContext.url;
 
 
-          fetch(url, {
-            method: expressionContext.method,
-            body: expressionContext.method.toLowerCase() === 'get' ? undefined : JSON.stringify(expressionContext.body),
-          }).then(response => response.json()).then(data => {
-            console.log('response', data);
-          }).catch(error => {
+            fetch(url, {
+              method: expressionContext.method,
+              body: expressionContext.method.toLowerCase() === 'get' ? undefined : JSON.stringify(expressionContext.body),
+            }).then(response => response.json()).then(data => {
+              console.log('response', data);
+            }).catch(error => {
+              console.log('Error fetching data:', error);
+            });
+          } catch (error) {
             console.log('Error fetching data:', error);
-          });
+          }
 
           setTimeout(() => {
             updateState(node.options.queryName, {
