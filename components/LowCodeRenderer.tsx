@@ -1,12 +1,12 @@
 "use client"
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { llmJsonParse } from '@/utils';
-import { IFinalData, IWeight, IWeightLayout, IWeightLayoutForRender, Message } from '@/types';
+import { llmJsonParse, transformWeightsMapToTree } from '@/utils';
+import { IFinalData, IWeight, IWeightLayout, IWeightLayoutForRender, IWeightTreeNode, Message } from '@/types';
 import { weightMaps } from './WeightMaps';
 import { createEventHandlers } from '@/utils/event';
 import useLowCodeStore from '@/store/lowcodeStore';
 import { parseObjectExpressions } from '@/utils/expression';
-import { Vessel } from '@opensea/vessel';
+import { ReplyOptions, Vessel, VesselMessage } from '@opensea/vessel';
 
 const ComponentWrapper = (context: { component: React.ComponentType<any>, node: IWeight, name: string, children: React.ReactNode }) => {
   const { component: Component, node, name, children } = context;
@@ -57,18 +57,29 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
   useEffect(() => {
     if (!vessel.current) {
       vessel.current = new Vessel({});
-      vessel.current.addListener('message', (message, reply) => {
-        if (typeof message.payload === 'object') {
-          const payload = message.payload as { type: string, messages: Message[] };
-          if (payload.type === 'updateMessages') {
-            setMessages(payload.messages);
-          }
-        }
-        const result = 'hi'
-        reply(result)
-        return true
+    }
 
-      })
+    vessel.current?.send({
+      type: 'iframeReady',
+    }).then((res) => {
+      setMessages(res as unknown as Message[]);
+    }).catch((err) => {
+    });
+    const listener = (message: VesselMessage<unknown>, reply: (response?: unknown, options?: ReplyOptions) => void) => {
+      if (typeof message.payload === 'object') {
+        const payload = message.payload as { type: string, messages: Message[] };
+        if (payload.type === 'updateMessages') {
+          setMessages(payload.messages);
+        }
+      }
+      const result = 'hi'
+      reply(result)
+      return true
+    }
+    vessel.current.addListener('message', listener);
+
+    return () => {
+      vessel.current?.removeListener('message', listener);
     }
   }, []);
 
@@ -90,14 +101,14 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   }, [querys]);
 
-  const renderComponent = (key: string): React.ReactNode => {
-    const node = weights[key];
-    if (!node) return null;
-    const { type } = node;
+  const rootWeight = useMemo(() => transformWeightsMapToTree(weights), [weights]);
+
+  const renderComponent = (node: IWeightTreeNode): React.ReactNode => {
+    const { name, type, children } = node;
     const Component = weightMaps[type];
     if (!Component) return null;
 
-    const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parent === key);
+    const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parent === name);
     let rowStartIndex = 0;
     let topLeiji = 0;
     let maxTopLeiji = 0;
@@ -135,17 +146,15 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
       return currentLayout || prevLayout;
     }, undefined);
     return (
-      <ComponentWrapper component={Component} node={node} name={key} key={key}>
-        {childrenKeys.map(renderComponent)}
+      <ComponentWrapper component={Component} node={node} name={name} key={name}>
+        {(children || []).map(renderComponent)}
       </ComponentWrapper>
     );
   };
 
-  const rootComponents = Object.keys(weights).filter(key => weights[key].parent == null);
-
   return (
     <div className="low-code-renderer">
-      {rootComponents.map(renderComponent)}
+      {rootWeight && renderComponent(rootWeight)}
     </div>
   );
 };

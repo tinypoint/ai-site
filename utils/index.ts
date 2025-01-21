@@ -1,3 +1,4 @@
+import { IWeight, IWeightTreeNode } from '@/types';
 import { jsonrepair } from 'jsonrepair';
 
 export function llmJsonParse(input: string): any {
@@ -31,3 +32,26 @@ export const mergeObjects = (target: any, source: any) => {
   }
   return target;
 };
+
+export const transformWeightsMapToTree = (weights: Record<string, IWeight>) => {
+  const maps: Record<string, IWeightTreeNode> = {};
+
+  Object.keys(weights).forEach(key => {
+    maps[key] = {
+      ...weights[key],
+      name: key,
+    }
+  });
+
+  Object.keys(maps).forEach(key => {
+    const weight = maps[key];
+    if (weight.parent) {
+      if (!Array.isArray(maps[weight.parent].children)) {
+        maps[weight.parent].children = [];
+      }
+      maps[weight.parent].children?.push(weight);
+    }
+  });
+
+  return Object.values(maps).find(weight => !weight.parent);
+}

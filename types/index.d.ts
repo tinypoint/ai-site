@@ -27,6 +27,11 @@ export type IWeight = {
   events?: any;
 }
 
+export interface IWeightTreeNode extends IWeight {
+  name: string;
+  children?: IWeightTreeNode[];
+}
+
 export type IBaseSchema = Record<IWeightName, Pick<IWeight, 'type' | 'parent'>>;
 
 export type ISchemaProps = Record<IWeightName, Pick<IWeight, 'props'>>;

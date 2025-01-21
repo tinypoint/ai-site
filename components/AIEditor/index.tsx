@@ -4,7 +4,7 @@ import useChatStore from '../../store/chatStore';
 import ReactMarkdown from 'react-markdown';
 import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from '@ant-design/icons';
 import { useEffect, useRef } from 'react';
-import { Vessel } from "@opensea/vessel"
+import { ReplyOptions, Vessel, VesselMessage } from "@opensea/vessel"
 import { UserMessage, AIMessage } from '@/types';
 import cls from 'classnames';
 
@@ -32,6 +32,22 @@ export default function AIEditorPage() {
     }).catch((err) => {
 
     });
+
+    const listener = (message: VesselMessage<unknown>, reply: (response?: unknown, options?: ReplyOptions) => void) => {
+      if (typeof message.payload === 'object') {
+        const payload = message.payload as { type: string };
+        if (payload.type === 'iframeReady') {
+          reply(messages)
+          return true
+        }
+      }
+      return false;
+    }
+    vessel.current?.addListener('message', listener)
+
+    return () => {
+      vessel.current?.removeListener('message', listener)
+    }
   }, [messages]);
 
   const handleSend = async (): Promise<void> => {
