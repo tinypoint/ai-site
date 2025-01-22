@@ -93,8 +93,7 @@ interface IFormEvents {
 }
 
 interface IModalEvents {
-  onOk: IWeightEventFlow;
-  onCancel: IWeightEventFlow;
+  onClose: IWeightEventFlow;
 }
 
 interface ITableEvents {
@@ -200,58 +199,7 @@ type IOutput = Record<WeightName, IWeightEvents>;
     }
   },
   "Modal1": {
-    "onOk": {
-      "nodes": [
-        {
-          "id": "start",
-          "type": "start",
-          "outputHandle": ["next"]
-        },
-        {
-          "id": "toast1",
-          "type": "toast",
-          "options": {
-            "message": "点击了确定",
-            "duration": 1000
-          },
-          "inputHandle": ["trigger"],
-          "outputHandle": ["next"]
-        },
-        {
-          "id": "controlComponent1",
-          "type": "controlComponent",
-          "options": {
-            "weightName": "Modal1",
-            "method": "close"
-          },
-          "inputHandle": ["trigger"],
-          "outputHandle": ["next"]
-        }
-      ],
-      "edges": [
-        {
-          "source": {
-            "id": "start",
-            "outputHandle": "next"
-          },
-          "target": {
-            "id": "controlComponent1",
-            "inputHandle": "trigger"
-          }
-        },
-        {
-          "source": {
-            "id": "controlComponent1",
-            "outputHandle": "next"
-          },
-          "target": {
-            "id": "toast1",
-            "inputHandle": "trigger"
-          }
-        }
-      ]
-    },
-    "onCancel": {
+    "onClose": {
       "nodes": [
         {
           "id": "start",

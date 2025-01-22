@@ -84,26 +84,21 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         unregisterWeight(name);
       }
     });
-    //   <Modal
-    //   title={title}
-    //   open={open}
-    //   onOk={eventHandlers.onOk || undefined}
-    //   onCancel={eventHandlers.onCancel || undefined}
-    // >
-    //   <AISiteLayoutSystemContainer>
-    //     {children}
-    //   </AISiteLayoutSystemContainer>
-    // </Modal>
+
+    const onOpenChange = (open: boolean) => {
+      setOpen(open);
+      eventHandlers.onClose && eventHandlers.onClose(open);
+    }
+
     return (
-      <Dialog>
+      <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogTrigger>Open</DialogTrigger>
-        <DialogContent>
+        <DialogContent className='space-y-0'>
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
-            <DialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
-            </DialogDescription>
+            <DialogTitle>{title}</DialogTitle>
+            <AISiteLayoutSystemContainer weightType='Container'>
+              {children}
+            </AISiteLayoutSystemContainer>
           </DialogHeader>
         </DialogContent>
       </Dialog>
