@@ -1,6 +1,4 @@
 
-import { message } from 'antd';
-
 interface Node {
   id: string;
   type: string;
@@ -94,7 +92,8 @@ export function createEventHandlers(
           console.log(`Setting props for: ${node.options.weightName}`);
           break;
         case 'toast':
-          message.info(node.options.message, node.options.duration);
+          alert(node.options.message);
+          // message.info(node.options.message, node.options.duration);
           break;
         case 'controlComponent':
           // Control component logic

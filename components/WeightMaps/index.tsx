@@ -1,19 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Checkbox, Button, Modal, Table, Select, Radio, Switch, Slider, DatePicker } from 'antd';
+import { Form } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { IWeightType, IWeightLayoutForRender } from '@/types';
-import styles from './index.module.scss';
 import useLowCodeStore from '@/store/lowcodeStore';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { Table as PrimeTable } from './Table';
+import DataTable from './DataTable';
+import { DatePicker } from './DatePicker';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+import { Label } from '../ui/label';
 
 type ComponentProps = any;
 
-const AISiteLayoutSystemContainer = ({ children }: { children: React.ReactNode }) => {
+const AISiteLayoutSystemContainer = ({ weightType, style, children }: { weightType: string, style?: React.CSSProperties, children: React.ReactNode }) => {
   return (
     <div
+      data-ai-site-weight-type={weightType}
       data-ai-site-grid-container
       className='relative grid w-full'
+      style={style}
     >
       {children}
     </div>
@@ -55,7 +78,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     }, [children]);
 
     return (
-      <AISiteLayoutSystemContainer>
+      <AISiteLayoutSystemContainer weightType="Page" style={style}>
         {children}
       </AISiteLayoutSystemContainer>
     )
@@ -63,7 +86,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Container: ({ children, layout, style }) => {
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
-        <AISiteLayoutSystemContainer>
+        <AISiteLayoutSystemContainer weightType="Container" style={style}>
           {children}
         </AISiteLayoutSystemContainer>
       </AISiteLayoutSystemItem>
@@ -79,33 +102,38 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Form: ({ name, eventHandlers, children, layout, style, labelCol, wrapperCol }) => {
     const registerWeight = useLowCodeStore(state => state.registerWeight);
     const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
-    const [form] = Form.useForm();
+    // const [form] = Form.useForm();
 
-    useEffect(() => {
-      registerWeight(
-        name,
-        {
-          methods: {
-            submit: async () => {
-              await form.validateFields()
-              form.submit();
-            },
-            reset: () => {
-              form.resetFields();
-            },
-            validate: () => {
-              form.validateFields();
-            },
-          }
-        }
-      )
-      return () => {
-        unregisterWeight(name);
-      }
-    });
+    // useEffect(() => {
+    //   registerWeight(
+    //     name,
+    //     {
+    //       methods: {
+    //         submit: async () => {
+    //           await form.validateFields()
+    //           form.submit();
+    //         },
+    //         reset: () => {
+    //           form.resetFields();
+    //         },
+    //         validate: () => {
+    //           form.validateFields();
+    //         },
+    //       }
+    //     }
+    //   )
+    //   return () => {
+    //     unregisterWeight(name);
+    //   }
+    // });
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
-        <Form
+        <Form>
+          <AISiteLayoutSystemContainer weightType="Form">
+            {children}
+          </AISiteLayoutSystemContainer>
+        </Form>
+        {/* <Form
           className='flex-1 w-0'
           form={form}
           labelCol={labelCol}
@@ -117,14 +145,15 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
           <AISiteLayoutSystemContainer>
             {children}
           </AISiteLayoutSystemContainer>
-        </Form>
+        </Form> */}
       </AISiteLayoutSystemItem>
     )
   },
   FormInput: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
+        <Input />
+        {/* <Form.Item
           className='flex-1 w-0'
           label={label}
           style={{
@@ -132,29 +161,25 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
             marginBottom: 0,
           }}>
           <Input />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  Input: ({ label, layout, style }) => {
+  Input: ({ name, label, layout, placeholder, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
-          className='flex-1 w-0'
-          label={label}
-          style={{
-            ...style,
-            marginBottom: 0,
-          }}>
-          <Input />
-        </Form.Item>
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          <Input id={name} placeholder={placeholder} />
+        </div>
       </AISiteLayoutSystemItem>
     )
   },
   FormCheckboxList: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
+        <Checkbox />
+        {/* <Form.Item
           className='flex-1 w-0'
           label={label}
           style={{
@@ -162,14 +187,18 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
             marginBottom: 0,
           }}>
           <Checkbox.Group options={options} />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  CheckboxList: ({ label, options, layout, style }) => {
+  CheckboxList: ({ name, label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          <Checkbox id={name} />
+        </div>
+        {/* <Form.Item
           className='flex-1 w-0'
           label={label}
           style={{
@@ -177,21 +206,24 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
             marginBottom: 0,
           }}>
           <Checkbox.Group options={options} />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
   Button: ({ text, layout, style, eventHandlers, htmlType }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Button
+        <Button className='flex-1 w-0'>
+          {text}
+        </Button>
+        {/* <Button
           className='flex-1 w-0'
           style={style}
           onClick={eventHandlers.onClick || undefined}
           htmlType={htmlType}
         >
           {text}
-        </Button>
+        </Button> */}
       </AISiteLayoutSystemItem>
     )
   },
@@ -217,17 +249,30 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         unregisterWeight(name);
       }
     });
+    //   <Modal
+    //   title={title}
+    //   open={open}
+    //   onOk={eventHandlers.onOk || undefined}
+    //   onCancel={eventHandlers.onCancel || undefined}
+    // >
+    //   <AISiteLayoutSystemContainer>
+    //     {children}
+    //   </AISiteLayoutSystemContainer>
+    // </Modal>
     return (
-      <Modal
-        title={title}
-        open={open}
-        onOk={eventHandlers.onOk || undefined}
-        onCancel={eventHandlers.onCancel || undefined}
-      >
-        <AISiteLayoutSystemContainer>
-          {children}
-        </AISiteLayoutSystemContainer>
-      </Modal>
+      <Dialog>
+        <DialogTrigger>Open</DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
+
     )
   },
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
@@ -236,21 +281,32 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         {/* <Table className={styles['ai-site-table']} style={style} columns={columns} dataSource={dataSource} loading={loading}>{children}</Table>
          */}
 
-        <PrimeTable
+        {/* <PrimeTable
           loading={loading}
           columns={columns}
           dataSource={dataSource}
           style={{
             ...style,
             overflow: 'hidden',
-          }} />
+          }} /> */}
+        <DataTable />
       </AISiteLayoutSystemItem>
     )
   },
   FormSelect: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
+        <Select>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Theme" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="light">Light</SelectItem>
+            <SelectItem value="dark">Dark</SelectItem>
+            <SelectItem value="system">System</SelectItem>
+          </SelectContent>
+        </Select>
+        {/* <Form.Item
           label={label}
           className='flex-1 w-0'
           style={{
@@ -258,14 +314,30 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
             marginBottom: 0,
           }}>
           <Select options={options} />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  Select: ({ label, options, layout, style }) => {
+  Select: ({ name, placeholder, label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          {/* <Input id={name} placeholder={placeholder} /> */}
+          <Select>
+            <SelectTrigger className="w-full">
+              <SelectValue id={name} placeholder={placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {
+                options.map((option: any) => (
+                  <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                ))
+              }
+            </SelectContent>
+          </Select>
+        </div>
+        {/* <Form.Item
           label={label}
           className='flex-1 w-0'
           style={{
@@ -273,14 +345,24 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
             marginBottom: 0,
           }}>
           <Select options={options} />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
   FormRadioList: ({ label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item
+        <RadioGroup defaultValue="option-one">
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="option-one" id="option-one" />
+            <Label htmlFor="option-one">Option One</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="option-two" id="option-two" />
+            <Label htmlFor="option-two">Option Two</Label>
+          </div>
+        </RadioGroup>
+        {/* <Form.Item
           className='flex-1 w-0'
           label={label}
           style={{
@@ -289,105 +371,135 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
           }}
         >
           <Radio.Group options={options} />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  RadioList: ({ label, options, layout, style }) => {
+  RadioList: ({ name, label, options, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          {/* <Input id={name} placeholder={placeholder} /> */}
+          <RadioGroup className='flex'>
+            {
+              options.map((option: any) => (
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value={option.value} id={option.value} />
+                  <Label htmlFor={option.value}>{option.label}</Label>
+                </div>
+              ))
+            }
+          </RadioGroup>
+        </div>
+
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <Radio.Group options={options} />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
   FormSwitch: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <Switch />
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <Switch />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  Switch: ({ label, layout, style }) => {
+  Switch: ({ name, label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          <Switch id={name} />
+        </div>
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <Switch />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
   FormSlider: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <Slider />
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <Slider />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  Slider: ({ label, layout, style }) => {
+  Slider: ({ name, label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          <Slider id={name} className='w-full' />
+        </div>
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <Slider />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
   FormDatePicker: ({ label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <DatePicker />
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <DatePicker />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
-  DatePicker: ({ label, layout, style }) => {
+  DatePicker: ({ name, label, layout, style }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <Form.Item className='flex-1 w-0'
+        <div className="flex w-full items-center space-x-2">
+          <Label htmlFor={name} className='shrink-0'>{label}</Label>
+          <DatePicker />
+        </div>
+        {/* <Form.Item className='flex-1 w-0'
           label={label}
           style={{
             ...style,
             marginBottom: 0,
           }}>
           <DatePicker />
-        </Form.Item>
+        </Form.Item> */}
       </AISiteLayoutSystemItem>
     )
   },
