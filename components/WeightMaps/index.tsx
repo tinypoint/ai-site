@@ -16,7 +16,6 @@ import { WeightCheckbox, WeightFormSelect, WeightSelect, WeightFormRadioList, We
 
 type ComponentProps = any;
 
-
 export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Page: ({ children, eventHandlers, style }) => {
 
@@ -25,7 +24,10 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     }, [children]);
 
     return (
-      <AISiteLayoutSystemContainer weightType="Page" style={style}>
+      <AISiteLayoutSystemContainer weightType="Page" style={{
+        ...style,
+        minHeight: '100vh',
+      }}>
         {children}
       </AISiteLayoutSystemContainer>
     )
