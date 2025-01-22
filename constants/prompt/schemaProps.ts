@@ -18,9 +18,7 @@ interface IPageProps {}
 
 interface IContainerProps {}
 
-interface IFormProps {
-  labelCol: { span: number; } span 从 0 到 24,  labelCol.span + wrapperCol.span = 24
-  wrapperCol: { span: number; } span 从 0 到 24,  labelCol.span + wrapperCol.span = 24
+interface IFormProps { 
 }
 
 interface IModalProps {
@@ -48,16 +46,17 @@ interface ITableProps {
 
 interface IButtonProps {
   text: string;
-  htmlType?: 'submit' | 'reset' | 'button';
 }
 
 interface IFormInputProps {
   label: string;
   fieldName: string;
+  placeholder: string;
 }
 
 interface IInputProps {
   label: string;
+  placeholder: string;
 }
 
 interface ITextProps {
@@ -67,11 +66,13 @@ interface ITextProps {
 interface IFormSelectProps {
   label: string;
   fieldName: string;
+  placeholder: string;
   options: { label: string; value: string }[];
 }
 
 interface ISelectProps {
   label: string;
+  placeholder: string;
   options: { label: string; value: string }[];
 }
 
@@ -81,15 +82,13 @@ interface IFormRadioListProps {
   options: { label: string; value: string }[];
 }
 
-interface ICheckboxListProps {
+interface ICheckboxProps {
   label: string;
-  options: { label: string; value: string }[];
 }
 
-interface IFormCheckboxListProps {
+interface IFormCheckboxProps {
   label: string;
   fieldName: string;
-  options: { label: string; value: string }[];
 }
 
 interface IRadioListProps {
@@ -118,6 +117,7 @@ interface ISliderProps {
 interface IFormDatePickerProps {
   label: string;
   fieldName: string;
+  type: 'date' | 'datetime' | 'time' | 'date-range' | 'datetime-range' | 'time-range';
 }
 
 interface IDatePickerProps {
@@ -128,8 +128,8 @@ interface IDatePickerProps {
 type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
 
 type IWeightProps = IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps
-    | IInputProps | IButtonProps | ISelectProps | ICheckboxListProps | IRadioListProps | ISwitchProps
-    | ISliderProps | IDatePickerProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxListProps
+    | IInputProps | IButtonProps | ISelectProps | ICheckboxProps | IRadioListProps | ISwitchProps
+    | ISliderProps | IDatePickerProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxProps
     | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps | ITextProps;
 
 type IWeight = {

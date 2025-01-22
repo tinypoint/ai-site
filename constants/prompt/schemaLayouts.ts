@@ -67,7 +67,7 @@ type IInputStyle = {}
 
 type ISelectStyle = {}
 
-type ICheckboxListStyle = {}
+type ICheckboxStyle = {}
 
 type IRadioListStyle = {}
 
@@ -78,7 +78,7 @@ type ISliderStyle = {}
 type IDatePickerStyle = {}
 
 type IWeightStyle = IPageStyle | IContainerStyle | ITextStyle | IFormStyle | IModalStyle | ITableStyle
-    | IButtonStyle | IInputStyle | ISelectStyle | ICheckboxListStyle | IRadioListStyle | ISwitchStyle
+    | IButtonStyle | IInputStyle | ISelectStyle | ICheckboxStyle | IRadioListStyle | ISwitchStyle
     | ISliderStyle | IDatePickerStyle;
 
 ${WeightType}

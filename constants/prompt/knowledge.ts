@@ -18,7 +18,7 @@ export const knowledge = `<knowledge>
         5. Page：根容器组件，宽度充满屏幕，高度由所有组件决定。
         6. Container，Form：容器组件，高度由内部组件决定。
         7. Container 可嵌套，嵌套的 colSpanToParentContainer 和 colStartToParentContainer 按父级 Container 宽度计算。
-        8. Button, Input, Select, RadioList, CheckboxList, Switch, Slider, DatePicker 的最小高度为 40px。
+        8. Button, Input, Select, RadioList, Checkbox, Switch, Slider, DatePicker 的最小高度为 40px。
         9. Table 最小高度为 400px。
         10. 假设屏幕宽度为 1920px，如果 Input1 的父级组件是 Container1，Container1 的 父级组件是 Page1, 那么 Input1的实际宽度是 1920px * (Container1.colSpanToParentContainer / 24) * (Input1.colSpanToParentContainer / 24)。
         11. 举例，一个表单中宽度充满父级，距离父级顶部8px，高为40px的Input: colStartToParentContainer = 0, colSpanToParentContainer = 24, rowStartToParentContainer = 1, rowSpanToParentContainer = 5
@@ -30,7 +30,7 @@ export const knowledge = `<knowledge>
         1. FormInput // 必须在表单内使用的input
         2. FormSelect // 必须在表单内使用的select
         3. FormRadioList // 必须在表单内使用的radioList
-        4. FormCheckboxList // 必须在表单内使用的checkboxList
+        4. FormCheckbox // 必须在表单内使用的checkbox
         5. FormSwitch // 必须在表单内使用的switch
         6. FormSlider // 必须在表单内使用的slider
         7. FormDatePicker // 必须在表单内使用的datePicker
@@ -40,7 +40,7 @@ export const knowledge = `<knowledge>
     7. Input // 可以独立使用的 input
     8. Select // 可以独立使用的 select
     9. RadioList // 可以独立使用的 radioList
-    10. CheckboxList // 可以独立使用的 checkboxList
+    10. Checkbox // 可以独立使用的 checkbox
     11. Switch // 可以独立使用的 switch
     12. Slider // 可以独立使用的 slider
     13. DatePicker // 可以独立使用的 datePicker
@@ -50,5 +50,5 @@ export const knowledge = `<knowledge>
 
 
 export const WeightType = `
-type IWeightType = 'Page' | 'Container' | 'Text' | 'Form' | 'Modal' | 'Table' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckboxList' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'Button' | 'Input' | 'Select' | 'CheckboxList' | 'RadioList' | 'Switch' | 'Slider' | 'DatePicker'
+type IWeightType = 'Page' | 'Container' | 'Text' | 'Form' | 'Modal' | 'Table' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckbox' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'Button' | 'Input' | 'Select' | 'Checkbox' | 'RadioList' | 'Switch' | 'Slider' | 'DatePicker'
 `
