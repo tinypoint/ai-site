@@ -1,14 +1,21 @@
 "use client"
-import { Layout, Input, Button, message as antdMessage, Steps, Collapse, Avatar } from 'antd';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
+import { Avatar } from '@/components/ui/avatar';
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button';
 import useChatStore from '../../store/chatStore';
 import ReactMarkdown from 'react-markdown';
-import { CheckCircleOutlined, LoadingOutlined, SendOutlined, RedoOutlined } from '@ant-design/icons';
+import { ChevronRight } from "lucide-react"
 import { useEffect, useRef } from 'react';
 import { ReplyOptions, Vessel, VesselMessage } from "@opensea/vessel"
 import { UserMessage, AIMessage } from '@/types';
-import cls from 'classnames';
+import clsx from 'clsx';
 
-const { Sider, Content } = Layout;
 
 export default function AIEditorPage() {
   const { messages, inputValue, setMessages, setInputValue, parseStreamResponse, getLastAIMessage } = useChatStore();
@@ -88,7 +95,7 @@ export default function AIEditorPage() {
           body: JSON.stringify(lastAIMessage),
         });
       } catch (error) {
-        antdMessage.error('Failed to get AI response');
+        alert('Failed to get AI response');
       }
     }
   };
@@ -101,7 +108,7 @@ export default function AIEditorPage() {
       setMessages([]);
       setInputValue('学生列表查询页');
     } catch (error) {
-      antdMessage.error('Failed to reset messages');
+      alert('Failed to reset messages');
     }
   };
 
@@ -112,7 +119,7 @@ export default function AIEditorPage() {
         const data = await response.json();
         setMessages(data);
       } catch (error) {
-        antdMessage.error('Failed to load messages');
+        alert('Failed to load messages');
       }
     };
 
@@ -120,46 +127,57 @@ export default function AIEditorPage() {
   }, [setMessages]);
 
   return (
-    <Layout className='h-screen'>
-      <Sider width={600} >
+    <div className='h-screen flex'>
+      <div className="w-25" >
         <div className='bg-white p-2 flex flex-col h-full'>
           <div className='flex-1 overflow-y-auto mb-2'>
             {messages.map((msg, index) => (
-              <div key={index} className={cls('flex flex-col mb-2', msg.role === 'user' ? 'items-end' : 'items-start')}>
+              <div key={index} className={clsx('flex flex-col mb-2', msg.role === 'user' ? 'items-end' : 'items-start')}>
                 <div
-                  className={cls('rounded-md p-4 relative max-w-[90%]', msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
+                  className={clsx('rounded-md p-4 relative max-w-[90%]', msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
                 >
                   <Avatar
-                    className={cls(msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
+                    className={clsx(msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
                   >
                     {msg.role === 'user' ? 'U' : 'AI'}
                   </Avatar>
                   <div
-                    className={cls('text-sm', msg.role === 'user' ? 'text-right' : 'text-left')}
+                    className={clsx('text-sm', msg.role === 'user' ? 'text-right' : 'text-left')}
                   >
                     <ReactMarkdown>{msg.content}</ReactMarkdown>
                     {msg.role === 'ai' && msg.progress && (
                       <div>
-                        <Collapse>
-                          {
-                            msg.progress.compeleteSteps.map(step => (
-                              <Collapse.Panel header={step} extra={
-                                msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined className='text-green-500' /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined className='text-gray-500' /> : null
-                              } key={step}>
+                        {
+                          msg.progress.compeleteSteps.map(step => (
+                            <Collapsible>
+                              <CollapsibleTrigger>
+                                {step}
+                                {
+                                  msg.progress!.compeleteSteps.includes(step) ? <ChevronRight className='text-green-500' /> : msg.progress!.runningSteps.includes(step) ? <ChevronRight className='text-gray-500' /> : null
+                                }
+                              </CollapsibleTrigger>
+                              <CollapsibleContent>
                                 <ReactMarkdown>{msg.artifact?.[step as keyof typeof msg.artifact] || ''}</ReactMarkdown>
-                              </Collapse.Panel>
-                            ))
-                          }
-                          {
-                            msg.progress.runningSteps.map(step => (
-                              <Collapse.Panel header={step} extra={
-                                msg.progress!.compeleteSteps.includes(step) ? <CheckCircleOutlined className='text-green-500' /> : msg.progress!.runningSteps.includes(step) ? <LoadingOutlined className='text-gray-500' /> : null
-                              } key={step}>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          ))
+                        }
+                        {
+                          msg.progress.runningSteps.map(step => (
+                            <Collapsible>
+                              <CollapsibleTrigger>
+                                {step}
+                                {
+                                  msg.progress!.compeleteSteps.includes(step) ? <ChevronRight className='text-green-500' /> : msg.progress!.runningSteps.includes(step) ? <ChevronRight className='text-gray-500' /> : null
+                                }
+                              </CollapsibleTrigger>
+                              <CollapsibleContent>
+
                                 <ReactMarkdown>{msg.artifact?.[step as keyof typeof msg.artifact] || ''}</ReactMarkdown>
-                              </Collapse.Panel>
-                            ))
-                          }
-                        </Collapse>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          ))
+                        }
                       </div>
                     )}
                   </div>
@@ -171,7 +189,7 @@ export default function AIEditorPage() {
           <div
             className='flex flex-col bg-white p-2 border border-gray-200 rounded-md'
           >
-            <Input.TextArea
+            <Textarea
               variant='borderless'
               className='mb-2 flex-1'
               autoSize={{ minRows: 2, maxRows: 10 }}
@@ -182,25 +200,21 @@ export default function AIEditorPage() {
             <div className='flex justify-end gap-2'>
               <Button
                 type="dashed"
-                icon={<RedoOutlined />}
+                icon={<ChevronRight />}
                 onClick={handleReset}
               >
                 Reset
               </Button>
               <Button
                 type="primary"
-                icon={<SendOutlined />}
+                icon={<ChevronRight />}
                 onClick={handleSend}
               />
             </div>
           </div>
         </div>
-      </Sider>
-      <Content style={{
-        padding: '20px',
-        maxWidth: '80%',
-        overflowX: 'auto'
-      }}>
+      </div>
+      <div className="flex-1 overflow-x-auto p-5">
         <div className='min-w-[600px] w-full h-full bg-white'>
           {/* <LowCodeRenderer /> */}
           <iframe
@@ -209,7 +223,7 @@ export default function AIEditorPage() {
             className='w-full h-full border-none'
           />
         </div>
-      </Content>
-    </Layout>
+      </div>
+    </div>
   );
 }
