@@ -7,15 +7,10 @@ import {
   ChatBubbleAction,
   ChatBubbleMessage,
 } from "@/components/ui/chat/chat-bubble";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { ChatInput } from "@/components/ui/chat/chat-input"
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list"
 
-import { ChevronRight, MessageCirclePlus } from "lucide-react"
+import { ChevronRight, CircleCheck, LoaderCircle, MessageCirclePlus } from "lucide-react"
 import { toast } from "sonner"
 import useChatStore from "@/hooks/useChatStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -27,9 +22,10 @@ import {
   RefreshCcw,
   Volume2,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { MouseEventHandler, useEffect, useRef, useState } from "react";
 import { AIMessage, UserMessage } from "@/types";
 import ReactMarkdown from "react-markdown";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const ChatAiIcons = [
   {
@@ -136,14 +132,16 @@ export default function Page() {
         });
       } catch (error) {
         toast('Failed to get AI response');
+      } finally {
+        setisLoading(false);
       }
     }
 
     setInput("");
     formRef.current?.reset();
   };
-
-  const handleReset = async () => {
+  const handleReset = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     try {
       await fetch('/api/messages', {
         method: 'DELETE',
@@ -175,67 +173,66 @@ export default function Page() {
               return (
                 <motion.div
                   key={index}
-                  layout
+                  // layout
                   initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
                   animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
                   exit={{ opacity: 0, scale: 1, y: 1, x: 0 }}
                   transition={{
                     opacity: { duration: 0.1 },
-                    layout: {
-                      type: "spring",
-                      bounce: 0.3,
-                      duration: index * 0.05 + 0.2,
-                    },
+                    // layout: {
+                    //   type: "spring",
+                    //   bounce: 0.3,
+                    //   duration: index * 0.05 + 0.2,
+                    // },
                   }}
                   style={{ originX: 0.5, originY: 0.5 }}
-                  className="flex flex-col gap-2 p-4"
+                  className="flex flex-col gap-2"
                 >
-                  <ChatBubble key={index} variant={variant}>
-                    <Avatar>
-                      <AvatarImage
-                        src={message.role !== "user" ? "" : message.avatar}
-                        alt="Avatar"
-                        className={message.role !== "user" ? "dark:invert" : ""}
-                      />
-                      <AvatarFallback>
-                        {message.role !== "user" ? "🤖" : "GG"}
-                      </AvatarFallback>
-                    </Avatar>
+                  <ChatBubble
+                    key={index}
+                    variant={variant}
+                    className="max-w-[90%]"
+                  >
+
                     <ChatBubbleMessage isLoading={message.role === "ai" ? message.isLoading : undefined}>
-                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                      <Avatar>
+                        <AvatarImage
+                          src={message.role !== "user" ? "" : message.avatar}
+                          alt="Avatar"
+                          className={message.role !== "user" ? "dark:invert" : ""}
+                        />
+                        <AvatarFallback>
+                          {message.role !== "user" ? "🤖" : "GG"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <ReactMarkdown className="prose prose-sm">{message.content}</ReactMarkdown>
                       {message.role === 'ai' && message.progress && (
                         <div>
-                          {
-                            message.progress.compeleteSteps.map(step => (
-                              <Collapsible>
-                                <CollapsibleTrigger>
-                                  {step}
-                                  {
-                                    message.progress!.compeleteSteps.includes(step) ? <ChevronRight className='text-green-500' /> : message.progress!.runningSteps.includes(step) ? <ChevronRight className='text-gray-500' /> : null
-                                  }
-                                </CollapsibleTrigger>
-                                <CollapsibleContent>
-                                  <ReactMarkdown>{message.artifact?.[step as keyof typeof message.artifact] || ''}</ReactMarkdown>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            ))
-                          }
-                          {
-                            message.progress.runningSteps.map(step => (
-                              <Collapsible>
-                                <CollapsibleTrigger>
-                                  {step}
-                                  {
-                                    message.progress!.compeleteSteps.includes(step) ? <ChevronRight className='text-green-500' /> : message.progress!.runningSteps.includes(step) ? <ChevronRight className='text-gray-500' /> : null
-                                  }
-                                </CollapsibleTrigger>
-                                <CollapsibleContent>
-
-                                  <ReactMarkdown>{message.artifact?.[step as keyof typeof message.artifact] || ''}</ReactMarkdown>
-                                </CollapsibleContent>
-                              </Collapsible>
-                            ))
-                          }
+                          <Accordion type="multiple" className="w-full">
+                            {[...message.progress.compeleteSteps, ...message.progress.runningSteps].map(step => {
+                              return (
+                                <AccordionItem key={step} value={step}>
+                                  <AccordionTrigger>
+                                    <div className="flex items-center gap-2">
+                                      {
+                                        message.progress!.compeleteSteps.includes(step) ?
+                                          <CircleCheck
+                                            className='text-green-500 w-4 h-4'
+                                          /> : message.progress!.runningSteps.includes(step) ?
+                                            <LoaderCircle
+                                              className='text-gray-500 animate-spin w-4 h-4'
+                                            /> : null
+                                      }
+                                      {step}
+                                    </div>
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <ReactMarkdown className="prose prose-sm">{message.artifact?.[step as keyof typeof message.artifact] || ''}</ReactMarkdown>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              )
+                            })}
+                          </Accordion>
                         </div>
                       )}
                       {message.role === "ai" && (
@@ -297,7 +294,6 @@ export default function Page() {
               <span className="sr-only">Use Microphone</span>
             </Button>
             <Button
-              disabled={!input || isLoading}
               size="sm"
               className="ml-auto gap-1.5"
               onClick={handleReset}

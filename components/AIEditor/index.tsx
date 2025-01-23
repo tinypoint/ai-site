@@ -64,7 +64,7 @@ export default function AIEditorPage() {
 
   return (
     <div className='h-screen flex'>
-      <div className="w-25" >
+      <div className="shrink-0 w-96 max-w-96" >
         <Chat />
       </div>
       <div className="flex-1 overflow-x-auto p-5">
