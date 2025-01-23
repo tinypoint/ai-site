@@ -4,8 +4,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-
-import { Avatar } from '@/components/ui/avatar';
+import { toast } from "sonner"
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button';
 import useChatStore from '../../store/chatStore';
@@ -95,7 +95,7 @@ export default function AIEditorPage() {
           body: JSON.stringify(lastAIMessage),
         });
       } catch (error) {
-        alert('Failed to get AI response');
+        toast('Failed to get AI response');
       }
     }
   };
@@ -108,7 +108,7 @@ export default function AIEditorPage() {
       setMessages([]);
       setInputValue('学生列表查询页');
     } catch (error) {
-      alert('Failed to reset messages');
+      toast('Failed to reset messages');
     }
   };
 
@@ -119,7 +119,7 @@ export default function AIEditorPage() {
         const data = await response.json();
         setMessages(data);
       } catch (error) {
-        alert('Failed to load messages');
+        toast('Failed to load messages');
       }
     };
 
@@ -139,7 +139,9 @@ export default function AIEditorPage() {
                   <Avatar
                     className={clsx(msg.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black')}
                   >
-                    {msg.role === 'user' ? 'U' : 'AI'}
+                    <AvatarFallback>
+                      {msg.role === 'user' ? 'U' : 'AI'}
+                    </AvatarFallback>
                   </Avatar>
                   <div
                     className={clsx('text-sm', msg.role === 'user' ? 'text-right' : 'text-left')}

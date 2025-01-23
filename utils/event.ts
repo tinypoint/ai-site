@@ -1,4 +1,7 @@
 
+
+import { toast } from "sonner"
+
 interface Node {
   id: string;
   type: string;
@@ -92,7 +95,7 @@ export function createEventHandlers(
           console.log(`Setting props for: ${node.options.weightName}`);
           break;
         case 'toast':
-          alert(node.options.message);
+          toast(node.options.message);
           // message.info(node.options.message, node.options.duration);
           break;
         case 'controlComponent':
