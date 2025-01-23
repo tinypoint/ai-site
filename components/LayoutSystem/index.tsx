@@ -6,7 +6,7 @@ export const AISiteLayoutSystemContainer = ({ weightType, style, children }: { w
     <div
       data-ai-site-weight-type={weightType}
       data-ai-site-grid-container
-      className='relative grid w-full'
+      className='relative grid w-full auto-rows-max'
       style={style}
     >
       {children}

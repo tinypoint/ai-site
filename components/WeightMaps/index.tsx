@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { IWeightType } from '@/types';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
-import DataTable from './DataTable';
+import { DataTable } from './DataTable';
 import {
   Dialog,
   DialogContent,
@@ -108,7 +108,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
       <AISiteLayoutSystemItem layout={layout}>
-        <DataTable />
+        <DataTable dataSource={dataSource} columns={columns} loading={loading} />
       </AISiteLayoutSystemItem>
     )
   },
