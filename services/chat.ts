@@ -1,10 +1,9 @@
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatOpenAI } from "@langchain/openai";
-import { schemaTypesPrompt } from "@/constants/prompt/schemaTypes";
+import { ChatDeepSeek } from "@/services/common/deepseek";
 import { schemaPropsPrompt } from "@/constants/prompt/schemaProps";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
 import { llmJsonParse, mergeObjects } from "@/utils";
-import type { IBaseSchema, ISchemaProps, ISchemaLayout, IFinalSchema, ISchemaEvents, ISchemaExpressions, IQuerys, IQueryMockResponse } from "@/types";
+import type { ISchemaProps, ISchemaLayout, IFinalSchema, ISchemaEvents, ISchemaExpressions, IQuerys, IQueryMockResponse } from "@/types";
 import { planPrompt } from "@/constants/prompt/plan";
 import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { queryMockResponsePrompt, queryPrompt } from "@/constants/prompt/query";
@@ -69,9 +68,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const sitePlanAgent = async (state: typeof StateAnnotation.State) => {
     const { messages } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
 
@@ -94,9 +91,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
   const querysAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan } = state;
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
 
@@ -125,9 +120,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   // const schemaTypesAgent = async (state: typeof StateAnnotation.State) => {
   //   const { messages, sitePlan, querys } = state;
 
-  //   const model = new ChatOpenAI({
-  //     apiKey: process.env.OPENAI_API_KEY,
-  //     modelName: "gpt-4o-2024-11-20",
+  //   const model = new ChatDeepSeek({
   //     temperature: 1,
   //   });
 
@@ -166,9 +159,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaLayoutsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, querys } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
 
@@ -198,9 +189,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaPropsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, querys, schemaLayouts } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
     const stream = model.stream([
@@ -234,9 +223,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaEventsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, querys, schemaLayouts, schemaProps } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
 
@@ -273,9 +260,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const queryMockResponseAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, querys, schemaLayouts, schemaProps, schemaEvents } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
 
@@ -314,9 +299,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaExpressionsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, schemaLayouts, schemaProps, schemaEvents, querys, queryMockResponse } = state;
 
-    const model = new ChatOpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      modelName: "gpt-4o-2024-11-20",
+    const model = new ChatDeepSeek({
       temperature: 1,
     });
 

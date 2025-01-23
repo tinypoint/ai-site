@@ -146,6 +146,7 @@ export default function Page() {
       await fetch('/api/messages', {
         method: 'DELETE',
       });
+      setisLoading(false);
       setMessages(() => {
         return [];
       });
