@@ -29,7 +29,7 @@ import { CalendarIcon } from "lucide-react";
 import { useForm, useFormContext } from "react-hook-form"
 import { z } from "zod"
 import { AISiteLayoutSystemContainer, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
-import useLowCodeStore from '@/store/lowcodeStore';
+import useLowCodeStore from '@/hooks/useLowCodeStore';
 
 export const WeightForm = ({ name, eventHandlers, children, layout, style, labelCol, wrapperCol }) => {
   const registerWeight = useLowCodeStore(state => state.registerWeight);

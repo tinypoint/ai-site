@@ -82,11 +82,15 @@ export interface SystemMessage {
   content: string;
 }
 export interface UserMessage {
+  id?: number;
   role: 'user';
   content: string;
+  avatar?: string;
+  name?: string;
 }
 
 export interface AIMessage {
+  id?: number;
   role: 'ai';
   content: string;
   artifact?: {
@@ -100,6 +104,9 @@ export interface AIMessage {
     runningSteps: string[];
     compeleteSteps: string[];
   };
+  avatar?: string;
+  name?: string;
+  isLoading?: boolean;
 }
 
 export type Message = SystemMessage | UserMessage | AIMessage;

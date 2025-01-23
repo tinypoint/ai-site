@@ -1,28 +1,52 @@
-import { Message, AIMessage } from '@/types';
-import { create } from 'zustand';
 
-interface ChatState {
+import { Message, AIMessage } from '@/types';
+import { create } from "zustand";
+
+export interface User {
+  id: number;
+  avatar: string;
   messages: Message[];
-  inputValue: string;
-  setMessages: (messages: Message[]) => void;
-  setInputValue: (value: string) => void;
-  updateLastMessage: (text: string) => void;
+  name: string;
+}
+
+interface State {
+  input: string;
+  messages: Message[];
+}
+
+interface Actions {
+  selectedUser: any;
+  setInput: (input: string) => void;
+  handleInputChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>,
+  ) => void;
+  setMessages: (fn: (messages: Message[]) => Message[]) => void;
   parseStreamResponse: (reader: ReadableStreamDefaultReader<Uint8Array>) => void;
   getLastAIMessage: () => AIMessage | undefined;
 }
 
-const useChatStore = create<ChatState>((set, get) => ({
+const useChatStore = create<State & Actions>()((set, get) => ({
+  selectedUser: {
+    id: 4,
+    avatar:
+      "https://images.freeimages.com/images/large-previews/023/geek-avatar-1632962.jpg?fmt=webp&h=350",
+    messages: [],
+    name: "John Smith",
+  },
+
+  input: "",
+
+  setInput: (input) => set({ input }),
+  handleInputChange: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>,
+  ) => set({ input: e.target.value }),
+
   messages: [],
-  inputValue: '学生列表查询页',
-  setMessages: (messages: Message[]) => set(() => ({ messages })),
-  setInputValue: (value: string) => set(() => ({ inputValue: value })),
-  updateLastMessage: (text: string) => set((state) => {
-    const updatedMessages = [...state.messages];
-    if (updatedMessages.length > 0) {
-      updatedMessages[updatedMessages.length - 1].content = text;
-    }
-    return { messages: updatedMessages };
-  }),
+  setMessages: (fn) => set(({ messages }) => ({ messages: fn(messages) })),
   parseStreamResponse: async (reader: ReadableStreamDefaultReader<Uint8Array>) => {
     const decoder = new TextDecoder();
     let buffer = '';
@@ -47,7 +71,7 @@ const useChatStore = create<ChatState>((set, get) => ({
           const jsonData = JSON.parse(chunk.slice(6));
           set((state) => {
             const updatedMessages = [...state.messages];
-            const lastAIMessage = updatedMessages.findLast((message) => message.role === 'ai');
+            const lastAIMessage = updatedMessages.findLast((content) => content.role === 'ai');
             if (lastAIMessage) {
 
               if (jsonData.type === 'progress') {
@@ -77,6 +101,15 @@ const useChatStore = create<ChatState>((set, get) => ({
 
         boundary = buffer.indexOf('\n\n');
       }
+
+      set((state) => {
+        const updatedMessages = [...state.messages];
+        const lastAIMessage = updatedMessages.findLast((content) => content.role === 'ai');
+        if (lastAIMessage) {
+          lastAIMessage.isLoading = false;
+        }
+        return { messages: updatedMessages };
+      });
     }
   },
   getLastAIMessage: () => {
@@ -86,3 +119,4 @@ const useChatStore = create<ChatState>((set, get) => ({
 }));
 
 export default useChatStore;
+

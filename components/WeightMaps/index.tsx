@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { IWeightType } from '@/types';
-import useLowCodeStore from '@/store/lowcodeStore';
+import useLowCodeStore from '@/hooks/useLowCodeStore';
 import DataTable from './DataTable';
 import {
   Dialog,

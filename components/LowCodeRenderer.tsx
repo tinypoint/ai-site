@@ -4,7 +4,7 @@ import { llmJsonParse, transformWeightsMapToTree } from '@/utils';
 import { IFinalData, IWeight, IWeightLayout, IWeightLayoutForRender, IWeightTreeNode, Message } from '@/types';
 import { weightMaps } from './WeightMaps';
 import { createEventHandlers } from '@/utils/event';
-import useLowCodeStore from '@/store/lowcodeStore';
+import useLowCodeStore from '@/hooks/useLowCodeStore';
 import { parseObjectExpressions } from '@/utils/expression';
 import { ReplyOptions, Vessel, VesselMessage } from '@opensea/vessel';
 
