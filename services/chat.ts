@@ -75,7 +75,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(planPrompt),
       ...messages,
-      new HumanMessage('请输出站点规划')
+      new HumanMessage('现在进行步骤一：生成站点的总体规划，作为后续的步骤的指导')
     ]);
 
     let sitePlan = '';
@@ -99,7 +99,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new SystemMessage(queryPrompt),
       ...messages,
       new AIMessage(sitePlan),
-      new HumanMessage('请按照规划，生成页面请求映射表')
+      new HumanMessage('现在开始进行步骤二：列出网页中需要用到全部接口请求')
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'querys' }) })}\n\n`));
@@ -167,9 +167,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new SystemMessage(schemaLayoutPrompt),
       ...messages,
       new AIMessage(sitePlan),
-      new HumanMessage('请按照规划，生成页面请求映射表'),
+      new HumanMessage('现在开始进行步骤二：列出网页中需要用到全部接口请求'),
       new AIMessage(querys),
-      new HumanMessage('请按照规划、请求映射表，生成组件类型、组件父级、组件布局和组件样式映射表')
+      new HumanMessage('现在开始进行步骤三：列出网页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观')
     ]);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaLayouts' }) })}\n\n`));
     let schemaLayouts = '';

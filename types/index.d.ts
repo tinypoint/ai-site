@@ -5,10 +5,10 @@ export type IWeightName = string;
 export type IWeightType = string;
 
 export interface IWeightLayout {
-  rowStartToParentContainer: number;
-  rowSpanToParentContainer: number;
-  colStartToParentContainer: number;
-  colSpanToParentContainer: number;
+  x: number;
+  width: number;
+  y: number;
+  height: number;
 }
 
 export interface IWeightLayoutForRender extends IWeightLayout {

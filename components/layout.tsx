@@ -1,10 +1,10 @@
 // ==================== 类型定义 ====================
 type GridPosition = {
 	gridRow: number;
-	rowStartToParentContainer: number;
-	rowSpanToParentContainer: number;
-	colStartToParentContainer: number;
-	colSpanToParentContainer: number;
+	x: number;
+	width: number;
+	y: number;
+	height: number;
 	autoHeight?: boolean;
 };
 
@@ -30,8 +30,8 @@ class LayoutContext {
 		const gridRow = this.rowCounter++;
 
 		// 水平定位
-		const colStartToParentContainer = element.grid.left;
-		const colSpanToParentContainer = element.grid.width;
+		const x = element.grid.left;
+		const width = element.grid.width;
 
 		// 垂直定位
 		let marginTop = element.vertical.top * this.ROW_HEIGHT;
@@ -50,10 +50,10 @@ class LayoutContext {
 		return [
 			{
 				gridRow,
-				rowStartToParentContainer: gridRow,
-				rowSpanToParentContainer: 1,
-				colStartToParentContainer,
-				colSpanToParentContainer,
+				y: gridRow,
+				height: 1,
+				x,
+				width,
 				autoHeight
 			},
 			{
@@ -81,17 +81,17 @@ const LayoutItem: React.FC<LayoutItemProps> = ({
 		data-ai-site-grid-item={JSON.stringify({
 			rowStartToParentContainerWithDiff: layoutMetrics.marginTop,
 			gridRow: gridPosition.gridRow,
-			rowStartToParentContainer: gridPosition.rowStartToParentContainer,
-			rowSpanToParentContainer: gridPosition.rowSpanToParentContainer,
-			colStartToParentContainer: gridPosition.colStartToParentContainer,
-			colSpanToParentContainer: gridPosition.colSpanToParentContainer,
+			y: gridPosition.y,
+			height: gridPosition.height,
+			x: gridPosition.x,
+			width: gridPosition.width,
 			autoHeight: gridPosition.autoHeight
 		})}
 		className="relative top-0 left-0 px-2 py-1 flex"
 		style={{
-			marginLeft: `${(gridPosition.colStartToParentContainer / 24 * 100).toFixed(4)}%`,
+			marginLeft: `${(gridPosition.x / 24 * 100).toFixed(4)}%`,
 			marginTop: layoutMetrics.marginTop,
-			width: `${(gridPosition.colSpanToParentContainer / 24 * 100).toFixed(4)}%`,
+			width: `${(gridPosition.width / 24 * 100).toFixed(4)}%`,
 			height: layoutMetrics.height,
 			gridRow: gridPosition.gridRow,
 			gridColumn: '1 / 2'

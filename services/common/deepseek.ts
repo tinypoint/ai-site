@@ -5,7 +5,7 @@ export class ChatDeepSeek extends ChatOpenAI {
     const { configuration, model, ...rest } = fields || {};
     super({
       apiKey: process.env.OPENAI_API_KEY,
-      model: model || 'deepseek-reasoner',
+      model: model || 'deepseek-chat',
       ...rest,
       configuration: {
         ...(configuration || {}),
