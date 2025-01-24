@@ -8,12 +8,14 @@ export interface IWeightLayout {
   x: number;
   width: number;
   y: number;
-  height: number;
+  height?: number;
+  heightMode?: 'auto' | 'fixed';
+  minHeight?: number;
 }
 
 export interface IWeightLayoutForRender extends IWeightLayout {
   gridRow?: number;
-  rowStartToParentContainerWithDiff?: number;
+  yToRow?: number;
 }
 
 export type IWeightStyle = Pick<CSSProperties, 'color' | 'fontSize' | 'fontWeight' | 'border' | 'borderRadius' | 'backgroundColor' | 'boxShadow' | 'opacity'>;

@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/dialog"
 import { AISiteLayoutSystemContainer, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import { WeightCheckbox, WeightFormSelect, WeightSelect, WeightFormRadioList, WeightRadioList, WeightFormSwitch, WeightSwitch, WeightFormSlider, WeightSlider, WeightFormDatePicker, WeightDatePicker, WeightForm, WeightFormInput, WeightInput, WeightFormCheckbox } from './Form';
+import { WeightChart } from './Chart';
 
 type ComponentProps = any;
 
 export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
-  Page: ({ children, eventHandlers, style }) => {
+  Page: ({ children, eventHandlers, style, layout }) => {
 
     useEffect(() => {
       eventHandlers.onPageLoad && eventHandlers.onPageLoad();
@@ -30,7 +31,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
           ...style,
           minHeight: '100vh',
         }}
-        paddingY={style.paddingY}
+        paddingY={layout.paddingY}
       >
         {children}
       </AISiteLayoutSystemContainer>
@@ -38,7 +39,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   },
   Container: ({ children, layout, style }) => {
     return (
-      <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
+      <AISiteLayoutSystemItem weightType="Container" layout={layout}>
         <AISiteLayoutSystemContainer
           weightType="Container"
           style={style}
@@ -51,7 +52,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   },
   Text: ({ content, layout, style }) => {
     return (
-      <AISiteLayoutSystemItem layout={layout}>
+      <AISiteLayoutSystemItem weightType='Text' layout={layout}>
         <div style={style}>{content}</div>
       </AISiteLayoutSystemItem>
     )
@@ -59,7 +60,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
 
   Button: ({ text, layout, style, eventHandlers, htmlType }) => {
     return (
-      <AISiteLayoutSystemItem layout={layout}>
+      <AISiteLayoutSystemItem weightType='Button' layout={layout}>
         <Button
           className='flex-1 w-0'
           onClick={eventHandlers.onClick || undefined}
@@ -118,7 +119,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   },
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
-      <AISiteLayoutSystemItem layout={layout}>
+      <AISiteLayoutSystemItem weightType='Table' layout={layout}>
         <DataTable dataSource={dataSource} columns={columns} loading={loading} />
       </AISiteLayoutSystemItem>
     )
@@ -138,4 +139,5 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Slider: WeightSlider,
   DatePicker: WeightDatePicker,
   Select: WeightSelect,
+  Chart: WeightChart
 };

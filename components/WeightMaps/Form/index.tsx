@@ -30,8 +30,18 @@ import { useForm, useFormContext } from "react-hook-form"
 import { z } from "zod"
 import { AISiteLayoutSystemContainer, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
+import { IWeightLayoutForRender } from '@/types';
 
-export const WeightForm = ({ name, eventHandlers, children, layout, style, labelCol, wrapperCol }) => {
+type FormWeightProps = {
+  name: string;
+  eventHandlers: any;
+  children: React.ReactNode;
+  layout: IWeightLayoutForRender;
+  style: React.CSSProperties;
+  [key: string]: any;
+}
+
+export const WeightForm = ({ name, eventHandlers, children, layout, style }: FormWeightProps) => {
   const registerWeight = useLowCodeStore(state => state.registerWeight);
   const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
 
@@ -65,7 +75,7 @@ export const WeightForm = ({ name, eventHandlers, children, layout, style, label
     eventHandlers.onSubmit && eventHandlers.onSubmit(values)
   }
   return (
-    <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
+    <AISiteLayoutSystemItem weightType='Form' layout={layout}>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -80,10 +90,10 @@ export const WeightForm = ({ name, eventHandlers, children, layout, style, label
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, style }) => {
+export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormInput' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -102,9 +112,9 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, s
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightInput = ({ name, label, layout, placeholder, style }) => {
+export const WeightInput = ({ name, label, layout, placeholder, style }: FormWeightProps) => {
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='Input' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <Input id={name} placeholder={placeholder} className='grow-[3] basis-9/12 text-sm' />
@@ -112,10 +122,10 @@ export const WeightInput = ({ name, label, layout, placeholder, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormCheckbox = ({ fieldName, name, label, layout, style }) => {
+export const WeightFormCheckbox = ({ fieldName, name, label, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormCheckbox' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -144,9 +154,9 @@ export const WeightFormCheckbox = ({ fieldName, name, label, layout, style }) =>
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightCheckbox = ({ name, label, options, layout, style }) => {
+export const WeightCheckbox = ({ name, label, options, layout, style }: FormWeightProps) => {
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='Checkbox' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <div className='grow-[3] basis-9/12'>
@@ -156,10 +166,10 @@ export const WeightCheckbox = ({ name, label, options, layout, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormSelect = ({ name, placeholder, fieldName, label, options, layout, style }) => {
+export const WeightFormSelect = ({ name, placeholder, fieldName, label, options, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormSelect' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -187,9 +197,9 @@ export const WeightFormSelect = ({ name, placeholder, fieldName, label, options,
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightSelect = ({ name, placeholder, label, options, layout, style }) => {
+export const WeightSelect = ({ name, placeholder, label, options, layout, style }: FormWeightProps) => {
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='Select' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <Select>
@@ -208,10 +218,10 @@ export const WeightSelect = ({ name, placeholder, label, options, layout, style 
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormRadioList = ({ fieldName, label, options, layout, style }) => {
+export const WeightFormRadioList = ({ fieldName, label, options, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormRadioList' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -245,9 +255,9 @@ export const WeightFormRadioList = ({ fieldName, label, options, layout, style }
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightRadioList = ({ name, label, options, layout, style }) => {
+export const WeightRadioList = ({ name, label, options, layout, style }: FormWeightProps) => {
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='RadioList' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <RadioGroup className='grow-[3] basis-9/12'>
@@ -264,10 +274,10 @@ export const WeightRadioList = ({ name, label, options, layout, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormSwitch = ({ fieldName, name, label, layout, style }) => {
+export const WeightFormSwitch = ({ fieldName, name, label, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormSwitch' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -290,9 +300,9 @@ export const WeightFormSwitch = ({ fieldName, name, label, layout, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightSwitch = ({ name, label, layout, style }) => {
+export const WeightSwitch = ({ name, label, layout, style }: FormWeightProps) => {
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='Switch' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <div className='grow-[3] basis-9/12'>
@@ -302,10 +312,10 @@ export const WeightSwitch = ({ name, label, layout, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormSlider = ({ fieldName, name, label, layout, style }) => {
+export const WeightFormSlider = ({ fieldName, name, label, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormSlider' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -322,9 +332,9 @@ export const WeightFormSlider = ({ fieldName, name, label, layout, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightSlider = ({ name, label, layout, style }) => {
+export const WeightSlider = ({ name, label, layout, style }: FormWeightProps) => {
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='Slider' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <Slider id={name} className='grow-[3] basis-9/12' />
@@ -332,10 +342,10 @@ export const WeightSlider = ({ name, label, layout, style }) => {
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightFormDatePicker = ({ fieldName, name, label, layout, style }) => {
+export const WeightFormDatePicker = ({ fieldName, name, label, layout, style }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='FormDatePicker' layout={layout}>
       <FormField
         control={form.control}
         name={fieldName}
@@ -379,10 +389,10 @@ export const WeightFormDatePicker = ({ fieldName, name, label, layout, style }) 
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightDatePicker = ({ name, label, layout, style }) => {
+export const WeightDatePicker = ({ name, label, layout, style }: FormWeightProps) => {
   const [date, setDate] = React.useState<Date>()
   return (
-    <AISiteLayoutSystemItem layout={layout}>
+    <AISiteLayoutSystemItem weightType='DatePicker' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
         <Popover>

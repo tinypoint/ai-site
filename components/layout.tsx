@@ -79,7 +79,7 @@ const LayoutItem: React.FC<LayoutItemProps> = ({
 }) => (
 	<div
 		data-ai-site-grid-item={JSON.stringify({
-			rowStartToParentContainerWithDiff: layoutMetrics.marginTop,
+			yToRow: layoutMetrics.marginTop,
 			gridRow: gridPosition.gridRow,
 			y: gridPosition.y,
 			height: gridPosition.height,

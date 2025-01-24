@@ -49,8 +49,6 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   const data: IFinalData = useMemo(() => {
     const parsedData = llmJsonParse(lastAIMessage?.artifact?.finalJSON || '{}');
-    console.log(lastAIMessage?.artifact?.finalJSON, 'parsedData')
-    console.log(parsedData, 'parsedData')
     return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalData : {} as IFinalData;
   }, [lastAIMessage?.artifact?.finalJSON]);
   const { weights = {}, querys = {} } = data;
@@ -111,8 +109,8 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
     const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parent === name);
     let rowStartIndex = 0;
-    let topLeiji = 0;
-    let maxTopLeiji = 0;
+    let rowBottom = 0;
+    let maxRowBottom = 0;
     const childrenList = childrenKeys.sort((a, b) => {
       return (weights[a]?.layout?.y || 0) - (weights[b]?.layout?.y || 0);
     });
@@ -121,24 +119,28 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
       if (currentLayout) {
         if (weights[childKey].type !== 'Modal') {
           if (prevLayout) {
-            if (currentLayout.y >= (prevLayout.y + prevLayout.height)) {
+            let prevBottom = 0;
+
+            prevBottom = prevLayout.y + (prevLayout.heightMode === 'auto' ? (prevLayout.minHeight ?? prevLayout.height ?? 0) : prevLayout.height ?? 0);
+            if (currentLayout.y >= prevBottom) {
               rowStartIndex += 1
               currentLayout.gridRow = rowStartIndex
-              topLeiji = maxTopLeiji
-              currentLayout.rowStartToParentContainerWithDiff = currentLayout.y - topLeiji
-              maxTopLeiji = currentLayout.y + currentLayout.height
+              rowBottom = maxRowBottom
+              currentLayout.yToRow = currentLayout.y - rowBottom
+              maxRowBottom = currentLayout.y + (currentLayout.height ?? 0);
             } else {
               currentLayout.gridRow = prevLayout.gridRow
-              currentLayout.rowStartToParentContainerWithDiff = currentLayout.y - topLeiji
-              if (currentLayout.y + currentLayout.height > maxTopLeiji) {
-                maxTopLeiji = currentLayout.y + currentLayout.height
+              currentLayout.yToRow = currentLayout.y - rowBottom
+              const currentBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.minHeight ?? currentLayout.height ?? 0) : currentLayout.height ?? 0);
+              if (currentBottom > maxRowBottom) {
+                maxRowBottom = currentBottom
               }
             }
           } else {
             rowStartIndex += 1
             currentLayout.gridRow = rowStartIndex
-            currentLayout.rowStartToParentContainerWithDiff = currentLayout.y;
-            maxTopLeiji = currentLayout.y + currentLayout.height;
+            currentLayout.yToRow = currentLayout.y;
+            maxRowBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.minHeight ?? currentLayout.height ?? 0) : currentLayout.height ?? 0);
           }
         } else {
           return prevLayout;

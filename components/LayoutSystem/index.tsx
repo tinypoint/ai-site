@@ -23,25 +23,34 @@ export const AISiteLayoutSystemContainer = ({
   )
 }
 
-export const AISiteLayoutSystemItem = ({ autoHeight, layout, children }: { autoHeight?: boolean, layout: IWeightLayoutForRender, children: React.ReactNode }) => {
-  const { x,
+export const AISiteLayoutSystemItem = (
+  { weightType, layout, children }: {
+    weightType?: string,
+    layout: IWeightLayoutForRender,
+    children: React.ReactNode
+  }) => {
+  const {
+    x,
     width,
     y,
     height,
+    minHeight,
+    heightMode,
     gridRow = 1,
-    rowStartToParentContainerWithDiff = 0
+    yToRow = 0
   } = layout;
-  const marginTop = (rowStartToParentContainerWithDiff) * 8;
+  const marginTop = (yToRow) * 8;
   // const height = height * 8;
   return (
     <div
-      data-ai-site-grid-item={`rowStartToParentContainerWithDiff: ${rowStartToParentContainerWithDiff}; gridRow: ${gridRow}; x: ${x}; width: ${width}; y: ${y}; height: ${height}; autoHeight: ${autoHeight}`}
-      className='relative top-0 left-0 px-2 py-1 flex'
+      data-ai-site-weight-type={weightType}
+      data-ai-site-grid-item={`yToRow: ${yToRow}; gridRow: ${gridRow}; heightMode: ${heightMode}; minHeight: ${minHeight}; y: ${y}; height: ${height}; x: ${x}; width: ${width}; `}
+      className='relative top-0 left-0 px-4 flex'
       style={{
         marginLeft: `${(x) / 24 * 100}%`,
         marginTop,
         width: `${(width) / 24 * 100}%`,
-        height: autoHeight ? 'max-content' : (height) * 8,
+        height: heightMode === 'auto' ? 'max-content' : (height ?? 0) * 8,
         gridArea: `${gridRow} / 1 / ${gridRow + 1} / 2`,
       }}>
       {children}
