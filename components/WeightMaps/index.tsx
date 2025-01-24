@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { AISiteLayoutSystemContainer, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
+import { LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import { WeightCheckbox, WeightFormSelect, WeightSelect, WeightFormRadioList, WeightRadioList, WeightFormSwitch, WeightSwitch, WeightFormSlider, WeightSlider, WeightFormDatePicker, WeightDatePicker, WeightForm, WeightFormInput, WeightInput, WeightFormCheckbox } from './Form';
 import { WeightChart } from './Chart';
 
@@ -25,29 +25,32 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     }, [children]);
 
     return (
-      <AISiteLayoutSystemContainer
+      <LayoutContainerContent
         weightType="Page"
         style={{
           ...style,
           minHeight: '100vh',
         }}
-        paddingY={layout.paddingY}
+        layout={layout}
       >
         {children}
-      </AISiteLayoutSystemContainer>
+      </LayoutContainerContent>
     )
   },
   Container: ({ children, layout, style }) => {
     return (
-      <AISiteLayoutSystemItem weightType="Container" layout={layout}>
-        <AISiteLayoutSystemContainer
+      <LayoutContainerPosition
+        weightType="Container"
+        layout={layout}
+      >
+        <LayoutContainerContent
           weightType="Container"
+          layout={layout}
           style={style}
-          paddingY={layout.paddingY}
         >
           {children}
-        </AISiteLayoutSystemContainer>
-      </AISiteLayoutSystemItem>
+        </LayoutContainerContent>
+      </LayoutContainerPosition>
     )
   },
   Text: ({ content, layout, style }) => {
@@ -105,12 +108,13 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         <DialogContent className='space-y-0'>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <AISiteLayoutSystemContainer
+            <LayoutContainerContent
               weightType='Modal'
-              paddingY={layout.paddingY}
+              layout={layout}
+              style={style}
             >
               {children}
-            </AISiteLayoutSystemContainer>
+            </LayoutContainerContent>
           </DialogHeader>
         </DialogContent>
       </Dialog>

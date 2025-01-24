@@ -24,6 +24,7 @@ export const knowledge = `<brandKnowledge>
         7. FormDatePicker // 必须在表单内使用的datePicker
         8. FormTextArea // 必须在表单内使用的textArea
     4. Table
+        1. TableColumn // 表格列
     5. Modal
     6. Text
     7. Input // 可以独立使用的 input
@@ -35,6 +36,11 @@ export const knowledge = `<brandKnowledge>
     13. DatePicker // 可以独立使用的 datePicker
     14. TextArea // 可以独立使用的 textArea
     14. Button // 可以独立使用的 button
+    15. Chart // 可以绘制任意图表的组件
+    16. Image // 图片组件
+    17. Carousel // 轮播图容器
+    18. Tabs // 标签页外层容器
+        1. TabPane // 标签页中的子容器
 6. 偏好
     1. 如果用户输入的信息和搭建站点不相关，请你直接输出"拒绝回答"
     2. AI SITE 只能搭建单页面，不支持多页面。因此，无论用户如何描述，你都只能按照单页面的思维去考虑。也就是说，只能有一个页面，页面中不可以进行页面跳转操作，凡是涉及到页面跳转的，你都换成弹窗来承载相关功能，页面中不允许有导航栏
@@ -48,17 +54,21 @@ export const knowledge = `<brandKnowledge>
     10. 对于编辑数据或者新增数据的表单，则需要使用表单组件FormInput FormSelect等组件，你习惯让这些组件垂直排列，每个组件宽度充满表单的宽度，提交按钮重置按钮也会新起一行，在底部靠右侧排列
     11. 习惯给弹窗组件关闭也设置事件
 7. AI SITE 的专有布局系统
-    1. width、 x 基于 24 分栏（容器水平方向默认带有padding，所以不需要关注），width取值范围 1-24，x取值范围 0-23，x+width <= 24
-    2. height、 y、paddingY、容器垂直方向内边距 是基于 8px 倍数，height 取值范围是大于 0 的整数，代表 8px 的倍数，y取值范围是大于 0 的整数，代表 8px 的倍数，paddingY 可使用的值为[0, 1, 2]， 分别代表 0px, 8px, 16px，(height + paddingY * 2)代表容器组件的实际高度
-    3. 支持容器嵌套，容器支持动态高度，容器支持垂直方向内边距（容器默认带有水平方向内边，因此不需要设置）
-    4. 子组件自身默认带有 padding: 4px 4px 8px 8px,因此不需要为子组件设置内边距
-    5. 在 1920 * 1080 的屏幕分辨率下展示良好
-    6. Button、FormInput、 Input、FormSelect、 Select、 FormCheckbox、 Checkbox、FormSwitch、Switch、Switch、FormSlider、Slider、FormDatePicker、DatePicker 的 height 固定为 5，即 40px
-    7. FormRadioList、 RadioList 横向模式时， height 固定为 5，即 40px，纵向模式时， height 由选项个数决定
-    8. FormTextArea、TextArea 的 height 至少为 10，即 80px，最大为 20，即 160px
-    9. Table 的 height 至少为 80，即 400px
-    10. Page 不需要设置x，y，width、height，默认占据整个屏幕，高度由内容撑开
-    11. Modal 的 x,y 可以不设置，width 至少为 12，代表屏幕的一半宽度，height 支持动态高度
+    1 通用属性
+        1. width、 x 基于 24 分栏，width取值范围 1-24，x取值范围 0-23，x+width <= 24
+        2. height、 y、基于 8px 倍数，height 取值范围是大于 0 的整数，代表 8px 的倍数，y取值范围是大于 0 的整数，代表 8px 的倍数
+    2. 容器专属属性
+        1. paddingX、paddingY 基于 8px 倍数，可使用的值为[0, 1, 2]， 分别代表 0px, 8px, 16px，(height + paddingY * 2)代表容器组件的实际高度
+        2. marginX、marginY 基于 8px 倍数，可使用的值为[0, 1, 2]， 分别代表 0px, 8px, 16px
+        3. heightMode 可取值为 'fixed' | 'auto'，auto 代表容器允许被子组件撑开，fixed 代表容器高度固定
+    3. 子组件自身默认带有 margin: 4px 4px 8px 8px,不需要为子组件设置内边距和外边距
+    4. 在 1920 * 1080 的屏幕分辨率下展示良好
+    5. Button、FormInput、 Input、FormSelect、 Select、 FormCheckbox、 Checkbox、FormSwitch、Switch、Switch、FormSlider、Slider、FormDatePicker、DatePicker 的 height 固定为 5，即 40px
+    6. FormRadioList、 RadioList 横向模式时， height 固定为 5，即 40px，纵向模式时， height 由选项个数决定
+    7. FormTextArea、TextArea 的 height 至少为 10，即 80px，最大为 20，即 160px
+    8. Table 的 height 至少为 80，即 400px
+    9. Page 不需要设置x，y，width、height，默认占据整个屏幕，高度由内容撑开
+    10. Modal 的 x,y 可以不设置，width 至少为 12，代表屏幕的一半宽度，height 支持动态高度
 </brandKnowledge>`
 
 

@@ -28,15 +28,15 @@ import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react";
 import { useForm, useFormContext } from "react-hook-form"
 import { z } from "zod"
-import { AISiteLayoutSystemContainer, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
+import { AISiteLayoutSystemContainer, LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
-import { IWeightLayoutForRender } from '@/types';
+import { IContainerWeightLayoutForRender, IWeightLayoutForRender } from '@/types';
 
 type FormWeightProps = {
   name: string;
   eventHandlers: any;
   children: React.ReactNode;
-  layout: IWeightLayoutForRender;
+  layout: IContainerWeightLayoutForRender;
   style: React.CSSProperties;
   [key: string]: any;
 }
@@ -75,19 +75,27 @@ export const WeightForm = ({ name, eventHandlers, children, layout, style }: For
     eventHandlers.onSubmit && eventHandlers.onSubmit(values)
   }
   return (
-    <AISiteLayoutSystemItem weightType='Form' layout={layout}>
+    <LayoutContainerPosition
+      weightType='Form'
+      layout={layout}
+      style={style}
+    >
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full"
           style={style}
         >
-          <AISiteLayoutSystemContainer weightType="Form">
+          <LayoutContainerContent
+            weightType="Form"
+            layout={layout}
+            style={style}
+          >
             {children}
-          </AISiteLayoutSystemContainer>
+          </LayoutContainerContent>
         </form>
       </Form>
-    </AISiteLayoutSystemItem>
+    </LayoutContainerPosition>
   )
 }
 export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, style }: FormWeightProps) => {

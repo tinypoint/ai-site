@@ -19,25 +19,17 @@ type Pixel8Multiplier = number & { __brand: '8px-multiplier' }; // 品牌类型�
 
 type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
 
-type ContainerAutoHeightLayout = {
+type ContainerLayout = {
   x: GridUnit;
   width: ColumnSpan;
-  heightMode: 'auto';
-  y: Pixel8Multiplier;
-  minHeight: Pixel8Multiplier;
-  paddingY: Pixel8Multiplier;
-}
-
-type ContainerFixedHeightLayout = {
-  x: GridUnit;
-  width: ColumnSpan;
-  heightMode: 'fixed';
+  heightMode: 'fixed' | 'auto';
   y: Pixel8Multiplier;
   height: Pixel8Multiplier;
+  marginX: Pixel8Multiplier;
+  marginY: Pixel8Multiplier;
+  paddingX: Pixel8Multiplier;
   paddingY: Pixel8Multiplier;
-}
-
-type ContainerLayout = ContainerAutoHeightLayout | ContainerFixedHeightLayout;
+};
 
 type ItemLayout = {
   x: GridUnit; 
@@ -46,17 +38,10 @@ type ItemLayout = {
   height: Pixel8Multiplier; 
 }
 
-type IPageLayout = ContainerLayout;
-
-type IModalLayout = ContainerLayout & ItemLayout;
-
-type IContainerLayout = ContainerLayout & ItemLayout;
-
-type IFormLayout = ContainerLayout & ItemLayout;
-
+// 容器组件的布局类型是 ContainerLayout
 // 其他的非容器组件的布局类型都是 ItemLayout
 
-type IWeightLayout = IPageLayout | IModalLayout | IContainerLayout | IFormLayout | IFormLayout;
+type IWeightLayout = IContainerLayout | IFormLayout;
 
 type IPageStyle = {
   backgroundColor: string;

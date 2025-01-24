@@ -75,7 +75,7 @@ export default function Page() {
     }
   };
 
-  const toggle = (e: React.FormEvent<HTMLFormElement>) => {
+  const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsMaximize(!isMaximize);
   }

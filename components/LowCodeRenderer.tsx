@@ -121,7 +121,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
           if (prevLayout) {
             let prevBottom = 0;
 
-            prevBottom = prevLayout.y + (prevLayout.heightMode === 'auto' ? (prevLayout.minHeight ?? prevLayout.height ?? 0) : prevLayout.height ?? 0);
+            prevBottom = prevLayout.y + (prevLayout.heightMode === 'auto' ? (prevLayout.height ?? 0) : prevLayout.height ?? 0);
             if (currentLayout.y >= prevBottom) {
               rowStartIndex += 1
               currentLayout.gridRow = rowStartIndex
@@ -131,7 +131,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
             } else {
               currentLayout.gridRow = prevLayout.gridRow
               currentLayout.yToRow = currentLayout.y - rowBottom
-              const currentBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.minHeight ?? currentLayout.height ?? 0) : currentLayout.height ?? 0);
+              const currentBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.height ?? 0) : currentLayout.height ?? 0);
               if (currentBottom > maxRowBottom) {
                 maxRowBottom = currentBottom
               }
@@ -140,7 +140,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
             rowStartIndex += 1
             currentLayout.gridRow = rowStartIndex
             currentLayout.yToRow = currentLayout.y;
-            maxRowBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.minHeight ?? currentLayout.height ?? 0) : currentLayout.height ?? 0);
+            maxRowBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.height ?? 0) : currentLayout.height ?? 0);
           }
         } else {
           return prevLayout;
