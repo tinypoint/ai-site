@@ -10,7 +10,7 @@ import {
 import { ChatInput } from "@/components/ui/chat/chat-input"
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list"
 
-import { ChevronRight, CircleCheck, LoaderCircle, Maximize2, MessageCirclePlus, Minimize2 } from "lucide-react"
+import { ChevronRight, CircleCheck, LoaderCircle, Maximize2, MessageCirclePlus, Minimize2, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { toast } from "sonner"
 import useChatStore from "@/hooks/useChatStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -53,7 +53,8 @@ export default function Page() {
   const handleInputChange = useChatStore((state) => state.handleInputChange);
   const parseStreamResponse = useChatStore((state) => state.parseStreamResponse);
   const [isLoading, setisLoading] = useState(false);
-  const [isMaximize, setIsMaximize] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLeft, setIsLeft] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -77,7 +78,7 @@ export default function Page() {
 
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsMaximize(!isMaximize);
+    setIsOpen(!isOpen);
   }
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -171,189 +172,218 @@ export default function Page() {
   }, []);
 
   return (
-    <motion.div
-      className={clsx("border rounded-lg absolute bottom-4 shadow-sm right-4 shrink-0 bg-white", isMaximize ? "w-lg max-w-lg top-4" : "w-md max-w-md h-96")}
-      layout
-      transition={{
-        layout: {
-          type: "tween",
-          duration: 0.15,
-        },
-      }}
-    >
-      <div className={clsx("flex h-full w-full flex-col", isMaximize ? "w-lg min-w-lg max-w-lg" : "w-md min-w-md max-w-md")}>
-        <div className="flex-1 w-full overflow-y-auto">
-          <ChatMessageList ref={messagesContainerRef}>
-            {/* Chat messages */}
-            {messages.map((message, index) => {
-              const variant = getMessageVariant(message.role!);
-              return (
-                <motion.div
-                  key={index}
-                  // layout
-                  initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
-                  animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
-                  exit={{ opacity: 0, scale: 1, y: 1, x: 0 }}
-                  transition={{
-                    opacity: { duration: 0.1 },
-                    // layout: {
-                    //   type: "spring",
-                    //   bounce: 0.3,
-                    //   duration: index * 0.05 + 0.2,
-                    // },
-                  }}
-                  style={{ originX: 0.5, originY: 0.5 }}
-                  className="flex flex-col gap-2"
-                >
-                  <ChatBubble
+    <>
+      <motion.div
+        className={clsx("border rounded-lg absolute top-4 bottom-4 shadow-sm left-4 shrink-0 bg-white w-lg max-w-lg", isOpen ? "opacity-100" : "opacity-10 w-0 max-0 overflow-hidden pointer-events-none")}
+        layout
+        transition={{
+          opacity: {
+            type: "tween",
+            duration: 0.15,
+          },
+          layout: {
+            type: "tween",
+            duration: 0.15,
+          },
+        }}
+      >
+        <div className={clsx("flex h-full w-full flex-col", isOpen ? "w-lg min-w-lg max-w-lg" : "w-md min-w-md max-w-md")}>
+          <div className="flex-1 w-full overflow-y-auto">
+            <ChatMessageList ref={messagesContainerRef}>
+              {/* Chat messages */}
+              {messages.map((message, index) => {
+                const variant = getMessageVariant(message.role!);
+                return (
+                  <motion.div
                     key={index}
-                    variant={variant}
-                    className="max-w-[90%]"
+                    // layout
+                    initial={{ opacity: 0, scale: 1, y: 50, x: 0 }}
+                    animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+                    exit={{ opacity: 0, scale: 1, y: 1, x: 0 }}
+                    transition={{
+                      opacity: { duration: 0.1 },
+                      // layout: {
+                      //   type: "spring",
+                      //   bounce: 0.3,
+                      //   duration: index * 0.05 + 0.2,
+                      // },
+                    }}
+                    style={{ originX: 0.5, originY: 0.5 }}
+                    className="flex flex-col gap-2"
                   >
+                    <ChatBubble
+                      key={index}
+                      variant={variant}
+                      className="max-w-[90%]"
+                    >
 
-                    <ChatBubbleMessage isLoading={message.role === "ai" ? message.isLoading : undefined}>
-                      <Avatar>
-                        <AvatarImage
-                          src={message.role !== "user" ? "" : message.avatar}
-                          alt="Avatar"
-                          className={message.role !== "user" ? "dark:invert" : ""}
-                        />
-                        <AvatarFallback>
-                          {message.role !== "user" ? "🤖" : "GG"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <ReactMarkdown className="prose prose-sm">{message.content}</ReactMarkdown>
-                      {message.role === 'ai' && message.progress && (
-                        <div>
-                          <Accordion type="multiple" className="w-full">
-                            {[...message.progress.compeleteSteps, ...message.progress.runningSteps].map(step => {
-                              return (
-                                <AccordionItem key={step} value={step}>
-                                  <AccordionTrigger>
-                                    <div className="flex items-center gap-2">
-                                      {
-                                        message.progress!.compeleteSteps.includes(step) ?
-                                          <CircleCheck
-                                            className='text-green-500 w-4 h-4'
-                                          /> : message.progress!.runningSteps.includes(step) ?
-                                            <LoaderCircle
-                                              className='text-gray-500 animate-spin w-4 h-4'
-                                            /> : null
-                                      }
-                                      {step}
-                                    </div>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ReactMarkdown className="prose prose-sm">{message.artifact?.[step as keyof typeof message.artifact] || ''}</ReactMarkdown>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              )
-                            })}
-                            {
-                              message.artifact?.finalJSON ? (
-                                <AccordionItem key="final" value="final">
-                                  <AccordionTrigger>
-                                    <div className="flex items-center gap-2">
-                                      <CircleCheck
-                                        className='text-green-500 w-4 h-4'
-                                      />
-                                      schema
-                                    </div>
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ReactMarkdown className="prose prose-sm">{message.artifact?.finalJSON || ''}</ReactMarkdown>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              ) : null
-                            }
-                          </Accordion>
-                        </div>
-                      )}
-                      {message.role === "ai" && (
-                        <div className="flex items-center mt-1.5 gap-1">
-                          {!message.isLoading && (
-                            <>
-                              {ChatAiIcons.map((icon, index) => {
-                                const Icon = icon.icon;
+                      <ChatBubbleMessage isLoading={message.role === "ai" ? message.isLoading : undefined}>
+                        <Avatar>
+                          <AvatarImage
+                            src={message.role !== "user" ? "" : message.avatar}
+                            alt="Avatar"
+                            className={message.role !== "user" ? "dark:invert" : ""}
+                          />
+                          <AvatarFallback>
+                            {message.role !== "user" ? "🤖" : "GG"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <ReactMarkdown className="prose prose-sm">{message.content}</ReactMarkdown>
+                        {message.role === 'ai' && message.progress && (
+                          <div>
+                            <Accordion type="multiple" className="w-full">
+                              {[...message.progress.compeleteSteps, ...message.progress.runningSteps].map(step => {
                                 return (
-                                  <ChatBubbleAction
-                                    variant="outline"
-                                    className="size-6"
-                                    key={index}
-                                    icon={<Icon className="size-3" />}
-                                    onClick={() =>
-                                      console.log(
-                                        "Action " +
-                                        icon.label +
-                                        " clicked for message " +
-                                        index,
-                                      )
-                                    }
-                                  />
-                                );
+                                  <AccordionItem key={step} value={step}>
+                                    <AccordionTrigger>
+                                      <div className="flex items-center gap-2">
+                                        {
+                                          message.progress!.compeleteSteps.includes(step) ?
+                                            <CircleCheck
+                                              className='text-green-500 w-4 h-4'
+                                            /> : message.progress!.runningSteps.includes(step) ?
+                                              <LoaderCircle
+                                                className='text-gray-500 animate-spin w-4 h-4'
+                                              /> : null
+                                        }
+                                        {step}
+                                      </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <ReactMarkdown className="prose prose-sm">{message.artifact?.[step as keyof typeof message.artifact] || ''}</ReactMarkdown>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                )
                               })}
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </ChatBubbleMessage>
-                  </ChatBubble>
-                </motion.div>
-              );
-            })}
-          </ChatMessageList>
-        </div>
-        <div className="px-4 pb-4">
-          <form
-            ref={formRef}
-            onSubmit={handleSendMessage}
-            className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
-          >
-            <ChatInput
-              ref={inputRef}
-              onKeyDown={handleKeyDown}
-              onChange={handleInputChange}
-              placeholder="Type your message here..."
-              className="min-h-12 resize-none rounded-lg bg-background border-0 p-3 shadow-none focus-visible:ring-0"
-            />
-            <div className="flex items-center p-3 pt-0">
-              <Button variant="ghost" size="icon">
-                <Paperclip className="size-4" />
-                <span className="sr-only">Attach file</span>
-              </Button>
+                              {
+                                message.artifact?.finalJSON ? (
+                                  <AccordionItem key="final" value="final">
+                                    <AccordionTrigger>
+                                      <div className="flex items-center gap-2">
+                                        <CircleCheck
+                                          className='text-green-500 w-4 h-4'
+                                        />
+                                        schema
+                                      </div>
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <ReactMarkdown className="prose prose-sm">{message.artifact?.finalJSON || ''}</ReactMarkdown>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                ) : null
+                              }
+                            </Accordion>
+                          </div>
+                        )}
+                        {message.role === "ai" && (
+                          <div className="flex items-center mt-1.5 gap-1">
+                            {!message.isLoading && (
+                              <>
+                                {ChatAiIcons.map((icon, index) => {
+                                  const Icon = icon.icon;
+                                  return (
+                                    <ChatBubbleAction
+                                      variant="outline"
+                                      className="size-6"
+                                      key={index}
+                                      icon={<Icon className="size-3" />}
+                                      onClick={() =>
+                                        console.log(
+                                          "Action " +
+                                          icon.label +
+                                          " clicked for message " +
+                                          index,
+                                        )
+                                      }
+                                    />
+                                  );
+                                })}
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </ChatBubbleMessage>
+                    </ChatBubble>
+                  </motion.div>
+                );
+              })}
+            </ChatMessageList>
+          </div>
+          <div className="px-4 pb-4">
+            <form
+              ref={formRef}
+              onSubmit={handleSendMessage}
+              className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
+            >
+              <ChatInput
+                ref={inputRef}
+                onKeyDown={handleKeyDown}
+                onChange={handleInputChange}
+                placeholder="Type your message here..."
+                className="min-h-12 resize-none rounded-lg bg-background border-0 p-3 shadow-none focus-visible:ring-0"
+              />
+              <div className="flex items-center p-3 pt-0">
+                <Button variant="ghost" size="icon">
+                  <Paperclip className="size-4" />
+                  <span className="sr-only">Attach file</span>
+                </Button>
 
-              <Button variant="ghost" size="icon">
-                <Mic className="size-4" />
-                <span className="sr-only">Use Microphone</span>
-              </Button>
-              <Button
-                size="sm"
-                className="ml-auto gap-1.5 w-8"
-                onClick={toggle}
-              >
-                {!isMaximize ? <Maximize2 className="size-3.5" /> : <Minimize2 className="size-3.5" />}
-              </Button>
-              <Button
-                size="sm"
-                className="ml-2 gap-1.5"
-                onClick={handleReset}
-              >
-                New Chat
-                <MessageCirclePlus className="size-3.5" />
-              </Button>
-              <Button
-                disabled={!input || isLoading}
-                type="submit"
-                size="sm"
-                className="ml-2 gap-1.5"
-              >
-                Send
-                <CornerDownLeft className="size-3.5" />
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div >
-    </motion.div>
+                <Button variant="ghost" size="icon">
+                  <Mic className="size-4" />
+                  <span className="sr-only">Use Microphone</span>
+                </Button>
+                <Button
+                  size="sm"
+                  className="ml-auto gap-1.5 w-8"
+                  onClick={toggle}
+                >
+                  {isOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+                </Button>
+                <Button
+                  size="sm"
+                  className="ml-2 gap-1.5"
+                  onClick={handleReset}
+                >
+                  New Chat
+                  <MessageCirclePlus className="size-3.5" />
+                </Button>
+                <Button
+                  disabled={!input || isLoading}
+                  type="submit"
+                  size="sm"
+                  className="ml-2 gap-1.5"
+                >
+                  Send
+                  <CornerDownLeft className="size-3.5" />
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div >
+      </motion.div>
+      <motion.div
+        className={clsx("absolute bottom-12 shadow-sm left-4 shrink-0 bg-white", isOpen ? "opacity-0" : "opacity-100")}
+        layout
+        transition={{
+          opacity: {
+            type: "tween",
+            duration: 0.15,
+          },
+          layout: {
+            type: "tween",
+            duration: 0.15,
+          },
+        }}
+      >
+
+        <Button
+          size="sm"
+          className="ml-auto gap-1.5 w-8"
+          onClick={toggle}
+        >
+          {isOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+        </Button>
+      </motion.div>
+    </>
   );
 }

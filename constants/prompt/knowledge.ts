@@ -69,6 +69,7 @@ export const knowledge = `<brandKnowledge>
     8. Table 的 height 至少为 80，即 400px
     9. Page 不需要设置x，y，width、height，默认占据整个屏幕，高度由内容撑开
     10. Modal 的 x,y 可以不设置，width 至少为 12，代表屏幕的一半宽度，height 支持动态高度
+    11. Modal 下第一层级的容器，比如表单，容器，等等，宽度最好充满表单，比如设置为 24
 </brandKnowledge>`
 
 
