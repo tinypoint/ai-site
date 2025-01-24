@@ -48,10 +48,11 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
 
   const data: IFinalData = useMemo(() => {
-    const parsedData = llmJsonParse(lastAIMessage?.artifact?.finalSchema || '{}');
+    const parsedData = llmJsonParse(lastAIMessage?.artifact?.finalJSON || '{}');
+    console.log(lastAIMessage?.artifact?.finalJSON, 'parsedData')
+    console.log(parsedData, 'parsedData')
     return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalData : {} as IFinalData;
-  }, [lastAIMessage?.artifact?.finalSchema]);
-
+  }, [lastAIMessage?.artifact?.finalJSON]);
   const { weights = {}, querys = {} } = data;
 
   useEffect(() => {

@@ -1,13 +1,22 @@
 import React from 'react';
 import { IWeightLayoutForRender } from '@/types';
 
-export const AISiteLayoutSystemContainer = ({ weightType, style, children }: { weightType: string, style?: React.CSSProperties, children: React.ReactNode }) => {
+export const AISiteLayoutSystemContainer = ({
+  weightType,
+  style,
+  children,
+  paddingY
+}: { weightType: string, style?: React.CSSProperties, children: React.ReactNode, paddingY?: number }) => {
   return (
     <div
       data-ai-site-weight-type={weightType}
       data-ai-site-grid-container
       className='relative grid w-full auto-rows-max'
-      style={style}
+      style={{
+        ...style,
+        paddingTop: paddingY ? paddingY * 8 : 0,
+        paddingBottom: paddingY ? paddingY * 8 : 0,
+      }}
     >
       {children}
     </div>

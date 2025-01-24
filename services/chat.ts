@@ -9,6 +9,7 @@ import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { queryMockResponsePrompt, queryPrompt } from "@/constants/prompt/query";
 import { schemaEventsPrompt } from "@/constants/prompt/schemaEvents";
 import { schemaExpressionsPrompt } from "@/constants/prompt/schemaExpressions";
+import { schemaMerge } from "@/utils/schema";
 
 
 const StateAnnotation = Annotation.Root({
@@ -57,7 +58,7 @@ const StateAnnotation = Annotation.Root({
   schemaExpressionsJSON: Annotation<ISchemaExpressions>({
     value: () => ({} as ISchemaExpressions),
   }),
-  finalSchema: Annotation<string>({
+  finalJSON: Annotation<string>({
     value: () => '',
   }),
   finalSchemaJSON: Annotation<IFinalSchema>({
@@ -98,8 +99,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(queryPrompt),
       ...messages,
-      new AIMessage(sitePlan),
-      new HumanMessage('现在开始进行步骤二：列出网页中需要用到全部接口请求')
+      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
+现在开始进行步骤二：列出网页中需要用到全部接口请求
+`)
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'querys' }) })}\n\n`));
@@ -117,45 +119,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     };
   }
 
-  // const schemaTypesAgent = async (state: typeof StateAnnotation.State) => {
-  //   const { messages, sitePlan, querys } = state;
-
-  //   const model = new ChatDeepSeek({
-  //     temperature: 1,
-  //   });
-
-  //   const stream = model.stream([
-  //     new SystemMessage(schemaTypesPrompt),
-  //     ...messages,
-  //     new AIMessage(sitePlan),
-  //     new HumanMessage('请按照规划，生成页面请求映射表'),
-  //     new AIMessage(querys),
-  //     new HumanMessage('请按照规划和请求映射表，生成组件类型和组件父级映射表')
-  //   ]);
-  //   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaTypes' }) })}\n\n`));
-  //   let schemaTypes = '';
-  //   for await (const chunk of await stream) {
-  //     schemaTypes += chunk.content;
-  //     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaTypes', data: chunk.content })}\n\n`));
-  //   }
-  //   writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaTypes' }) })}\n\n`));
-
-  //   const schemaTypesJSON = llmJsonParse(schemaTypes);
-  //   const finalSchemaJSON: IFinalSchema = {};
-  //   for (const key in schemaTypesJSON) {
-  //     finalSchemaJSON[key] = {
-  //       type: schemaTypesJSON[key].type,
-  //       parent: schemaTypesJSON[key].parent,
-  //     };
-  //   }
-
-  //   return {
-  //     schemaTypes,
-  //     schemaTypesJSON,
-  //     finalSchemaJSON,
-  //   };
-  // }
-
   const schemaLayoutsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, querys } = state;
 
@@ -166,10 +129,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(schemaLayoutPrompt),
       ...messages,
-      new AIMessage(sitePlan),
-      new HumanMessage('现在开始进行步骤二：列出网页中需要用到全部接口请求'),
-      new AIMessage(querys),
-      new HumanMessage('现在开始进行步骤三：列出网页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观')
+      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
+网页中的全部的接口请求为：\n${querys}\n
+现在开始进行步骤三：列出网页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观
+`)
     ]);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaLayouts' }) })}\n\n`));
     let schemaLayouts = '';
@@ -180,14 +143,29 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaLayouts' }) })}\n\n`));
     const schemaLayoutsJSON = llmJsonParse(schemaLayouts);
 
+    const finalJSON = schemaMerge({
+      schemaExpressionsJSON: { querys: {}, weights: {} },
+      schemaLayoutsJSON: schemaLayoutsJSON,
+      schemaPropsJSON: {},
+      schemaEventsJSON: {},
+      querysJSON: {},
+      queryMockResponseJSON: {}
+    });
+
+    const final = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: final })}\n\n`));
+
     return {
       schemaLayouts,
       schemaLayoutsJSON,
+      final,
+      finalJSON,
     };
   }
 
   const schemaPropsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querys, schemaLayouts } = state;
+    const { messages, sitePlan, querys, schemaLayouts, schemaLayoutsJSON } = state;
 
     const model = new ChatDeepSeek({
       temperature: 1,
@@ -195,12 +173,11 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(schemaPropsPrompt),
       ...messages,
-      new AIMessage(sitePlan),
-      new HumanMessage('请按照规划，生成页面请求映射表'),
-      new AIMessage(querys),
-      new HumanMessage('请按照规划、请求映射表，生成组件类型，组件父级，组件布局和组件样式映射表'),
-      new AIMessage(schemaLayouts),
-      new HumanMessage('请按照规划、请求映射表、组件映射表，生成组件属性映射表')
+      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
+网页中的全部的接口请求为：\n${querys}\n
+网页中全部组件，以及组件的唯一名称、类型、父子关系，布局和样式为：\n${schemaLayouts}\n
+现在开始进行步骤四：为所有组件设置准确且合理的属性
+`)
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaProps' }) })}\n\n`));
@@ -214,9 +191,24 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaProps' }) })}\n\n`));
 
+    const finalJSON = schemaMerge({
+      schemaExpressionsJSON: { querys: {}, weights: {} },
+      schemaLayoutsJSON: schemaLayoutsJSON,
+      schemaPropsJSON: schemaPropsJSON,
+      schemaEventsJSON: {},
+      querysJSON: {},
+      queryMockResponseJSON: {}
+    });
+
+    const final = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: final })}\n\n`));
+
     return {
       schemaProps,
       schemaPropsJSON,
+      final,
+      finalJSON,
     };
   }
 
@@ -346,50 +338,26 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       queryMockResponseJSON
     } = state;
 
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'finalSchema' }) })}\n\n`));
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'finalJSON' }) })}\n\n`));
 
-    const finalSchemaJSON: IFinalSchema = {};
-    const { querys, weights } = schemaExpressionsJSON;
-    for (const key in schemaLayoutsJSON) {
-      const weightExpressions = weights[key];
-      finalSchemaJSON[key] = {
-        type: schemaLayoutsJSON[key].type,
-        parent: schemaLayoutsJSON[key].parent,
-        layout: schemaLayoutsJSON[key]?.layout,
-        style: schemaLayoutsJSON[key]?.style,
-        props: schemaPropsJSON[key]?.props,
-        events: schemaEventsJSON[key],
-      };
+    const finalJSON = schemaMerge({
+      schemaExpressionsJSON: { querys: {}, weights: {} },
+      schemaLayoutsJSON: schemaLayoutsJSON,
+      schemaPropsJSON: schemaPropsJSON,
+      schemaEventsJSON: schemaEventsJSON,
+      querysJSON: querysJSON,
+      queryMockResponseJSON: queryMockResponseJSON
+    });
 
-      if (weightExpressions) {
-        finalSchemaJSON[key].props = mergeObjects({ ...(finalSchemaJSON[key].props || {}) }, weightExpressions);
-      }
-    }
+    const final = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
 
-    const finalQuerysJSON: IQuerys = {};
-    for (const key in querysJSON) {
-      const querysExpressions = querys[key];
-      finalQuerysJSON[key] = {
-        ...querysJSON[key],
-        ...queryMockResponseJSON[key],
-      };
-      if (querysExpressions) {
-        finalQuerysJSON[key] = mergeObjects({ ...(finalQuerysJSON[key] || {}) }, querysExpressions);
-      }
-    }
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: final })}\n\n`));
 
-    const finalSchema = `\`\`\`json\n${JSON.stringify({
-      weights: finalSchemaJSON,
-      querys: finalQuerysJSON,
-    }, null, 2)}\n\`\`\``;
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalSchema', data: finalSchema })}\n\n`));
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'finalSchema' }) })}\n\n`));
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'finalJSON' }) })}\n\n`));
 
     return {
-      finalSchema,
-      finalSchemaJSON,
+      final,
+      finalJSON,
     };
   }
 
@@ -398,19 +366,20 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     .addNode('querysAgent', querysAgent)
     .addNode("schemaLayoutsAgent", schemaLayoutsAgent)
     .addNode("schemaPropsAgent", schemaPropsAgent)
-    .addNode("schemaEventsAgent", schemaEventsAgent)
-    .addNode("queryMockResponseAgent", queryMockResponseAgent)
-    .addNode("schemaExpressionsAgent", schemaExpressionsAgent)
-    .addNode("schemaMergeAgent", schemaMergeAgent)
+    // .addNode("schemaEventsAgent", schemaEventsAgent)
+    // .addNode("queryMockResponseAgent", queryMockResponseAgent)
+    // .addNode("schemaExpressionsAgent", schemaExpressionsAgent)
+    // .addNode("schemaMergeAgent", schemaMergeAgent)
     .addEdge(START, "sitePlanAgent")
     .addEdge("sitePlanAgent", "querysAgent")
     .addEdge("querysAgent", "schemaLayoutsAgent")
     .addEdge("schemaLayoutsAgent", "schemaPropsAgent")
-    .addEdge("schemaPropsAgent", "schemaEventsAgent")
-    .addEdge("schemaEventsAgent", "queryMockResponseAgent")
-    .addEdge("queryMockResponseAgent", "schemaExpressionsAgent")
-    .addEdge("schemaExpressionsAgent", "schemaMergeAgent")
-    .addEdge("schemaMergeAgent", END);
+    .addEdge("schemaPropsAgent", END);
+  // .addEdge("schemaPropsAgent", "schemaEventsAgent")
+  // .addEdge("schemaEventsAgent", "queryMockResponseAgent")
+  // .addEdge("queryMockResponseAgent", "schemaExpressionsAgent")
+  // .addEdge("schemaExpressionsAgent", "schemaMergeAgent")
+  // .addEdge("schemaMergeAgent", END);
 
   const app = workflow.compile({});
 

@@ -92,7 +92,7 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, s
             <FormItem className="flex w-full items-center space-x-2 space-y-0">
               <FormLabel className='grow-[1] basis-3/12 shrink-0'>{label}</FormLabel>
               <FormControl>
-                <Input className="grow-[3] basis-9/12" placeholder={placeholder}  {...field} value={field.value || ''} />
+                <Input className="grow-[3] basis-9/12 text-sm" placeholder={placeholder}  {...field} value={field.value || ''} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -107,7 +107,7 @@ export const WeightInput = ({ name, label, layout, placeholder, style }) => {
     <AISiteLayoutSystemItem layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
-        <Input id={name} placeholder={placeholder} className='grow-[3] basis-9/12' />
+        <Input id={name} placeholder={placeholder} className='grow-[3] basis-9/12 text-sm' />
       </div>
     </AISiteLayoutSystemItem>
   )

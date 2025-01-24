@@ -98,7 +98,7 @@ export interface AIMessage {
     querys?: string;
     schemaProps?: string;
     schemaLayouts?: string;
-    finalSchema?: string;
+    finalJSON?: string;
   };
   progress?: {
     runningSteps: string[];

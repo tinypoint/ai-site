@@ -2,10 +2,6 @@ import { knowledge } from "./knowledge";
 
 export const schemaPropsPrompt = `${knowledge}
 
-<role>
-你是一个专业的低代码开发者，你擅长理解用的真实需求，为的schema生成组件的props
-</role>
-
 <task>
 1. 深入理解用户的真实需求
 2. 为 schema 生成组件的 props
@@ -143,6 +139,6 @@ type IOutput = Record<WeightName, IWeight>;
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`json结尾
+3. 输出以\`\`\`json开头，以\`\`\`结尾
 </output>
 `

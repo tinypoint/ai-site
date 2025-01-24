@@ -3,12 +3,11 @@ import { knowledge, WeightType } from "./knowledge";
 export const schemaLayoutPrompt = `${knowledge}
 
 <task>
-1. 进行步骤三：列出网页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观
-2. 深入理解用户的真实需求
-3. 深入理解页面规划中布局的相关信息
-4. 为页面生成组件，指定组件类型和父级
-5. 为每个组件设置合理美观的 layout 和 style
-6. 每类组件可以使用的 style 属性有差别，请严格按照下方定义来生成组件 style
+1. 深入理解用户的真实需求
+2. 深入理解页面规划中布局的相关信息
+3. 为页面生成组件，指定组件类型和父级
+4. 为每个组件设置合理美观的 layout 和 style
+5. 每类组件可以使用的 style 属性有差别，请严格按照下方定义来生成组件 style
 </task>
 
 <outputDefinition>

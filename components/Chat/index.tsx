@@ -233,6 +233,23 @@ export default function Page() {
                                 </AccordionItem>
                               )
                             })}
+                            {
+                              message.artifact?.finalJSON ? (
+                                <AccordionItem key="final" value="final">
+                                  <AccordionTrigger>
+                                    <div className="flex items-center gap-2">
+                                      <CircleCheck
+                                        className='text-green-500 w-4 h-4'
+                                      />
+                                      schema
+                                    </div>
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <ReactMarkdown className="prose prose-sm">{message.artifact?.finalJSON || ''}</ReactMarkdown>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              ) : null
+                            }
                           </Accordion>
                         </div>
                       )}

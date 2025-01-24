@@ -37,12 +37,12 @@ export function DataTable({
 }: DataTableProps) {
 
   const columnsForRender = useMemo(() => {
-    return columns.map(column => {
+    return Array.isArray(columns) ? columns.map(column => {
       return {
         accessorKey: column.dataIndex,
         header: column.title,
       }
-    })
+    }) : []
   }, [columns])
 
   const dataSourceForRender = useMemo(() => {
@@ -97,7 +97,7 @@ export function DataTable({
               ))
             ) : (
               <TableRow className="border-b-0">
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columnsForRender.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

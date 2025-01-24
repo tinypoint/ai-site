@@ -3,10 +3,9 @@ import { knowledge } from "./knowledge";
 export const queryPrompt = `${knowledge}
 
 <task>
-1. 进行步骤二：列出网页中需要用到全部接口请求
-2. 深入理解用户的真实需求
-3. 根据用户的需求，生成页面需要请求的接口
-4. 请求要合理，不要出现不合理的请求
+1. 深入理解用户的真实需求
+2. 根据用户的需求，生成页面需要请求的接口
+3. 请求要合理，不要出现不合理的请求
 </task>
 
 <example>
@@ -59,7 +58,7 @@ type IOutput = Record<IQueryName, IQuery>
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`json结尾
+3. 输出以\`\`\`json开头，以\`\`\`结尾
 </output>
 `;
 
@@ -131,6 +130,6 @@ type IOutput = Record<IQueryName, IQueryMockResponse>
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`json结尾
+3. 输出以\`\`\`json开头，以\`\`\`结尾
 </output>
 `;

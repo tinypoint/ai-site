@@ -24,10 +24,14 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     }, [children]);
 
     return (
-      <AISiteLayoutSystemContainer weightType="Page" style={{
-        ...style,
-        minHeight: '100vh',
-      }}>
+      <AISiteLayoutSystemContainer
+        weightType="Page"
+        style={{
+          ...style,
+          minHeight: '100vh',
+        }}
+        paddingY={style.paddingY}
+      >
         {children}
       </AISiteLayoutSystemContainer>
     )
@@ -35,7 +39,11 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Container: ({ children, layout, style }) => {
     return (
       <AISiteLayoutSystemItem autoHeight={true} layout={layout}>
-        <AISiteLayoutSystemContainer weightType="Container" style={style}>
+        <AISiteLayoutSystemContainer
+          weightType="Container"
+          style={style}
+          paddingY={layout.paddingY}
+        >
           {children}
         </AISiteLayoutSystemContainer>
       </AISiteLayoutSystemItem>
@@ -62,7 +70,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  Modal: ({ name, title, children, style, eventHandlers }) => {
+  Modal: ({ name, title, children, style, eventHandlers, layout }) => {
     const registerWeight = useLowCodeStore(state => state.registerWeight);
     const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
     const [open, setOpen] = useState(false);
@@ -96,7 +104,10 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         <DialogContent className='space-y-0'>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <AISiteLayoutSystemContainer weightType='Container'>
+            <AISiteLayoutSystemContainer
+              weightType='Modal'
+              paddingY={layout.paddingY}
+            >
               {children}
             </AISiteLayoutSystemContainer>
           </DialogHeader>

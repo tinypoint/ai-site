@@ -87,7 +87,11 @@ const useChatStore = create<State & Actions>()((set, get) => ({
                 if (aiMessageReceived[jsonData.type] === undefined) {
                   aiMessageReceived[jsonData.type] = '';
                 }
-                aiMessageReceived[jsonData.type] += jsonData.data;
+                if (jsonData.type === 'finalJSON') {
+                  aiMessageReceived[jsonData.type] = jsonData.data;
+                } else {
+                  aiMessageReceived[jsonData.type] += jsonData.data;
+                }
               }
 
               const { plan, ...rest } = aiMessageReceived;
