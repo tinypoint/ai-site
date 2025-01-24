@@ -140,5 +140,6 @@ type IOutput = Record<WeightName, IWeight>;
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
 3. 输出以\`\`\`json开头，以\`\`\`结尾
+4. 尽可能的减少 json 中的缩进和换行
 </output>
 `

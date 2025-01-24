@@ -2,13 +2,9 @@ import { knowledge } from "./knowledge";
 
 export const schemaExpressionsPrompt = `${knowledge}
 
-<role>
-你是一个专业的低代码开发者，你擅长理解用的真实需求，为页面中的组件的请求生成表达式
-</role>
-
 <task>
 1. 深入理解用户的真实需求
-2. 为 schema 生成组件的 props
+2. 根据站点规划，为页面中每个组件的属性和页面中每个请求的 url，请求参数，请求体，请求头，请求 cookie 生成合理的表达式
 </task>
 
 <outputDefinition>
@@ -41,14 +37,14 @@ type IOutput = {
 \`\`\`json
 {
   "weights": {
-    "Chart1": {
-      "values": "{{ Query2.response.chartDatas[0].value }}"
+    "chart1": {
+      "values": "{{ query2.response.chartDatas[0].value }}"
     },
-    "Table1": {
+    "table1": {
       "loading": "{{ Query3.loading }}",
       "dataSource": "{{ Query3.response.data.taskList }}"
     },
-    "Select3": {
+    "select3": {
       "options": "{{ Query4.response.statusList }}"
     }
   },
@@ -58,7 +54,7 @@ type IOutput = {
         "bookId": "{{ BookIdInput1.value }}"
       }
     },
-    "Query2": {
+    "query2": {
       "body": {
         "bookId": "{{ BookIdInput5.value }}",
         "name": "{{ BookNameInput2.value }}",
@@ -80,5 +76,6 @@ type IOutput = {
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
 3. 输出以\`\`\`json开头，以\`\`\`结尾
+4. 尽可能的减少 json 中的缩进和换行
 </output>
 `

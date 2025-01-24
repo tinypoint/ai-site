@@ -53,7 +53,7 @@ export default function Page() {
   const handleInputChange = useChatStore((state) => state.handleInputChange);
   const parseStreamResponse = useChatStore((state) => state.parseStreamResponse);
   const [isLoading, setisLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [isLeft, setIsLeft] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -174,7 +174,7 @@ export default function Page() {
   return (
     <>
       <motion.div
-        className={clsx("border rounded-lg absolute top-4 bottom-4 shadow-sm left-4 shrink-0 bg-white w-lg max-w-lg", isOpen ? "opacity-100" : "opacity-10 w-0 max-0 overflow-hidden pointer-events-none")}
+        className={clsx("border rounded-lg absolute top-4 bottom-4 shadow-sm left-4 shrink-0 bg-white w-[500px]", isOpen ? "opacity-100" : "opacity-0 w-0 max-0 overflow-hidden pointer-events-none")}
         layout
         transition={{
           opacity: {

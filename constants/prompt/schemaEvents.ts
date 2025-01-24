@@ -2,13 +2,9 @@ import { knowledge } from "./knowledge";
 
 export const schemaEventsPrompt = `${knowledge}
 
-<role>
-你是一个专业的低代码开发者，你擅长理解用的真实需求，为的schema生成组件的events
-</role>
-
 <task>
 1. 深入理解用户的真实需求
-2. 为 schema 生成组件的 props
+2. 根据站点总体规划，为页面中所有组件生成合理的事件，事件触发实际，和触发动作
 </task>
 
 <outputDefinition>
@@ -145,7 +141,7 @@ type IOutput = Record<WeightName, IWeightEvents>;
 <example>
 \`\`\`json
 {
-  "Button1": {
+  "button1": {
     "onClick": {
       "nodes": [
       {
@@ -157,7 +153,7 @@ type IOutput = Record<WeightName, IWeightEvents>;
           "id": "controlComponent1",
           "type": "controlComponent",
           "options": {
-            "weightName": "Modal1",
+            "weightName": "modal1",
             "method": "open"
           },
           "inputHandle": ["trigger"],
@@ -198,7 +194,7 @@ type IOutput = Record<WeightName, IWeightEvents>;
       ]
     }
   },
-  "Modal1": {
+  "modal1": {
     "onClose": {
       "nodes": [
         {
@@ -220,7 +216,7 @@ type IOutput = Record<WeightName, IWeightEvents>;
           "id": "controlComponent1",
           "type": "controlComponent",
           "options": {
-            "weightName": "Modal1",
+            "weightName": "modal1",
             "method": "close"
           },
           "inputHandle": ["trigger"],
@@ -259,5 +255,6 @@ type IOutput = Record<WeightName, IWeightEvents>;
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
 3. 输出以\`\`\`json开头，以\`\`\`结尾
+4. 尽可能的减少 json 中的缩进和换行
 </output>
 `
