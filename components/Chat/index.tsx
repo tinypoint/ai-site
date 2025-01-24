@@ -10,7 +10,7 @@ import {
 import { ChatInput } from "@/components/ui/chat/chat-input"
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list"
 
-import { ChevronRight, CircleCheck, LoaderCircle, MessageCirclePlus } from "lucide-react"
+import { ChevronRight, CircleCheck, LoaderCircle, Maximize2, MessageCirclePlus, Minimize2 } from "lucide-react"
 import { toast } from "sonner"
 import useChatStore from "@/hooks/useChatStore";
 import { AnimatePresence, motion } from "framer-motion";
@@ -23,6 +23,7 @@ import {
   Volume2,
 } from "lucide-react";
 import { MouseEventHandler, useEffect, useRef, useState } from "react";
+import { clsx } from "clsx";
 import { AIMessage, UserMessage } from "@/types";
 import ReactMarkdown from "react-markdown";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -52,6 +53,7 @@ export default function Page() {
   const handleInputChange = useChatStore((state) => state.handleInputChange);
   const parseStreamResponse = useChatStore((state) => state.parseStreamResponse);
   const [isLoading, setisLoading] = useState(false);
+  const [isMaximize, setIsMaximize] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -72,6 +74,11 @@ export default function Page() {
       handleSendMessage(e as unknown as React.FormEvent<HTMLFormElement>);
     }
   };
+
+  const toggle = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsMaximize(!isMaximize);
+  }
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -164,11 +171,20 @@ export default function Page() {
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col">
-      <div className="flex-1 w-full overflow-y-auto bg-muted/40">
-        <ChatMessageList ref={messagesContainerRef}>
-          {/* Chat messages */}
-          <AnimatePresence>
+    <motion.div
+      className={clsx("border rounded-lg absolute bottom-4 shadow-sm right-4 shrink-0 bg-white", isMaximize ? "w-lg max-w-lg top-4" : "w-md max-w-md h-96")}
+      layout
+      transition={{
+        layout: {
+          type: "tween",
+          duration: 0.15,
+        },
+      }}
+    >
+      <div className={clsx("flex h-full w-full flex-col", isMaximize ? "w-lg min-w-lg max-w-lg" : "w-md min-w-md max-w-md")}>
+        <div className="flex-1 w-full overflow-y-auto">
+          <ChatMessageList ref={messagesContainerRef}>
+            {/* Chat messages */}
             {messages.map((message, index) => {
               const variant = getMessageVariant(message.role!);
               return (
@@ -285,52 +301,59 @@ export default function Page() {
                 </motion.div>
               );
             })}
-          </AnimatePresence>
-        </ChatMessageList>
-      </div>
-      <div className="px-4 pb-4 bg-muted/40">
-        <form
-          ref={formRef}
-          onSubmit={handleSendMessage}
-          className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
-        >
-          <ChatInput
-            ref={inputRef}
-            onKeyDown={handleKeyDown}
-            onChange={handleInputChange}
-            placeholder="Type your message here..."
-            className="min-h-12 resize-none rounded-lg bg-background border-0 p-3 shadow-none focus-visible:ring-0"
-          />
-          <div className="flex items-center p-3 pt-0">
-            <Button variant="ghost" size="icon">
-              <Paperclip className="size-4" />
-              <span className="sr-only">Attach file</span>
-            </Button>
+          </ChatMessageList>
+        </div>
+        <div className="px-4 pb-4">
+          <form
+            ref={formRef}
+            onSubmit={handleSendMessage}
+            className="relative rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
+          >
+            <ChatInput
+              ref={inputRef}
+              onKeyDown={handleKeyDown}
+              onChange={handleInputChange}
+              placeholder="Type your message here..."
+              className="min-h-12 resize-none rounded-lg bg-background border-0 p-3 shadow-none focus-visible:ring-0"
+            />
+            <div className="flex items-center p-3 pt-0">
+              <Button variant="ghost" size="icon">
+                <Paperclip className="size-4" />
+                <span className="sr-only">Attach file</span>
+              </Button>
 
-            <Button variant="ghost" size="icon">
-              <Mic className="size-4" />
-              <span className="sr-only">Use Microphone</span>
-            </Button>
-            <Button
-              size="sm"
-              className="ml-auto gap-1.5"
-              onClick={handleReset}
-            >
-              New Chat
-              <MessageCirclePlus className="size-3.5" />
-            </Button>
-            <Button
-              disabled={!input || isLoading}
-              type="submit"
-              size="sm"
-              className="ml-2 gap-1.5"
-            >
-              Send Message
-              <CornerDownLeft className="size-3.5" />
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div >
+              <Button variant="ghost" size="icon">
+                <Mic className="size-4" />
+                <span className="sr-only">Use Microphone</span>
+              </Button>
+              <Button
+                size="sm"
+                className="ml-auto gap-1.5 w-8"
+                onClick={toggle}
+              >
+                {!isMaximize ? <Maximize2 className="size-3.5" /> : <Minimize2 className="size-3.5" />}
+              </Button>
+              <Button
+                size="sm"
+                className="ml-2 gap-1.5"
+                onClick={handleReset}
+              >
+                New Chat
+                <MessageCirclePlus className="size-3.5" />
+              </Button>
+              <Button
+                disabled={!input || isLoading}
+                type="submit"
+                size="sm"
+                className="ml-2 gap-1.5"
+              >
+                Send
+                <CornerDownLeft className="size-3.5" />
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div >
+    </motion.div>
   );
 }

@@ -63,11 +63,8 @@ export default function AIEditorPage() {
   }, [setMessages]);
 
   return (
-    <div className='h-screen flex'>
-      <div className="shrink-0 w-96 max-w-96" >
-        <Chat />
-      </div>
-      <div className="flex-1 overflow-x-auto p-5">
+    <div className='h-screen'>
+      <div className="w-full h-full overflow-x-auto">
         <div className='min-w-[600px] w-full h-full bg-white'>
           {/* <LowCodeRenderer /> */}
           <iframe
@@ -77,6 +74,7 @@ export default function AIEditorPage() {
           />
         </div>
       </div>
+      <Chat />
     </div>
   );
 }
