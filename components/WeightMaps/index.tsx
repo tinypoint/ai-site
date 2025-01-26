@@ -74,6 +74,17 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
+  TableActionButton: ({ name, text, layout, style, eventHandlers }) => {
+    return (
+      <Button
+        size="sm"
+        onClick={eventHandlers.onClick || undefined}
+        style={style}
+      >
+        {text}
+      </Button>
+    )
+  },
   Modal: ({ name, title, children, style, eventHandlers, layout }) => {
     const registerWeight = useLowCodeStore(state => state.registerWeight);
     const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
@@ -123,7 +134,14 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
       <AISiteLayoutSystemItem weightType='Table' layout={layout} style={style}>
-        <DataTable dataSource={dataSource} columns={columns} loading={loading} style={style} />
+        <DataTable
+          dataSource={dataSource}
+          columns={columns}
+          loading={loading}
+          style={style}
+        >
+          {children}
+        </DataTable>
       </AISiteLayoutSystemItem>
     )
   },

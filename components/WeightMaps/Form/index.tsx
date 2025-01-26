@@ -120,12 +120,17 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, s
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightInput = ({ name, label, layout, placeholder, style }: FormWeightProps) => {
+export const WeightInput = ({ name, label, layout, placeholder, style, eventHandlers }: FormWeightProps) => {
   return (
     <AISiteLayoutSystemItem weightType='Input' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
-        <Input id={name} placeholder={placeholder} className='grow-[3] basis-9/12 text-sm' />
+        <Input
+          id={name}
+          placeholder={placeholder}
+          className='grow-[3] basis-9/12 text-sm'
+          onChange={eventHandlers.onChange}
+        />
       </div>
     </AISiteLayoutSystemItem>
   )
@@ -205,12 +210,12 @@ export const WeightFormSelect = ({ name, placeholder, fieldName, label, options,
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightSelect = ({ name, placeholder, label, options, layout, style }: FormWeightProps) => {
+export const WeightSelect = ({ name, placeholder, label, options, layout, style, eventHandlers }: FormWeightProps) => {
   return (
     <AISiteLayoutSystemItem weightType='Select' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
-        <Select>
+        <Select onValueChange={eventHandlers.onChange}>
           <SelectTrigger className="grow-[3] basis-9/12">
             <SelectValue id={name} placeholder={placeholder} />
           </SelectTrigger>

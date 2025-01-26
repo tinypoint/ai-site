@@ -16,5 +16,6 @@ export const planPrompt = `${knowledge}
 
 <output>
 1. 你的表达要清晰且准确，不包含歧义，而且不能丢失用户的任何信息
+2. 字数控制在300字以内
 </output>
 `

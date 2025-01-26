@@ -104,31 +104,59 @@ interface ITableActionButtonEvents {
   onClick: IWeightEventFlow;
 }
 
+interface IFormInputEvents {
+}
+
 interface IInputEvents {
   onChange: IWeightEventFlow;
+}
+
+interface IFormSelectEvents {
 }
 
 interface ISelectEvents {
   onChange: IWeightEventFlow;
 }
 
+interface IFormCheckboxEvents {
+}
+
 interface ICheckboxEvents {
   onChange: IWeightEventFlow;
+}
+
+interface IFormRadioListEvents {
 }
 
 interface IRadioListEvents {
   onChange: IWeightEventFlow;
 }
 
+interface IFormSwitchEvents {
+}
+
 interface ISwitchEvents {
   onChange: IWeightEventFlow;
+}
+
+interface IFormSliderEvents {
 }
 
 interface ISliderEvents {
   onChange: IWeightEventFlow;
 }
 
+interface IFormDatePickerEvents {
+}
+
 interface IDatePickerEvents {
+  onChange: IWeightEventFlow;
+}
+
+interface IFormTextAreaEvents {
+}
+
+interface ITextAreaEvents {
   onChange: IWeightEventFlow;
 }
 
@@ -136,7 +164,7 @@ type WeightName = string; // 组件的唯一标识，格式为：英文组件类
 
 type IWeightEvents = IPageEvents | IContainerEvents | IFormEvents | IModalEvents | ITableEvents
     | IInputEvents | IButtonEvents | ITableActionButtonEvents | ISelectEvents | ICheckboxEvents | IRadioListEvents | ISwitchEvents
-    | ISliderEvents | IDatePickerEvents;
+    | ISliderEvents | IDatePickerEvents | ITextAreaEvents | IFormInputEvents | IFormSelectEvents | IFormCheckboxEvents | IFormRadioListEvents | IFormSwitchEvents | IFormSliderEvents | IFormDatePickerEvents;
 
 type IOutput = Record<WeightName, IWeightEvents>;
 \`\`\`
@@ -145,112 +173,8 @@ type IOutput = Record<WeightName, IWeightEvents>;
 <example>
 \`\`\`json
 {
-  "button1": {
-    "onClick": {
-      "nodes": [
-      {
-          "id": "start",
-          "type": "start",
-          "outputHandle": ["next"]
-        },
-        {
-          "id": "controlComponent1",
-          "type": "controlComponent",
-          "options": {
-            "weightName": "modal1",
-            "method": "open"
-          },
-          "inputHandle": ["trigger"],
-          "outputHandle": ["next"]
-        },
-        {
-          "id": "toast1",
-          "type": "toast",
-          "options": {
-            "message": "按钮打开 Modal 成功",
-            "duration": 1000
-          },
-          "inputHandle": ["trigger"],
-          "outputHandle": ["next"]
-        }
-      ],
-      "edges": [
-        {
-          "source": {
-            "id": "start",
-            "outputHandle": "next"
-          },
-          "target": {
-            "id": "controlComponent1",
-            "inputHandle": "trigger"
-          }
-        },
-        {
-          "source": {
-            "id": "controlComponent1",
-            "outputHandle": "next"
-          },
-          "target": {
-            "id": "toast1",
-            "inputHandle": "trigger"
-          }
-        }
-      ]
-    }
-  },
-  "modal1": {
-    "onClose": {
-      "nodes": [
-        {
-          "id": "start",
-          "type": "start",
-          "outputHandle": ["next"]
-        },
-        {
-          "id": "toast1",
-          "type": "toast",
-          "options": {
-            "message": "点击了取消",
-            "duration": 1000
-          },
-          "inputHandle": ["trigger"],
-          "outputHandle": ["next"]
-        },
-        {
-          "id": "controlComponent1",
-          "type": "controlComponent",
-          "options": {
-            "weightName": "modal1",
-            "method": "close"
-          },
-          "inputHandle": ["trigger"],
-          "outputHandle": ["next"]
-        }
-      ],
-      "edges": [
-        {
-          "source": {
-            "id": "start",
-            "outputHandle": "next"
-          },
-          "target": {
-            "id": "controlComponent1",
-            "inputHandle": "trigger"
-          }
-        },
-        {
-          "source": {
-            "id": "controlComponent1",
-            "outputHandle": "next"
-          },
-          "target": {
-            "id": "toast1",
-            "inputHandle": "trigger"
-          }
-        }
-      ]
-    }
-  }
+  "button1": {"onClick":{"nodes":[{"id":"start","type":"start","outputHandle":["next"]},{"id":"controlComponent1","type":"controlComponent","options":{"weightName":"modal1","method":"open"},"inputHandle":["trigger"],"outputHandle":["next"]},{"id":"toast1","type":"toast","options":{"message":"按钮打开 Modal 成功","duration":1000},"inputHandle":["trigger"],"outputHandle":["next"]}],"edges":[{"source":{"id":"start","outputHandle":"next"},"target":{"id":"controlComponent1","inputHandle":"trigger"}},{"source":{"id":"controlComponent1","outputHandle":"next"},"target":{"id":"toast1","inputHandle":"trigger"}}]}},
+  "modal1": {"onClose":{"nodes":[{"id":"start","type":"start","outputHandle":["next"]},{"id":"toast1","type":"toast","options":{"message":"点击了取消","duration":1000},"inputHandle":["trigger"],"outputHandle":["next"]},{"id":"controlComponent1","type":"controlComponent","options":{"weightName":"modal1","method":"close"},"inputHandle":["trigger"],"outputHandle":["next"]}],"edges":[{"source":{"id":"start","outputHandle":"next"},"target":{"id":"controlComponent1","inputHandle":"trigger"}},{"source":{"id":"controlComponent1","outputHandle":"next"},"target":{"id":"toast1","inputHandle":"trigger"}}]}}
 }
 \`\`\`
 </example>

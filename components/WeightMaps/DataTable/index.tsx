@@ -24,6 +24,7 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { useMemo } from "react";
+import { LoaderCircle } from "lucide-react";
 
 interface IColumn {
   dataIndex: string;
@@ -37,6 +38,7 @@ interface DataTableProps {
   dataSource: any[];
   loading?: boolean;
   style?: React.CSSProperties;
+  children?: React.ReactNode;
 }
 
 export function DataTable({
@@ -44,10 +46,21 @@ export function DataTable({
   columns,
   loading,
   style,
+  children,
 }: DataTableProps) {
-
   const columnsForRender = useMemo(() => {
     return Array.isArray(columns) ? columns.map(column => {
+      if (column.renderType === 'actions') {
+        return {
+          accessorKey: column.dataIndex,
+          header: column.title,
+          cell: (info: any) => {
+            return <div className="flex space-x-2">
+              {children}
+            </div>
+          }
+        }
+      }
       return {
         accessorKey: column.dataIndex,
         header: column.title,
@@ -89,29 +102,31 @@ export function DataTable({
             ))}
           </TableHeader>
           <TableBody className="[&_tr:last-child]:border-1">
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    console.log(cell)
-                    return (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    )
-                  })}
+            {
+              loading ? (
+                null
+              ) : table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow className="border-b-0">
+                  <TableCell colSpan={columnsForRender.length} className="h-24 text-center">
+                    No results.
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow className="border-b-0">
-                <TableCell colSpan={columnsForRender.length} className="h-24 text-center">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
+              )}
           </TableBody>
         </Table>
       </div>
@@ -143,6 +158,22 @@ export function DataTable({
           </PaginationContent>
         </Pagination>
       </div>
+      {loading && (
+        (
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-white/50"
+          >
+            <div
+              className="flex items-center gap-2"
+            >
+              <LoaderCircle
+                className='text-gray-500 animate-spin w-4 h-4'
+              />
+              loading
+            </div>
+          </div>
+        )
+      )}
     </div>
   )
 }

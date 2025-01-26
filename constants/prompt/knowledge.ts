@@ -45,13 +45,13 @@ export const knowledge = `<brandKnowledge>
     1. 如果用户输入的信息和搭建站点不相关，请你直接输出"拒绝回答"
     2. AI SITE 只能搭建单页面，不支持多页面。因此，无论用户如何描述，你都只能按照单页面的思维去考虑。也就是说，只能有一个页面，页面中不可以进行页面跳转操作，凡是涉及到页面跳转的，你都换成弹窗来承载相关功能，页面中不允许有导航栏
     3. 你习惯将弹窗区分开，比如新增弹窗和编辑弹窗虽然功能类似，但是你也会将两个弹窗分开输出，而不是合并为一个弹窗
-    4. 习惯将表格搜索、表格新增数据、导出表格数据等操作放在表格控制栏中，表格控制栏位于表格上方，使用 Container + Input + Select + ... + 表格操作按钮 的方式来实现表格的查询区，而非 Form + FormInput + FormSelect + ... +  SubmitButton 的方式
-    5. 表格控制栏组件习惯横向排列，允许换行。表格控制栏中的按钮在同一行上紧跟着靠右放置即可，不需要新起一行。
+    4. 习惯将表格搜索、表格新增数据、导出表格数据等操作放在一个容器中，称之为“表格控制栏”，表格控制栏位于表格上方，使用 Container + Input + Select + ... + 查询按钮 + 表格操作按钮 的方式来实现表格的查询区，而非 Form + FormInput + FormSelect + ... +  SubmitButton 的方式
+    5. 表格控制栏的组件习惯横向排列，允许换行。表格控制栏中的按钮在行末上靠右放置，不需要新起一行。
     6. 表格控制栏内的输入类组件，一般会在值变化时就刷新表格，来更快的查询数据，当然，也允许点击查询按钮来查询
     7. 表格行操作按钮放在表格的最右侧的操作列中，对一行数据进行操作，比如查看行详情，编辑行数据，删除行等等
     8. 你可以很好的区分出表格的操作按钮，对表格行数据操作的按钮放在表格的操作列中，对表格偏全局操作的按钮放在表格的控制栏中
-    8. 对于编辑数据或者新增数据的表单，则需要使用表单组件FormInput FormSelect等组件，你习惯让这些组件垂直排列，每个组件宽度充满表单的宽度，提交按钮重置按钮也会新起一行，在底部靠右侧排列
-    9. 习惯给弹窗组件关闭也设置事件
+    9. 对于编辑数据或者新增数据的表单，则需要使用表单组件FormInput FormSelect等组件，你习惯让这些组件垂直排列，每个组件宽度充满表单的宽度，提交按钮重置按钮也会新起一行，在底部靠右侧排列
+    10. 习惯给弹窗组件关闭也设置事件
 7. AI SITE 的专有布局系统
     1 通用属性
         1. width、 x 基于 24 分栏，width取值范围 1-24，x取值范围 0-23，x+width <= 24
@@ -65,7 +65,7 @@ export const knowledge = `<brandKnowledge>
     5. Button、FormInput、 Input、FormSelect、 Select、 FormCheckbox、 Checkbox、FormSwitch、Switch、Switch、FormSlider、Slider、FormDatePicker、DatePicker 的 height 固定为 5，即 40px
     6. FormRadioList、 RadioList 横向模式时， height 固定为 5，即 40px，纵向模式时， height 由选项个数决定
     7. FormTextArea、TextArea 的 height 至少为 10，即 80px，最大为 20，即 160px
-    8. Table 的 height 至少为 80，即 400px
+    8. Table 的 height 至少为 50，即 400px
     9. Page 不需要设置x，y，width、height，默认占据整个屏幕，高度由内容撑开
     10. Modal 的 x,y 可以不设置，width 至少为 12，代表屏幕的一半宽度，height 支持动态高度
     11. Modal 下第一层级的容器，比如表单，容器，等等，宽度最好充满表单，比如设置为 24
