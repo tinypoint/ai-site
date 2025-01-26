@@ -43,7 +43,7 @@ const ChatAiIcons = [
   },
 ];
 
-export default function Page() {
+export default function Chat({ refreshPreview }: { refreshPreview: () => void }) {
   const messages = useChatStore((state) => state.messages);
   const setMessages = useChatStore((state) => state.setMessages);
   const getLastAIMessage = useChatStore((state) => state.getLastAIMessage);
@@ -53,8 +53,7 @@ export default function Page() {
   const handleInputChange = useChatStore((state) => state.handleInputChange);
   const parseStreamResponse = useChatStore((state) => state.parseStreamResponse);
   const [isLoading, setisLoading] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
-  const [isLeft, setIsLeft] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -128,6 +127,8 @@ export default function Page() {
 
         const reader = response.body!.getReader();
         await parseStreamResponse(reader);
+
+        refreshPreview()
 
         const lastAIMessage = getLastAIMessage();
 
@@ -362,7 +363,7 @@ export default function Page() {
         </div >
       </motion.div>
       <motion.div
-        className={clsx("absolute bottom-12 shadow-sm left-4 shrink-0 bg-white", isOpen ? "opacity-0" : "opacity-100")}
+        className={clsx("absolute bottom-12 shadow-sm left-4 shrink-0", isOpen ? "opacity-0" : "opacity-100")}
         layout
         transition={{
           opacity: {

@@ -4,7 +4,7 @@ export const schemaEventsPrompt = `${knowledge}
 
 <task>
 1. 深入理解用户的真实需求
-2. 根据站点总体规划，为页面中所有组件生成合理的事件，事件触发实际，和触发动作
+2. 根据站点总体规划和当前的页面组件和页面请求接口，为页面中所有组件生成合理的事件，事件触发实际，和触发动作
 </task>
 
 <outputDefinition>

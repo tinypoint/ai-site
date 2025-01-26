@@ -57,9 +57,6 @@ export function DataTable({
     return Array.isArray(dataSource) ? dataSource : []
   }, [dataSource]);
 
-
-  console.log(dataSourceForRender, columnsForRender, loading);
-
   const table = useReactTable({
     data: dataSourceForRender,
     columns: columnsForRender,

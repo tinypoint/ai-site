@@ -19,58 +19,28 @@ const StateAnnotation = Annotation.Root({
       return [...right]
     }
   }),
-  sitePlan: Annotation<string>({
-    value: () => '',
-  }),
-  querys: Annotation<string>({
-    value: () => '',
-  }),
-  querysJSON: Annotation<IQuerys>({
-    value: () => ({} as IQuerys),
-  }),
-  schemaLayouts: Annotation<string>({
-    value: () => '',
-  }),
-  schemaLayoutsJSON: Annotation<ISchemaLayout>({
-    value: () => ({} as ISchemaLayout),
-  }),
-  schemaProps: Annotation<string>({
-    value: () => '',
-  }),
-  schemaPropsJSON: Annotation<ISchemaProps>({
-    value: () => ({} as ISchemaProps),
-  }),
-  schemaEvents: Annotation<string>({
-    value: () => '',
-  }),
-  schemaEventsJSON: Annotation<ISchemaEvents>({
-    value: () => ({} as ISchemaEvents),
-  }),
-  queryMockResponse: Annotation<string>({
-    value: () => '',
-  }),
-  queryMockResponseJSON: Annotation<IQueryMockResponse>({
-    value: () => ({} as IQueryMockResponse),
-  }),
-  schemaExpressions: Annotation<string>({
-    value: () => '',
-  }),
-  schemaExpressionsJSON: Annotation<ISchemaExpressions>({
-    value: () => ({} as ISchemaExpressions),
-  }),
-  final: Annotation<string>({
-    value: () => '',
-  }),
-  finalJSON: Annotation<string>({
-    value: () => '',
-  }),
+  sitePlan: Annotation<string>,
+  querys: Annotation<string>,
+  querysJSON: Annotation<IQuerys>,
+  schemaLayouts: Annotation<string>,
+  schemaLayoutsJSON: Annotation<ISchemaLayout>,
+  schemaProps: Annotation<string>,
+  schemaPropsJSON: Annotation<ISchemaProps>,
+  schemaEvents: Annotation<string>,
+  schemaEventsJSON: Annotation<ISchemaEvents>,
+  queryMockResponse: Annotation<string>,
+  queryMockResponseJSON: Annotation<IQueryMockResponse>,
+  schemaExpressions: Annotation<string>,
+  schemaExpressionsJSON: Annotation<ISchemaExpressions>,
+  final: Annotation<string>,
+  finalJSON: Annotation<string>,
 });
 export const schemaAgent = async (messages: BaseMessage[], writer: WritableStreamDefaultWriter<Uint8Array>) => {
   const sitePlanAgent = async (state: typeof StateAnnotation.State) => {
     const { messages } = state;
 
     const model = new ChatDeepSeek({
-      temperature: 1,
+      temperature: 1.3,
     });
 
     const stream = model.stream([
@@ -164,10 +134,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
     const finalJSON = schemaMerge({
       schemaExpressionsJSON: { querys: {}, weights: {} },
-      schemaLayoutsJSON: schemaLayoutsJSON,
+      schemaLayoutsJSON,
       schemaPropsJSON: {},
       schemaEventsJSON: {},
-      querysJSON: querysJSON,
+      querysJSON,
       queryMockResponseJSON: {}
     });
 
@@ -213,19 +183,16 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
     const finalJSON = schemaMerge({
       schemaExpressionsJSON: { querys: {}, weights: {} },
-      schemaLayoutsJSON: schemaLayoutsJSON,
-      schemaPropsJSON: schemaPropsJSON,
+      schemaLayoutsJSON,
+      schemaPropsJSON,
       schemaEventsJSON: {},
-      querysJSON: querysJSON,
+      querysJSON,
       queryMockResponseJSON: {}
     });
 
     const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinal })}\n\n`));
-
-    console.log(`===final====${nextFinal}`)
-    console.log(`=======`)
 
     return {
       schemaProps,
@@ -316,11 +283,11 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
     const finalJSON = schemaMerge({
       schemaExpressionsJSON: { querys: {}, weights: {} },
-      schemaLayoutsJSON: schemaLayoutsJSON,
-      schemaPropsJSON: schemaPropsJSON,
-      schemaEventsJSON: schemaEventsJSON,
-      querysJSON: querysJSON,
-      queryMockResponseJSON: queryMockResponseJSON
+      schemaLayoutsJSON,
+      schemaPropsJSON,
+      schemaEventsJSON,
+      querysJSON,
+      queryMockResponseJSON,
     });
 
     const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
@@ -364,12 +331,12 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const schemaExpressionsJSON = llmJsonParse(schemaExpressions);
 
     const finalJSON = schemaMerge({
-      schemaExpressionsJSON: { querys: {}, weights: {} },
-      schemaLayoutsJSON: schemaLayoutsJSON,
-      schemaPropsJSON: schemaPropsJSON,
-      schemaEventsJSON: schemaEventsJSON,
-      querysJSON: querysJSON,
-      queryMockResponseJSON: queryMockResponseJSON
+      schemaExpressionsJSON,
+      schemaLayoutsJSON,
+      schemaPropsJSON,
+      schemaEventsJSON,
+      querysJSON,
+      queryMockResponseJSON
     });
 
     const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;

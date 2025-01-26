@@ -62,7 +62,6 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   },
 
   Button: ({ name, text, layout, style, eventHandlers, htmlType }) => {
-    console.log(name, 'eventHandlers', eventHandlers)
     return (
       <AISiteLayoutSystemItem weightType='Button' layout={layout}>
         <Button
