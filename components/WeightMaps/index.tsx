@@ -63,7 +63,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
 
   Button: ({ name, text, layout, style, eventHandlers, htmlType }) => {
     return (
-      <AISiteLayoutSystemItem weightType='Button' layout={layout}>
+      <AISiteLayoutSystemItem weightType='Button' layout={layout} className='items-center'>
         <Button
           className='flex-1 w-0'
           onClick={eventHandlers.onClick || undefined}
@@ -104,7 +104,6 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogTrigger>Open</DialogTrigger>
         <DialogContent className='space-y-0'>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -123,8 +122,8 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   },
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
-      <AISiteLayoutSystemItem weightType='Table' layout={layout}>
-        <DataTable dataSource={dataSource} columns={columns} loading={loading} />
+      <AISiteLayoutSystemItem weightType='Table' layout={layout} style={style}>
+        <DataTable dataSource={dataSource} columns={columns} loading={loading} style={style} />
       </AISiteLayoutSystemItem>
     )
   },

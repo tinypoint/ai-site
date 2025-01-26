@@ -36,12 +36,14 @@ interface DataTableProps {
   columns: IColumn[];
   dataSource: any[];
   loading?: boolean;
+  style?: React.CSSProperties;
 }
 
 export function DataTable({
   dataSource,
   columns,
-  loading
+  loading,
+  style,
 }: DataTableProps) {
 
   const columnsForRender = useMemo(() => {
@@ -65,7 +67,7 @@ export function DataTable({
   })
 
   return (
-    <div className="w-full flex flex-col rounded-md border">
+    <div className="w-full flex flex-col" style={style}>
       <div className="h-0 flex-1">
         <Table className="h-full">
           <TableHeader>

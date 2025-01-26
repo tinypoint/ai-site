@@ -1,5 +1,6 @@
 import React from 'react';
 import { IWeightLayoutForRender, IContainerWeightLayoutForRender } from '@/types';
+import clsx from 'clsx';
 
 export const AISiteLayoutSystemContainer = ({
   weightType,
@@ -140,11 +141,12 @@ export const LayoutContainerContent = ({
 }
 
 export const AISiteLayoutSystemItem = (
-  { weightType, layout, children, style }: {
+  { weightType, layout, children, style, className }: {
     weightType?: string,
     layout: IWeightLayoutForRender,
     children: React.ReactNode,
-    style?: React.CSSProperties
+    style?: React.CSSProperties,
+    className?: string,
   }) => {
   const {
     x,
@@ -158,7 +160,7 @@ export const AISiteLayoutSystemItem = (
     <div
       data-ai-site-weight-type={weightType}
       data-ai-site-grid-container={JSON.stringify(layout)}
-      className='relative top-0 left-0 flex px-4'
+      className={clsx('relative top-0 left-0 flex px-2', className)}
       style={{
         marginLeft: `${(x) / 24 * 100}%`,
         marginTop,

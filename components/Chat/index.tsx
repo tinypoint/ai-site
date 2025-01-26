@@ -54,6 +54,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
   const parseStreamResponse = useChatStore((state) => state.parseStreamResponse);
   const [isLoading, setisLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenTemp, setIsOpenTemp] = useState(false);
 
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -172,10 +173,39 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
     setInput('学生列表查询页');
   }, []);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (isOpen) {
+        setIsOpenTemp(false)
+        return
+      }
+      if (e.key === 'Meta') {
+        setIsOpenTemp(true)
+      }
+    }
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (isOpen) {
+        setIsOpenTemp(false)
+        return
+      }
+      if (e.key === 'Meta') {
+        setIsOpenTemp(false)
+      }
+    }
+    window.addEventListener('keydown', onKeyDown)
+    window.addEventListener('keyup', onKeyUp)
+    return () => {
+      window.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('keyup', onKeyUp)
+    }
+  }, [])
+
+  const isShow = isOpen ? isOpen : isOpenTemp;
+
   return (
     <>
       <motion.div
-        className={clsx("border rounded-lg absolute top-4 bottom-4 shadow-sm left-4 shrink-0 bg-white w-[500px]", isOpen ? "opacity-100" : "opacity-0 w-0 max-0 overflow-hidden pointer-events-none")}
+        className={clsx("border rounded-lg absolute top-4 bottom-4 shadow-sm left-4 shrink-0 bg-white w-[500px]", isShow ? "opacity-100" : "opacity-0 w-0 max-0 overflow-hidden pointer-events-none")}
         layout
         transition={{
           opacity: {
@@ -188,7 +218,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
           },
         }}
       >
-        <div className={clsx("flex h-full w-full flex-col", isOpen ? "w-lg min-w-lg max-w-lg" : "w-md min-w-md max-w-md")}>
+        <div className={clsx("flex h-full w-full flex-col", isShow ? "w-lg min-w-lg max-w-lg" : "w-md min-w-md max-w-md")}>
           <div className="flex-1 w-full overflow-y-auto">
             <ChatMessageList ref={messagesContainerRef}>
               {/* Chat messages */}
@@ -338,7 +368,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
                   className="ml-auto gap-1.5 w-8"
                   onClick={toggle}
                 >
-                  {isOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+                  {isShow ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
                 </Button>
                 <Button
                   size="sm"
@@ -363,7 +393,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
         </div >
       </motion.div>
       <motion.div
-        className={clsx("absolute bottom-12 shadow-sm left-4 shrink-0", isOpen ? "opacity-0" : "opacity-100")}
+        className={clsx("absolute bottom-12 shadow-sm left-4 shrink-0", isShow ? "opacity-0" : "opacity-100")}
         layout
         transition={{
           opacity: {
@@ -382,7 +412,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
           className="ml-auto gap-1.5 w-8"
           onClick={toggle}
         >
-          {isOpen ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
+          {isShow ? <PanelLeftClose className="size-3.5" /> : <PanelLeftOpen className="size-3.5" />}
         </Button>
       </motion.div>
     </>
