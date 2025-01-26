@@ -12,6 +12,7 @@ export interface IWeightLayout {
 }
 
 export interface IWeightLayoutForRender extends IWeightLayout {
+  heightMode: 'auto' | 'fixed';
   gridRow: number;
   yToRow: number;
 }

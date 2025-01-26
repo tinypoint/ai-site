@@ -38,10 +38,13 @@ type ItemLayout = {
   height: Pixel8Multiplier; 
 }
 
-// 容器组件的布局类型是 ContainerLayout
-// 其他的非容器组件的布局类型都是 ItemLayout
+type ITableActionButtonLayout = {} // 表格操作列中的按钮的布局类型，不需要设置任何布局
 
-type IWeightLayout = IContainerLayout | IFormLayout;
+// 容器组件的布局类型是 ContainerLayout
+
+// 除了 TableActionButton 组件的布局类型是 TableActionButtonLayout，其他的非容器组件的布局类型都是 ItemLayout
+
+type IWeightLayout = IContainerLayout | IFormLayout | ITableActionButtonLayout;
 
 type IPageStyle = {
   backgroundColor: string;
@@ -98,10 +101,11 @@ type IDatePickerStyle = {}
 
 type IFormTextAreaStyle = {}
 type ITextAreaStyle = {}
+type ITableActionButtonStyle = {}
 
 type IWeightStyle = IPageStyle | IContainerStyle | ITextStyle | IFormStyle | IModalStyle | ITableStyle
     | IButtonStyle | IInputStyle | ISelectStyle | ICheckboxStyle | IRadioListStyle | ISwitchStyle
-    | ISliderStyle | IDatePickerStyle | ITextAreaStyle | IFormInputStyle | IFormSelectStyle | IFormCheckboxStyle | IFormRadioListStyle | IFormSwitchStyle | IFormSliderStyle | IFormDatePickerStyle | IFormTextAreaStyle;
+    | ISliderStyle | IDatePickerStyle | ITextAreaStyle | IFormInputStyle | IFormSelectStyle | IFormCheckboxStyle | IFormRadioListStyle | IFormSwitchStyle | IFormSliderStyle | IFormDatePickerStyle | IFormTextAreaStyle | ITableActionButtonStyle;
 
 ${WeightType}
 

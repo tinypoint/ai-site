@@ -100,6 +100,10 @@ interface IButtonEvents {
   onClick: IWeightEventFlow;
 }
 
+interface ITableActionButtonEvents {
+  onClick: IWeightEventFlow;
+}
+
 interface IInputEvents {
   onChange: IWeightEventFlow;
 }
@@ -131,7 +135,7 @@ interface IDatePickerEvents {
 type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
 
 type IWeightEvents = IPageEvents | IContainerEvents | IFormEvents | IModalEvents | ITableEvents
-    | IInputEvents | IButtonEvents | ISelectEvents | ICheckboxEvents | IRadioListEvents | ISwitchEvents
+    | IInputEvents | IButtonEvents | ITableActionButtonEvents | ISelectEvents | ICheckboxEvents | IRadioListEvents | ISwitchEvents
     | ISliderEvents | IDatePickerEvents;
 
 type IOutput = Record<WeightName, IWeightEvents>;

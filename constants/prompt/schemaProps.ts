@@ -36,11 +36,22 @@ interface ITableColumnTag extends ITableColumnBase {
   colorsMap: Record<string, "success" | "warning" | "danger" | "info" | "secondary" | "contrast">;
 }
 
+interface ITableColumnActions extends ITableColumnBase {
+  title: string;
+  dataIndex: 'ai-site-actions'; // 固定值，用于标识 actions 列
+  key: 'ai-site-actions'; // 固定值，用于标识 actions 列
+  renderType: 'actions'; // 根据表格中 TableActionButton，决定是否生成生成 actions 列，一个表格最多只能有一个 actions 列，必须放在表格的最后一列
+}
+
 interface ITableProps {
-  columns: <ITableColumnText | ITableColumnTag>[];
+  columns: <ITableColumnText | ITableColumnTag | ITableColumnActions>[];
 }
 
 interface IButtonProps {
+  text: string;
+}
+
+interface ITableActionButtonProps {
   text: string;
 }
 
@@ -124,7 +135,7 @@ interface IDatePickerProps {
 type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
 
 type IWeightProps = IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps
-    | IInputProps | IButtonProps | ISelectProps | ICheckboxProps | IRadioListProps | ISwitchProps
+    | IInputProps | IButtonProps | ITableActionButtonProps | ISelectProps | ICheckboxProps | IRadioListProps | ISwitchProps
     | ISliderProps | IDatePickerProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxProps
     | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps | ITextProps;
 
