@@ -3,8 +3,11 @@ import { knowledge } from "./knowledge";
 export const schemaExpressionsPrompt = `${knowledge}
 
 <task>
-1. 深入理解用户的真实需求
-2. 根据站点规划，为页面中每个组件的属性和页面中每个请求的 url，请求参数，请求体，请求头，请求 cookie 生成合理的表达式
+1. 深入理解用户真实需求，明确数据流向应为【组件 -> 请求参数】和【请求响应 -> 组件属性】
+2. 严格遵循单向数据流原则生成表达式：
+   - 组件的属性值只能来自：常量、其他组件状态、请求响应数据
+   - 请求的参数值只能来自：常量、组件状态、其他请求响应数据
+3. 根据站点规划，为每个组件属性和请求参数生成合法表达式
 </task>
 
 <outputDefinition>
@@ -32,50 +35,31 @@ type IOutput = {
 };
 \`\`\`
 </outputDefinition>
+<importantRules>
+1. 严格禁止循环依赖（如 Input1.value 不能绑定到 Query1.params.id，同时 Query1.response 又绑定到 Input1.value） 
+2. 组件属性值来源优先级：请求响应 > 其他组件状态 > 常量
+3. 请求参数值来源优先级：组件状态 > 其他请求响应 > 常量
+</importantRules>
 
 <example>
 \`\`\`json
 {
   "weights": {
-    "chart1": {
-      "values": "{{ query2.response.chartDatas[0].value }}"
-    },
-    "table1": {
-      "loading": "{{ Query3.loading }}",
-      "dataSource": "{{ Query3.response.data.taskList }}"
-    },
-    "select3": {
-      "options": "{{ Query4.response.statusList }}"
-    }
+    "Table1":{"dataSource":"{{ GetStudents.response.list }}","loading":"{{ GetStudents.loading }}"},
   },
   "querys": {
-    "Query1": {
-      "params": {
-        "bookId": "{{ BookIdInput1.value }}"
-      }
-    },
-    "query2": {
-      "body": {
-        "bookId": "{{ BookIdInput5.value }}",
-        "name": "{{ BookNameInput2.value }}",
-        "author": "{{ BookAuthorSelect3.value }}"
-      }
-    },
-    "Query3": {
-      "url": "https://api.example.com/api/v1/car/{{ carIdInput1.value }}/delete",
-      "headers": {
-        "token": "{{ TokenInput1.value }}"
-      }
-    }
+    "GetStudents": {"params":{"keyword":"{{ SearchInput1.value }}","page":"{{ Table1.currentPage }}"}},
+    "SubmitForm": {"body":{"name":"{{ FormInput1.value }}","age":"{{ FormNumberInput1.value }}"}}
   }
 }
 \`\`\`
 </example>
 
 <output>
-1. 输出合法的 json，不允许包含解释
-2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`结尾
-4. 尽可能的减少 json 中的缩进和换行
-</output>
+ 1. 输出严格符合单向数据流原则的合法JSON
+ 2. 确保无循环依赖和反向绑定
+ 3. 组件属性只能依赖：请求响应、其他组件状态、常量
+ 4. 请求参数只能依赖：组件状态、其他请求响应、常量
+ 5. 使用\`\`\`json和\`\`\`包裹输出，最小化缩进和换行
+ </output>
 `

@@ -120,10 +120,18 @@ type IOutput = Record<WeightName, IWeight>;
 \`\`\`
 </outputDefinition>
 
+<example>
+\`\`\`json
+{
+  "Container1":{"type":"Container","parent":"Page1","layout":{"x":0,"width":24,"heightMode":"auto","y":0,"height":16,"marginX":1,"marginY":1,"paddingX":1,"paddingY":1},"style":{"backgroundColor":"#000","borderRadius":"0","border":"0"}},
+  "Button1":{"type":"Button","parent":"Container1","layout":{"x":0,"width":2,"y":0,"height":5},"style":{}}
+}
+\`\`\`
+</example>
+
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`结尾
-4. 尽可能的减少 json 中的缩进和换行
+3. 使用\`\`\`json和\`\`\`包裹输出，最小化缩进和换行
 </output>
 `

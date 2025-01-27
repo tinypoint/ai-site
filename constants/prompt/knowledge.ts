@@ -72,6 +72,12 @@ export const knowledge = `<brandKnowledge>
     12. Table 作为特殊的容器组件，其子组件只能是 TableActionButton 类型的，TableActionButton的子组件将会被放置在表格的最右侧的操作列中
     13. Table 最多只能拥有一个操作列，操作列中可以放置多个 TableActionButton 组件
     14. Tabs 作为特殊的容器组件，其子组件只能是 TabPane 类型的，TabPane 将作为每个标签的容器使用
+8. AI SITE 的数据关联
+    1. AI SITE 中通过表达式语法，进行组件于请求，组件与组件，请求与请求之间的数据关联
+    2. 表达式语法为双花括号包裹的javascript表达式，比如 {{ Input1.value }} {{ Query1.data.list }}，javascript的版本需要为 es5 版本已获得更好的兼容性
+    3. 明确数据流向应为【组件 -> 请求参数】和【请求响应 -> 组件属性】
+    4. 严格遵循单向数据流原则生成表达式：
+       - 组件的属性值只能来自：常量、其他组件状态、请求响应数据
 </brandKnowledge>`
 
 

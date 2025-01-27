@@ -173,8 +173,8 @@ type IOutput = Record<WeightName, IWeightEvents>;
 <example>
 \`\`\`json
 {
-  "button1": {"onClick":{"nodes":[{"id":"start","type":"start","outputHandle":["next"]},{"id":"controlComponent1","type":"controlComponent","options":{"weightName":"modal1","method":"open"},"inputHandle":["trigger"],"outputHandle":["next"]},{"id":"toast1","type":"toast","options":{"message":"按钮打开 Modal 成功","duration":1000},"inputHandle":["trigger"],"outputHandle":["next"]}],"edges":[{"source":{"id":"start","outputHandle":"next"},"target":{"id":"controlComponent1","inputHandle":"trigger"}},{"source":{"id":"controlComponent1","outputHandle":"next"},"target":{"id":"toast1","inputHandle":"trigger"}}]}},
-  "modal1": {"onClose":{"nodes":[{"id":"start","type":"start","outputHandle":["next"]},{"id":"toast1","type":"toast","options":{"message":"点击了取消","duration":1000},"inputHandle":["trigger"],"outputHandle":["next"]},{"id":"controlComponent1","type":"controlComponent","options":{"weightName":"modal1","method":"close"},"inputHandle":["trigger"],"outputHandle":["next"]}],"edges":[{"source":{"id":"start","outputHandle":"next"},"target":{"id":"controlComponent1","inputHandle":"trigger"}},{"source":{"id":"controlComponent1","outputHandle":"next"},"target":{"id":"toast1","inputHandle":"trigger"}}]}}
+  "button1":{"onClick":{"nodes":[{"id":"start","type":"start","outputHandle":["next"]},{"id":"controlComponent1","type":"controlComponent","options":{"weightName":"modal1","method":"open"},"inputHandle":["trigger"],"outputHandle":["next"]},{"id":"toast1","type":"toast","options":{"message":"按钮打开 Modal 成功","duration":1000},"inputHandle":["trigger"],"outputHandle":["next"]}],"edges":[{"source":{"id":"start","outputHandle":"next"},"target":{"id":"controlComponent1","inputHandle":"trigger"}},{"source":{"id":"controlComponent1","outputHandle":"next"},"target":{"id":"toast1","inputHandle":"trigger"}}]}},
+  "modal1":{"onClose":{"nodes":[{"id":"start","type":"start","outputHandle":["next"]},{"id":"toast1","type":"toast","options":{"message":"点击了取消","duration":1000},"inputHandle":["trigger"],"outputHandle":["next"]},{"id":"controlComponent1","type":"controlComponent","options":{"weightName":"modal1","method":"close"},"inputHandle":["trigger"],"outputHandle":["next"]}],"edges":[{"source":{"id":"start","outputHandle":"next"},"target":{"id":"controlComponent1","inputHandle":"trigger"}},{"source":{"id":"controlComponent1","outputHandle":"next"},"target":{"id":"toast1","inputHandle":"trigger"}}]}}
 }
 \`\`\`
 </example>
@@ -182,7 +182,6 @@ type IOutput = Record<WeightName, IWeightEvents>;
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`结尾
-4. 尽可能的减少 json 中的缩进和换行
+3. 使用\`\`\`json和\`\`\`包裹输出，最小化缩进和换行
 </output>
 `

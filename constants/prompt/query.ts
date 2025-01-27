@@ -55,11 +55,19 @@ type IOutput = Record<IQueryName, IQuery>
 \`\`\`
 </outputDefinition>
 
+<example>
+\`\`\`json
+{
+  "queryName1":{"url":"https://api.example.com/data","method":"GET","params":{"page":1,"pageSize": 10}},
+  "queryName2":{"url":"https://api.example.com/data","method":"POST","body":{"name":"test","age":18}}
+}
+\`\`\`
+</example>
+
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`结尾
-4. 尽可能的减少 json 中的缩进和换行
+3. 使用\`\`\`json和\`\`\`包裹输出，最小化缩进和换行
 </output>
 `;
 
@@ -76,41 +84,9 @@ export const queryMockResponsePrompt = `${knowledge}
 <example>
 \`\`\`json
 {
-  "queryName1": {
-    "response": {
-      "statusCode": 0,
-      "data": {
-        "taskList": [
-          {
-            "taskId": "1",
-            "taskName": "test",
-            "taskStatus": "1"
-          },
-          {
-            "taskId": "2",
-            "taskName": "test2",
-            "taskStatus": "2"
-          }
-        ]
-      }
-    }
-  },
-  "queryName2": {
-    "response": {
-      "status_code": 0,
-      "msg": "删除成功"
-    }
-  },
-  "queryName3": {
-    "response": {
-      "code": 200,
-      "bookDetail": {
-        "bookId": "1",
-        "bookName": "test",
-        "bookPrice": 18
-      }
-    }
-  }
+  "queryName1":{"response":{"statusCode":0,"data":{"taskList":[{"taskId":"1","taskName":"test","taskStatus":"1"},{"taskId":"2","taskName":"test2","taskStatus":"2"}]}}},
+  "queryName2":{"response":{"statusCode":0,"msg":"删除成功"}}
+  "queryName3":{"response":{"code":200,"bookDetail":{"bookId":"1","bookName":"test","bookPrice":18}}}
 }
 \`\`\`
 </example>
@@ -131,7 +107,6 @@ type IOutput = Record<IQueryName, IQueryMockResponse>
 <output>
 1. 输出合法的 json，不允许包含解释
 2. 输出需要符合上方IOutput的类型定义
-3. 输出以\`\`\`json开头，以\`\`\`结尾
-4. 尽可能的减少 json 中的缩进和换行
+3. 使用\`\`\`json和\`\`\`包裹输出，最小化缩进和换行
 </output>
 `;
