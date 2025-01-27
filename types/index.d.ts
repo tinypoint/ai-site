@@ -9,16 +9,15 @@ export interface IWeightLayout {
   width: number;
   y: number;
   height: number;
+  heightMode: 'auto' | 'fixed';
 }
 
 export interface IWeightLayoutForRender extends IWeightLayout {
-  heightMode: 'auto' | 'fixed';
   gridRow: number;
   yToRow: number;
 }
 
 export interface IContainerWeightLayoutForRender extends IWeightLayout {
-  heightMode: 'auto' | 'fixed';
   gridRow: number;
   yToRow: number;
   marginX: number;
@@ -42,8 +41,6 @@ export interface IWeightTreeNode extends IWeight {
   name: string;
   children?: IWeightTreeNode[];
 }
-
-export type IBaseSchema = Record<IWeightName, Pick<IWeight, 'type' | 'parent'>>;
 
 export type ISchemaProps = Record<IWeightName, Pick<IWeight, 'props'>>;
 
@@ -72,6 +69,7 @@ export type IQuery = {
   headers?: Record<string, string>;
   body?: Record<string, string>;
   cookies?: Record<string, string>;
+  params?: Record<string, string>;
   response?: any;
 }
 

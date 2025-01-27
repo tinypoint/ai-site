@@ -1,5 +1,5 @@
 import React from 'react';
-import { IWeightLayoutForRender, IContainerWeightLayoutForRender } from '@/types';
+import { IWeightLayoutForRender, IContainerWeightLayoutForRender, IWeightStyle } from '@/types';
 import clsx from 'clsx';
 
 export const AISiteLayoutSystemContainer = ({
@@ -9,7 +9,7 @@ export const AISiteLayoutSystemContainer = ({
   layout,
 }: {
   weightType: string,
-  style?: React.CSSProperties,
+  style?: IWeightStyle,
   children: React.ReactNode,
   layout: IContainerWeightLayoutForRender,
 }) => {
@@ -105,7 +105,7 @@ export const LayoutContainerContent = ({
   layout,
 }: {
   weightType: string,
-  style?: React.CSSProperties,
+  style?: IWeightStyle,
   children: React.ReactNode,
   layout: IContainerWeightLayoutForRender,
 }) => {
@@ -145,7 +145,7 @@ export const AISiteLayoutSystemItem = (
     weightType?: string,
     layout: IWeightLayoutForRender,
     children: React.ReactNode,
-    style?: React.CSSProperties,
+    style?: IWeightStyle,
     className?: string,
   }) => {
   const {

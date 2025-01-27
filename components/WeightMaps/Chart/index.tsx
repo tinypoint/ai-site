@@ -1,12 +1,12 @@
 import { AISiteLayoutSystemItem } from "@/components/LayoutSystem"
-import { IWeightLayout } from "@/types"
+import { IWeightLayoutForRender, IWeightStyle } from "@/types"
 
 export const WeightChart = ({
   layout,
   style
 }: {
-  layout: IWeightLayout
-  style: React.CSSProperties
+  layout: IWeightLayoutForRender
+  style: IWeightStyle
 }) => {
   return (
     <AISiteLayoutSystemItem

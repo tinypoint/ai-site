@@ -9,6 +9,7 @@ interface LowCodeState {
   callWeightMethod: (method: string, ...args: any[]) => void;
   updateExpressionContext: (name: string, state: any) => void;
   getExpressionContext: (name: string) => any;
+  getAllExpressionContext: () => any;
 }
 
 const useLowCodeStore = create<LowCodeState>((set, get) => ({
@@ -33,6 +34,9 @@ const useLowCodeStore = create<LowCodeState>((set, get) => ({
   },
   getExpressionContext: (name: string) => {
     return get().expressionContext[name];
+  },
+  getAllExpressionContext: () => {
+    return get().expressionContext;
   }
 }));
 

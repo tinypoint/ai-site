@@ -1,29 +1,43 @@
 "use client"
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { llmJsonParse, transformWeightsMapToTree } from '@/utils';
-import { IFinalData, IWeight, IWeightLayout, IWeightLayoutForRender, IWeightTreeNode, Message } from '@/types';
+import { IFinalData, IQuerys, IWeight, IWeightLayoutForRender, IWeightTreeNode, Message } from '@/types';
 import { weightMaps } from './WeightMaps';
 import { createEventHandlers } from '@/utils/event';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
 import { parseObjectExpressions } from '@/utils/expression';
 import { ReplyOptions, Vessel, VesselMessage } from '@opensea/vessel';
 
-const ComponentWrapper = (context: { component: React.ComponentType<any>, node: IWeight, name: string, children: React.ReactNode }) => {
-  const { component: Component, node, name, children } = context;
+const ComponentWrapper = (context: {
+  component: React.ComponentType<any>,
+  node: IWeight,
+  name: string,
+  children: React.ReactNode,
+  querys: IQuerys
+}) => {
+  const { component: Component, node, name, children, querys } = context;
   const { layout, style, props = {}, events } = node;
 
   const expressionContext = useLowCodeStore(state => state.expressionContext);
   const callWeightMethod = useLowCodeStore(state => state.callWeightMethod);
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
   const getExpressionContext = useLowCodeStore(state => state.getExpressionContext);
-  const eventHandlers = createEventHandlers(events || {}, callWeightMethod, updateExpressionContext, getExpressionContext);
+  const getAllExpressionContext = useLowCodeStore(state => state.getAllExpressionContext);
+  const eventHandlers = createEventHandlers(
+    events || {},
+    querys,
+    callWeightMethod,
+    updateExpressionContext,
+    getExpressionContext,
+    getAllExpressionContext
+  );
 
   const parsedProps = parseObjectExpressions(props, expressionContext);
 
   if (name.startsWith('Table')) {
     // console.log('expressionContext', expressionContext)
     // console.log(name, 'props', props)
-    console.log(name, 'parsedProps', parsedProps)
+    // console.log(name, 'parsedProps', parsedProps)
   }
 
   return (
@@ -149,7 +163,13 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
       return currentLayout || prevLayout;
     }, undefined);
     return (
-      <ComponentWrapper component={Component} node={node} name={name} key={name}>
+      <ComponentWrapper
+        component={Component}
+        node={node}
+        name={name}
+        key={name}
+        querys={querys}
+      >
         {(children || []).map(renderComponent)}
       </ComponentWrapper>
     );

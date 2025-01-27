@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/pagination"
 import { useMemo } from "react";
 import { LoaderCircle } from "lucide-react";
+import { IWeightStyle } from "@/types";
 
 interface IColumn {
   dataIndex: string;
@@ -37,7 +38,7 @@ interface DataTableProps {
   columns: IColumn[];
   dataSource: any[];
   loading?: boolean;
-  style?: React.CSSProperties;
+  style?: IWeightStyle;
   children?: React.ReactNode;
 }
 

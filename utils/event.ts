@@ -1,6 +1,8 @@
 
 
+import { IQuerys } from "@/types";
 import { toast } from "sonner"
+import { parseObjectExpressions } from "./expression";
 
 interface Node {
   id: string;
@@ -28,9 +30,11 @@ interface EventData {
 
 export function createEventHandlers(
   eventObject: { [key: string]: EventData },
+  querys: IQuerys,
   callWeightMethod: (method: string, ...args: any[]) => void,
   updateState: (name: string, state: any) => void,
   getExpressionContext: (name: string) => any,
+  getAllExpressionContext: () => any,
 ) {
   const handlers: { [key: string]: () => void } = {};
 
@@ -50,11 +54,23 @@ export function createEventHandlers(
         case 'executeQuery':
           // Execute query logic
 
+          const query = querys[node.options.queryName]
+          if (!query) {
+            console.warn(`Query not found: ${node.options.queryName}`);
+            return;
+          }
 
+
+
+          const expressionContexts = getAllExpressionContext()
+          if (query.method?.toLowerCase() === 'get') {
+            const params = parseObjectExpressions(query.params || {}, expressionContexts)
+            // console.log('params', params)
+          }
 
           const expressionContext = { ...(getExpressionContext(node.options.queryName) || {}) };
-          console.log(`Executing query: ${node.options.queryName}`, expressionContext);
-
+          // console.log(`Executing query: ${node.options.queryName}`, expressionContext);
+          // console.log('query', query)
           updateState(node.options.queryName, {
             ...expressionContext,
             loading: true,
@@ -71,10 +87,10 @@ export function createEventHandlers(
             }).then(response => response.json()).then(data => {
               console.log('response', data);
             }).catch(error => {
-              console.log('Error fetching data:', error);
+              // console.log('Error fetching data:', error);
             });
           } catch (error) {
-            console.log('Error fetching data:', error);
+            // console.log('Error fetching data:', error);
           }
 
           setTimeout(() => {
@@ -83,11 +99,11 @@ export function createEventHandlers(
               loading: false,
               response: expressionContext.mockResponse,
             });
-            console.log({
-              ...expressionContext,
-              loading: false,
-              response: expressionContext.mockResponse,
-            });
+            // console.log({
+            //   ...expressionContext,
+            //   loading: false,
+            //   response: expressionContext.mockResponse,
+            // });
           }, 1000);
           break;
         case 'setComponentProps':

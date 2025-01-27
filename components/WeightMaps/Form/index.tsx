@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
@@ -28,16 +28,17 @@ import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react";
 import { useForm, useFormContext } from "react-hook-form"
 import { z } from "zod"
-import { AISiteLayoutSystemContainer, LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
+import { LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
-import { IContainerWeightLayoutForRender, IWeightLayoutForRender } from '@/types';
+import { IContainerWeightLayoutForRender, IWeightStyle } from '@/types';
+import { debounce } from 'lodash-es';
 
 type FormWeightProps = {
   name: string;
   eventHandlers: any;
   children: React.ReactNode;
   layout: IContainerWeightLayoutForRender;
-  style: React.CSSProperties;
+  style: IWeightStyle;
   [key: string]: any;
 }
 
@@ -78,7 +79,6 @@ export const WeightForm = ({ name, eventHandlers, children, layout, style }: For
     <LayoutContainerPosition
       weightType='Form'
       layout={layout}
-      style={style}
     >
       <Form {...form}>
         <form
@@ -121,6 +121,19 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, s
   )
 }
 export const WeightInput = ({ name, label, layout, placeholder, style, eventHandlers }: FormWeightProps) => {
+
+  const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
+  const getExpressionContext = useLowCodeStore(state => state.getExpressionContext);
+
+  const debounceOnChange = useMemo(() => {
+    return debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value
+      const oldExpressionContext = getExpressionContext(name)
+      updateExpressionContext(name, { ...oldExpressionContext, value })
+      eventHandlers.onChange && eventHandlers.onChange(value)
+    }, 500)
+
+  }, [eventHandlers.onChange])
   return (
     <AISiteLayoutSystemItem weightType='Input' layout={layout}>
       <div className="flex w-full items-center space-x-2">
@@ -129,7 +142,7 @@ export const WeightInput = ({ name, label, layout, placeholder, style, eventHand
           id={name}
           placeholder={placeholder}
           className='grow-[3] basis-9/12 text-sm'
-          onChange={eventHandlers.onChange}
+          onChange={debounceOnChange}
         />
       </div>
     </AISiteLayoutSystemItem>
@@ -211,11 +224,18 @@ export const WeightFormSelect = ({ name, placeholder, fieldName, label, options,
   )
 }
 export const WeightSelect = ({ name, placeholder, label, options, layout, style, eventHandlers }: FormWeightProps) => {
+  const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
+  const getExpressionContext = useLowCodeStore(state => state.getExpressionContext);
+  const onValueChange = (value: string) => {
+    const oldExpressionContext = getExpressionContext(name)
+    updateExpressionContext(name, { ...oldExpressionContext, value })
+    eventHandlers.onChange && eventHandlers.onChange(value)
+  }
   return (
     <AISiteLayoutSystemItem weightType='Select' layout={layout}>
       <div className="flex w-full items-center space-x-2">
         <Label htmlFor={name} className='grow-[1] basis-3/12 shrink-0'>{label}</Label>
-        <Select onValueChange={eventHandlers.onChange}>
+        <Select onValueChange={onValueChange}>
           <SelectTrigger className="grow-[3] basis-9/12">
             <SelectValue id={name} placeholder={placeholder} />
           </SelectTrigger>
