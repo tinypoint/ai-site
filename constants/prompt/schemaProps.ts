@@ -49,13 +49,13 @@ interface ITableProps {
 
 interface IButtonProps {
   text: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?: "default" | "destructive" | "outline" | "ghost" | "link";
   disabled?: boolean;
 }
 
 interface ITableActionButtonProps {
   text: string;
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?: "default" | "destructive" | "outline" | "ghost" | "link";
   disabled?: boolean;
 }
 
@@ -63,11 +63,13 @@ interface IFormInputProps {
   label: string;
   fieldName: string;
   placeholder: string;
+  disabled?: boolean;
 }
 
 interface IInputProps {
   label: string;
   placeholder: string;
+  disabled?: boolean;
 }
 
 interface ITextProps {
@@ -79,60 +81,72 @@ interface IFormSelectProps {
   fieldName: string;
   placeholder: string;
   options: { label: string; value: string }[];
+  disabled?: boolean;
 }
 
 interface ISelectProps {
   label: string;
   placeholder: string;
   options: { label: string; value: string }[];
+  disabled?: boolean;
 }
 
 interface IFormRadioListProps {
   label: string;
   fieldName: string;
   options: { label: string; value: string }[];
+  disabled?: boolean;
 }
 
 interface ICheckboxProps {
   label: string;
+  disabled?: boolean;
 }
 
 interface IFormCheckboxProps {
   label: string;
   fieldName: string;
+  disabled?: boolean;
 }
 
 interface IRadioListProps {
   label: string;
   options: { label: string; value: string }[];
+  disabled?: boolean;
 }
 
 interface IFormSwitchProps {
   label: string;
   fieldName: string;
+  disabled?: boolean;
 }
 
 interface ISwitchProps {
   label: string;
+  disabled?: boolean;
 }
 
 interface IFormSliderProps {
   label: string;
   fieldName: string;
+  disabled?: boolean;
 }
 
 interface ISliderProps {
   label: string;
+  disabled?: boolean;
 }
 
 interface IFormDatePickerProps {
   label: string;
   fieldName: string;
+  disabled?: boolean;
   type: 'date' | 'datetime' | 'time' | 'date-range' | 'datetime-range' | 'time-range';
 }
 
 interface IDatePickerProps {
   label: string;
+  disabled?: boolean;
   type: 'date' | 'datetime' | 'time' | 'date-range' | 'datetime-range' | 'time-range';
 }
 

@@ -129,9 +129,11 @@ export const LayoutContainerContent = ({
       }}
     >
       <div
-        className='relative grid w-full auto-rows-max'
+        className={clsx('relative grid w-full', {
+          'auto-rows-max': heightMode === 'auto',
+        })}
         style={{
-          height: heightMode === 'auto' ? 'max-content' : (height ?? 0 + (paddingY ?? 0) * 2) * 8,
+          height: heightMode === 'auto' ? undefined : (height ?? 0 + (paddingY ?? 0) * 2) * 8,
         }}
       >
         {children}

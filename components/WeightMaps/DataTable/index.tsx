@@ -81,7 +81,7 @@ export function DataTable({
   })
 
   return (
-    <div className="w-full flex flex-col" style={style}>
+    <div className="w-full h-full flex flex-col" style={style}>
       <div className="h-0 flex-1">
         <Table className="h-full">
           <TableHeader>

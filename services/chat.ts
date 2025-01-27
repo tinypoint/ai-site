@@ -40,7 +40,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const { messages } = state;
 
     const model = new ChatDeepSeek({
-      model: 'deepseek-reasoner',
+      // model: 'deepseek-reasoner',
       temperature: 1.3,
     });
 

@@ -61,7 +61,7 @@ export const knowledgeold = `<brandKnowledge>
         2. marginX、marginY 基于 8px 倍数，可使用的值为[0, 1, 2]， 分别代表 0px, 8px, 16px
         3. heightMode 可取值为 'fixed' | 'auto'，auto 代表容器允许被子组件撑开，fixed 代表容器高度固定
     3. 子组件自身默认带有 margin: 4px 4px 8px 8px,不需要为子组件设置内边距和外边距
-    4. 在 1920 * 1080 的屏幕分辨率下展示良好
+    4. 在 1440 * 1080 的屏幕分辨率下展示良好
     5. Button、FormInput、 Input、FormSelect、 Select、 FormCheckbox、 Checkbox、FormSwitch、Switch、Switch、FormSlider、Slider、FormDatePicker、DatePicker 的 height 固定为 5，即 40px
     6. FormRadioList、 RadioList 横向模式时， height 固定为 5，即 40px，纵向模式时， height 由选项个数决定
     7. FormTextArea、TextArea 的 height 至少为 10，即 80px，最大为 20，即 160px
@@ -91,7 +91,7 @@ type IWeightType = 'Page' | 'Container' | 'Text' | 'Form' |
 
 export const knowledge = `
 # AI SITE 品牌知识手册
-**版本：v1.2 | 更新日期：2025-01-27 | 适用分辨率：1920*1080**
+**版本：v1.2 | 更新日期：2025-01-27 | 适用分辨率：1440*1080**
 
 ## 一、产品定位
 1. **产品名称**：AI SITE
@@ -122,8 +122,8 @@ export const knowledge = `
 |-------------|----------------------------|--------------------------|
 | **Page**    | 无                         | 根容器，不设布局参数      |
 | **Container** | 任意                     | 支持卡片式样式            |
-| **Form**    | 仅Form*系列组件            | 必须包含提交按钮          |
-| **Table**   | 仅TableActionButton        | 表格列由表格属性声明，表格行操作按钮由TableActionButton组件声明，TableActionButton存在时，表格需要生成操作列           |
+| **Form**    | 仅Form*系列组件            | 表单容器，放在弹窗中宽度24栏          |
+| **Table**   | 仅TableActionButton        | 表格列由表格属性声明，表格行操作按钮由TableActionButton组件声明，TableActionButton存在时，表格需要生成操作列，高度至少50，即400px           |
 | **Modal**   | 任意                       | 宽度≥12栏                |
 | **Tabs**    | 仅TabPane                  | 标签页容器                |
 | **Carousel** | 任意                      | 轮播容器                  |
@@ -246,12 +246,12 @@ export const knowledge = `
 - **表格操作列**：表格行操作按钮由TableActionButton组件声明，TableActionButton存在时，表格需要生成操作列，操作列是表格的最后一个列，表格最多只能有一个操作列，操作列中可以放置多个TableActionButton组件
 
 #### 表单设计
-- **布局规则**：控件垂直排列，宽度100%
+- **布局规则**：控件垂直排列，宽度24栏
 - **按钮位置**：底部新行右对齐
 - **只读表单**：如果仅是展示数据，请使用只读(disabled)表单，不需要按钮
 
 #### 模态框设计
-- **层级管理**：不同操作使用独立Modal（如新增/编辑）
+- **层级管理**：不同操作使用独立Modal（如详情/新增/编辑）
 - **关闭事件**：必须配置关闭触发逻辑
 
 ### 4.2 视觉规范

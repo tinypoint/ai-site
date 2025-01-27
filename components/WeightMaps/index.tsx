@@ -61,7 +61,14 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     )
   },
 
-  Button: ({ name, text, layout, style, eventHandlers, variant, htmlType }) => {
+  Button: ({
+    name,
+    text,
+    layout,
+    style,
+    eventHandlers,
+    variant
+  }) => {
     return (
       <AISiteLayoutSystemItem weightType='Button' layout={layout} className='items-center'>
         <Button
@@ -75,12 +82,20 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       </AISiteLayoutSystemItem>
     )
   },
-  TableActionButton: ({ name, text, layout, style, eventHandlers }) => {
+  TableActionButton: ({
+    name,
+    text,
+    layout,
+    style,
+    eventHandlers,
+    variant,
+  }) => {
     return (
       <Button
         size="sm"
         onClick={eventHandlers.onClick || undefined}
         style={style}
+        variant={variant}
       >
         {text}
       </Button>
@@ -134,16 +149,29 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
   },
   Table: ({ children, layout, style, columns, dataSource, loading }) => {
     return (
-      <AISiteLayoutSystemItem weightType='Table' layout={layout} style={style}>
-        <DataTable
-          dataSource={dataSource}
-          columns={columns}
-          loading={loading}
+      <LayoutContainerPosition
+        weightType="Table"
+        layout={layout}
+      >
+        <LayoutContainerContent
+          weightType="Table"
+          layout={{
+            ...(layout || {}),
+            heightMode: 'fixed'
+          }}
           style={style}
         >
-          {children}
-        </DataTable>
-      </AISiteLayoutSystemItem>
+          <DataTable
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            // style={style}
+          >
+            {children}
+          </DataTable>
+        </LayoutContainerContent>
+
+      </LayoutContainerPosition>
     )
   },
   Form: WeightForm,

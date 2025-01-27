@@ -74,7 +74,7 @@ export default function AIEditorPage() {
 
   return (
     <div className='h-screen w-screen p-4 bg-gray-100'>
-      <div className="w-full h-full border rounded-md shadow-md overflow-hidden">
+      <div className="mx-auto w-full max-w-[1440px] h-full border rounded-md shadow-md overflow-hidden">
         <div className="h-8 w-full bg-white p-2 bg-gray-200 flex">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>

@@ -124,7 +124,12 @@ export function createEventHandlers(
       }
 
       // Find and execute next nodes
-      (eventData.edges || []).filter(edge => edge.source.id === nodeId && edge.source.outputHandle === 'next')
+      (eventData.edges || []).filter(edge => {
+        return edge.source.id === nodeId && (
+          edge.source.outputHandle === 'next' ||
+          edge.source.outputHandle === 'success'
+        )
+      })
         .forEach(edge => executeNode(edge.target.id));
     };
 
