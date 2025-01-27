@@ -61,13 +61,14 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     )
   },
 
-  Button: ({ name, text, layout, style, eventHandlers, htmlType }) => {
+  Button: ({ name, text, layout, style, eventHandlers, variant, htmlType }) => {
     return (
       <AISiteLayoutSystemItem weightType='Button' layout={layout} className='items-center'>
         <Button
           className='flex-1 w-0'
           onClick={eventHandlers.onClick || undefined}
           style={style}
+          variant={variant}
         >
           {text}
         </Button>

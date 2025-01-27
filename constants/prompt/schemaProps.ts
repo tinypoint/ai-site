@@ -49,10 +49,14 @@ interface ITableProps {
 
 interface IButtonProps {
   text: string;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  disabled?: boolean;
 }
 
 interface ITableActionButtonProps {
   text: string;
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  disabled?: boolean;
 }
 
 interface IFormInputProps {

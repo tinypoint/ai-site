@@ -98,7 +98,7 @@ export const WeightForm = ({ name, eventHandlers, children, layout, style }: For
     </LayoutContainerPosition>
   )
 }
-export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, style }: FormWeightProps) => {
+export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, style, disabled }: FormWeightProps) => {
   const form = useFormContext()
   return (
     <AISiteLayoutSystemItem weightType='FormInput' layout={layout}>
@@ -110,7 +110,7 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, s
             <FormItem className="flex w-full items-center space-x-2 space-y-0">
               <FormLabel className='grow-[1] basis-3/12 shrink-0'>{label}</FormLabel>
               <FormControl>
-                <Input className="grow-[3] basis-9/12 text-sm" placeholder={placeholder}  {...field} value={field.value || ''} />
+                <Input className="grow-[3] basis-9/12 text-sm" placeholder={placeholder}  {...field} value={field.value || ''} disabled={disabled} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,7 +120,7 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, s
     </AISiteLayoutSystemItem>
   )
 }
-export const WeightInput = ({ name, label, layout, placeholder, style, eventHandlers }: FormWeightProps) => {
+export const WeightInput = ({ name, label, layout, placeholder, style, eventHandlers, disabled }: FormWeightProps) => {
 
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
   const getExpressionContext = useLowCodeStore(state => state.getExpressionContext);
@@ -143,6 +143,7 @@ export const WeightInput = ({ name, label, layout, placeholder, style, eventHand
           placeholder={placeholder}
           className='grow-[3] basis-9/12 text-sm'
           onChange={debounceOnChange}
+          disabled={disabled}
         />
       </div>
     </AISiteLayoutSystemItem>

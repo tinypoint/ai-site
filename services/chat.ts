@@ -2,8 +2,8 @@ import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from "@langchain/
 import { ChatDeepSeek } from "@/services/common/deepseek";
 import { schemaPropsPrompt } from "@/constants/prompt/schemaProps";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
-import { llmJsonParse, mergeObjects } from "@/utils";
-import type { ISchemaProps, ISchemaLayout, IFinalSchema, ISchemaEvents, ISchemaExpressions, IQuerys, IQueryMockResponse } from "@/types";
+import { llmJsonParse } from "@/utils";
+import type { ISchemaProps, ISchemaLayout, ISchemaEvents, ISchemaExpressions, IQuerys, IQueryMockResponse } from "@/types";
 import { planPrompt } from "@/constants/prompt/plan";
 import { Annotation, END, START, StateGraph } from "@langchain/langgraph";
 import { queryMockResponsePrompt, queryPrompt } from "@/constants/prompt/query";
@@ -40,19 +40,23 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const { messages } = state;
 
     const model = new ChatDeepSeek({
+      model: 'deepseek-reasoner',
       temperature: 1.3,
     });
 
     const stream = model.stream([
       new SystemMessage(planPrompt),
       ...messages,
+      new AIMessage('好的'),
       new HumanMessage('现在进行步骤一：生成站点的总体规划，作为后续的步骤的指导')
     ]);
 
     let sitePlan = '';
     for await (const chunk of await stream) {
-      sitePlan += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'plan', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        sitePlan += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'plan', data: chunk.content })}\n\n`));
+      }
     }
 
     return {
@@ -77,8 +81,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'querys' }) })}\n\n`));
     let querys = '';
     for await (const chunk of await stream) {
-      querys += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'querys', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        querys += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'querys', data: chunk.content })}\n\n`));
+      }
     }
     const querysJSON = llmJsonParse(querys);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'querys' }) })}\n\n`));
@@ -106,8 +112,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaLayouts' }) })}\n\n`));
     let schemaLayouts = '';
     for await (const chunk of await stream) {
-      schemaLayouts += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaLayouts', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        schemaLayouts += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaLayouts', data: chunk.content })}\n\n`));
+      }
     }
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaLayouts' }) })}\n\n`));
     const schemaLayoutsJSON = llmJsonParse(schemaLayouts);
@@ -141,9 +149,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       queryMockResponseJSON: {}
     });
 
-    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinal })}\n\n`));
+    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
+    const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
 
     return {
       schemaLayouts,
@@ -173,8 +181,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaProps' }) })}\n\n`));
     let schemaProps = '';
     for await (const chunk of await stream) {
-      schemaProps += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaProps', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        schemaProps += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaProps', data: chunk.content })}\n\n`));
+      }
     }
 
     const schemaPropsJSON = llmJsonParse(schemaProps);
@@ -190,9 +200,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       queryMockResponseJSON: {}
     });
 
-    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinal })}\n\n`));
+    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
+    const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
 
     return {
       schemaProps,
@@ -222,8 +232,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'queryMockResponse' }) })}\n\n`));
     for await (const chunk of await stream) {
-      queryMockResponse += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'queryMockResponse', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        queryMockResponse += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'queryMockResponse', data: chunk.content })}\n\n`));
+      }
     }
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'queryMockResponse' }) })}\n\n`));
 
@@ -253,8 +265,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaEvents' }) })}\n\n`));
     let schemaEvents = '';
     for await (const chunk of await stream) {
-      schemaEvents += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaEvents', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        schemaEvents += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaEvents', data: chunk.content })}\n\n`));
+      }
     }
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaEvents' }) })}\n\n`));
@@ -290,9 +304,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       queryMockResponseJSON,
     });
 
-    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinal })}\n\n`));
+    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
+    const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
 
     return {
       schemaEvents,
@@ -323,8 +337,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaExpressions' }) })}\n\n`));
     let schemaExpressions = '';
     for await (const chunk of await stream) {
-      schemaExpressions += chunk.content;
-      writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaExpressions', data: chunk.content })}\n\n`));
+      if (chunk.content) {
+        schemaExpressions += chunk.content;
+        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaExpressions', data: chunk.content })}\n\n`));
+      }
     }
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaExpressions' }) })}\n\n`));
@@ -339,9 +355,9 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       queryMockResponseJSON
     });
 
-    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinal })}\n\n`));
+    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
+    const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
 
     return {
       schemaExpressions,

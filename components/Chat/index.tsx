@@ -78,6 +78,10 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
 
   const toggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    if (isOpen) {
+      setIsOpenTemp(false)
+    }
+
     setIsOpen(!isOpen);
   }
 
@@ -129,6 +133,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
         const reader = response.body!.getReader();
         await parseStreamResponse(reader);
 
+        setIsOpen(false)
         refreshPreview()
 
         const lastAIMessage = getLastAIMessage();
@@ -160,7 +165,10 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
       setMessages(() => {
         return [];
       });
-      setInput('学生列表查询页');
+      if (inputRef.current) {
+        inputRef.current.value = '学生列表管理页';
+      }
+      setInput('学生列表管理页');
     } catch (error) {
       toast('Failed to reset messages');
     }
@@ -168,9 +176,9 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.value = '学生列表查询页';
+      inputRef.current.value = '学生列表管理页';
     }
-    setInput('学生列表查询页');
+    setInput('学生列表管理页');
   }, []);
 
   useEffect(() => {
