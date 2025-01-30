@@ -60,11 +60,18 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
 
+
+  const { siteLayout = {}, routes = [] } = useMemo(() => {
+    const parsedData = llmJsonParse(lastAIMessage?.artifact?.navigation || '{}');
+    return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalData : {} as IFinalData;
+  }, [lastAIMessage?.artifact?.navigation])
+
   const data: IFinalData = useMemo(() => {
     const parsedData = llmJsonParse(lastAIMessage?.artifact?.finalJSON || '{}');
     return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalData : {} as IFinalData;
   }, [lastAIMessage?.artifact?.finalJSON]);
   const { weights = {}, querys = {} } = data;
+
 
   useEffect(() => {
     if (!vessel.current) {
@@ -113,6 +120,12 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   }, [querys]);
 
+
+
+  const root = useMemo(() => transformWeightsMapToTree(siteLayout), [siteLayout]);
+  useEffect(() => {
+    updateExpressionContext('routes', routes)
+  }, [routes])
   const rootWeight = useMemo(() => transformWeightsMapToTree(weights), [weights]);
 
   const renderComponent = (node: IWeightTreeNode): React.ReactNode => {
@@ -135,9 +148,14 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   return (
     <div className="low-code-renderer">
-      {rootWeight && renderComponent(rootWeight)}
+      {root && renderComponent(root)}
     </div>
-  );
+  )
+  // return (
+  //   <div className="low-code-renderer">
+  //     {rootWeight && renderComponent(rootWeight)}
+  //   </div>
+  // );
 };
 
 export default LowCodeRenderer; 

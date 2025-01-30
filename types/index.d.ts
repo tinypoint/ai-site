@@ -83,6 +83,7 @@ export interface AIMessage {
     schemaProps?: string;
     schemaLayouts?: string;
     finalJSON?: string;
+    navigation?: string;
   };
   progress?: {
     runningSteps: string[];

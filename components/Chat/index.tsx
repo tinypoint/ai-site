@@ -29,8 +29,10 @@ import ReactMarkdown from "react-markdown";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 const prompts = [
+  '库存管理系统',
   '仪表盘页面，上方是4个图表，然后是表格操作区，有输入框，选择框，查询按钮，然后下方左侧是表格，右侧是一个表单可以提交数据',
-  '学生列表管理页'
+  '学生列表管理页',
+
 ]
 
 const ChatAiIcons = [
