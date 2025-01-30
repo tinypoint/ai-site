@@ -30,7 +30,7 @@ import { useForm, useFormContext } from "react-hook-form"
 import { z } from "zod"
 import { LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
-import { IContainerWeightLayoutForRender, IWeightStyle } from '@/types';
+import { IContainerWeightLayoutForRender } from '@/types';
 import { debounce } from 'lodash-es';
 
 type FormWeightProps = {
@@ -38,7 +38,6 @@ type FormWeightProps = {
   eventHandlers: any;
   children: React.ReactNode;
   layout: IContainerWeightLayoutForRender;
-  style: IWeightStyle;
   [key: string]: any;
 }
 

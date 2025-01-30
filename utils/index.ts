@@ -45,13 +45,13 @@ export const transformWeightsMapToTree = (weights: Record<string, IWeight>) => {
 
   Object.keys(maps).forEach(key => {
     const weight = maps[key];
-    if (weight.parent) {
-      if (!Array.isArray(maps[weight.parent].children)) {
-        maps[weight.parent].children = [];
+    if (weight.parentId) {
+      if (!Array.isArray(maps[weight.parentId].children)) {
+        maps[weight.parentId].children = [];
       }
-      maps[weight.parent].children?.push(weight);
+      maps[weight.parentId].children?.push(weight);
     }
   });
 
-  return Object.values(maps).find(weight => !weight.parent);
+  return Object.values(maps).find(weight => !weight.parentId);
 }

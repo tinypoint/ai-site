@@ -150,7 +150,7 @@ interface IDatePickerProps {
   type: 'date' | 'datetime' | 'time' | 'date-range' | 'datetime-range' | 'time-range';
 }
 
-type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
+type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数字
 
 type IWeightProps = IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps
     | IInputProps | IButtonProps | ITableActionButtonProps | ISelectProps | ICheckboxProps | IRadioListProps | ISwitchProps

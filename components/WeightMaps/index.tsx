@@ -14,12 +14,12 @@ import {
 import { LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
 import { WeightCheckbox, WeightFormSelect, WeightSelect, WeightFormRadioList, WeightRadioList, WeightFormSwitch, WeightSwitch, WeightFormSlider, WeightSlider, WeightFormDatePicker, WeightDatePicker, WeightForm, WeightFormInput, WeightInput, WeightFormCheckbox } from './Form';
 import { WeightChart } from './Chart';
+import clsx from 'clsx';
 
 type ComponentProps = any;
 
 export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
-  Page: ({ children, eventHandlers, style, layout }) => {
-
+  Page: ({ children, eventHandlers, layout, backgroundColor }) => {
     useEffect(() => {
       eventHandlers.onPageLoad && eventHandlers.onPageLoad();
     }, [children]);
@@ -27,17 +27,14 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     return (
       <LayoutContainerContent
         weightType="Page"
-        style={{
-          ...style,
-          minHeight: '100vh',
-        }}
         layout={layout}
+        className="bg-gray-100 min-h-screen p-2"
       >
         {children}
       </LayoutContainerContent>
     )
   },
-  Container: ({ children, layout, style }) => {
+  Container: ({ children, layout, border, radius }) => {
     return (
       <LayoutContainerPosition
         weightType="Container"
@@ -46,7 +43,12 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         <LayoutContainerContent
           weightType="Container"
           layout={layout}
-          style={style}
+          className={clsx("bg-white p-2", {
+            'border': border,
+            'rounded-sm': radius === 'sm',
+            'rounded-md': radius === 'md',
+            'rounded-lg': radius === 'lg',
+          })}
         >
           {children}
         </LayoutContainerContent>
@@ -131,6 +133,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
 
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogTrigger>open</DialogTrigger>
         <DialogContent className='space-y-0'>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
@@ -147,33 +150,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
 
     )
   },
-  Table: ({ children, layout, style, columns, dataSource, loading }) => {
-    return (
-      <LayoutContainerPosition
-        weightType="Table"
-        layout={layout}
-      >
-        <LayoutContainerContent
-          weightType="Table"
-          layout={{
-            ...(layout || {}),
-            heightMode: 'fixed'
-          }}
-          style={style}
-        >
-          <DataTable
-            dataSource={dataSource}
-            columns={columns}
-            loading={loading}
-            // style={style}
-          >
-            {children}
-          </DataTable>
-        </LayoutContainerContent>
-
-      </LayoutContainerPosition>
-    )
-  },
+  Table: DataTable,
   Form: WeightForm,
   FormInput: WeightFormInput,
   FormCheckbox: WeightFormCheckbox,

@@ -20,10 +20,6 @@ export const AISiteLayoutSystemContainer = ({
     heightMode,
     gridRow,
     yToRow,
-    marginX,
-    marginY,
-    paddingX,
-    paddingY,
   } = layout;
   return (
     <div
@@ -40,16 +36,8 @@ export const AISiteLayoutSystemContainer = ({
       <div
         className='relative grid w-full auto-rows-max'
         style={{
-          marginTop: (marginY ?? 0) * 8,
-          marginBottom: (marginY ?? 0) * 8,
-          marginLeft: (marginX ?? 0) * 8,
-          marginRight: (marginX ?? 0) * 8,
           height: heightMode === 'auto' ? 'max-content' : (height ?? 0) * 8,
           boxSizing: 'content-box',
-          paddingTop: (paddingY ?? 0) * 8,
-          paddingBottom: (paddingY ?? 0) * 8,
-          paddingLeft: (paddingX ?? 0) * 8,
-          paddingRight: (paddingX ?? 0) * 8,
           ...style,
         }}
       >
@@ -74,8 +62,6 @@ export const LayoutContainerPosition = ({
     heightMode,
     gridRow,
     yToRow,
-    marginY,
-    marginX,
   } = layout;
   return (
     <div
@@ -87,10 +73,6 @@ export const LayoutContainerPosition = ({
         marginTop: `${(yToRow) * 8}px`,
         width: `${(width) / 24 * 100}%`,
         gridArea: `${gridRow} / 1 / ${gridRow + 1} / 2`,
-        paddingTop: (marginY ?? 0) * 8,
-        paddingBottom: (marginY ?? 0) * 8,
-        paddingLeft: (marginX ?? 0) * 8,
-        paddingRight: (marginX ?? 0) * 8,
       }}
     >
       {children}
@@ -103,28 +85,24 @@ export const LayoutContainerContent = ({
   style,
   children,
   layout,
+  className,
 }: {
   weightType: string,
   style?: IWeightStyle,
   children: React.ReactNode,
   layout: IContainerWeightLayoutForRender,
+  className?: string,
 }) => {
   const {
     height,
     heightMode,
-    paddingX,
-    paddingY,
   } = layout;
   return (
     <div
       data-ai-site-weight-type={weightType}
       data-ai-site-grid-container={JSON.stringify(layout)}
-      className='w-full'
+      className={clsx('w-full', className)}
       style={{
-        paddingTop: (paddingY ?? 0) * 8,
-        paddingBottom: (paddingY ?? 0) * 8,
-        paddingLeft: (paddingX ?? 0) * 8,
-        paddingRight: (paddingX ?? 0) * 8,
         ...style,
       }}
     >
@@ -133,7 +111,7 @@ export const LayoutContainerContent = ({
           'auto-rows-max': heightMode === 'auto',
         })}
         style={{
-          height: heightMode === 'auto' ? undefined : (height ?? 0 + (paddingY ?? 0) * 2) * 8,
+          height: heightMode === 'auto' ? undefined : (height ?? 0) * 8,
         }}
       >
         {children}

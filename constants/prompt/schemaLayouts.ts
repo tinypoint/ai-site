@@ -1,13 +1,12 @@
-import { knowledge, WeightType } from "./knowledge";
+import { knowledge } from "./knowledge";
 
 export const schemaLayoutPrompt = `${knowledge}
 
 <task>
-1. 深入理解用户的真实需求
-2. 深入理解页面规划中布局的相关信息
-3. 为页面生成组件，指定组件类型和父级
-4. 为每个组件设置合理美观的 layout 和 style
-5. 每类组件可以使用的 style 属性有差别，请严格按照下方定义来生成组件 style
+1. 深入理解用户的真实需求和页面规划中给出的布局建议
+2. 输出json格式的组件映射表，为每个组件设置唯一ID，类型，父级，布局，属性
+3. 确保组件布局符合AI SITE的布局规范
+4. 组件布局属性中width是相对于父组件的宽度的24分栏，而不是相对于屏幕的宽度，这点要格外注意
 </task>
 
 <outputDefinition>
@@ -17,131 +16,160 @@ type GridUnit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 |
 type ColumnSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24;
 type Pixel8Multiplier = number & { __brand: '8px-multiplier' }; // 品牌类型确保只接受8的倍数
 
-type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
+type WeightId = string; // 组件的唯一标识，格式为：英文组件类型加数字
 
-type ContainerLayout = {
+// x + width <= 24
+
+type IPageLayout = {
+  x: 0;
+  width: 24; // full width of screen
+  heightMode: 'auto';
+  y: 0;
+  height: 135; // 1080px
+}
+
+type IContainerLayout = {
   x: GridUnit;
-  width: ColumnSpan;
-  heightMode: 'fixed' | 'auto';
+  width: ColumnSpan; // percent of "parent" width, not percent of screen width, 1 means 1 / 24 of "parent" width, 12 means half of "parent" width, 24 means full width of "parent"
+  heightMode: 'auto' | 'fixed';
   y: Pixel8Multiplier;
   height: Pixel8Multiplier;
-  marginX: Pixel8Multiplier;
-  marginY: Pixel8Multiplier;
-  paddingX: Pixel8Multiplier;
-  paddingY: Pixel8Multiplier;
+}
+
+type IFormLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  heightMode: 'auto' | 'fixed';
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier;
+}
+
+// center of screen
+type IModalLayout = {
+  x: 6; // center of screen
+  width: 12; // half of screen
+  heightMode: 'auto' | 'fixed';
+  y: 22; // 176px
+  height: 60; // 480px
+}
+
+type ITableLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  heightMode: 'auto' | 'fixed';
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // default 50, 400px
+}
+
+type ITableActionButtonLayout = {} // don not need to set layout
+
+type IInputLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // default 5, 40px
+}
+
+type IFormInputLayout = IInputLayout;
+type ISelectLayout = IInputLayout;
+type IFormSelectLayout = IInputLayout;
+type ICheckboxLayout = IInputLayout;
+type IFormCheckboxLayout = IInputLayout;
+type ISwitchLayout = IInputLayout;
+type IFormSwitchLayout = IInputLayout;
+type ISliderLayout = IInputLayout;
+type IFormSliderLayout = IInputLayout;
+type IDatePickerLayout = IInputLayout;
+type IFormDatePickerLayout = IInputLayout;
+
+type ITextAreaLayout = IInputLayout;
+type IFormTextAreaLayout = IInputLayout;
+
+// when option is horizontal
+type IFormRadioListLayout = IInputLayout;
+type IRadioListLayout = IInputLayout;
+
+// when option is vertical, width is 4, height is 40
+type IFormRadioListLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // option count * 5, 1 option height is 5, 2 option height is 10, 3 option height is 15 and so on
 };
 
-type ItemLayout = {
-  x: GridUnit; 
+type IRadioListLayout = {
+  x: GridUnit;
   width: ColumnSpan;
-  y: Pixel8Multiplier; 
-  height: Pixel8Multiplier; 
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // option count * 5, 1 option height is 5, 2 option height is 10, 3 option height is 15 and so on
+};
+
+type IFormTextAreaLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // rows * 5, 1 row height is 5, 2 row height is 10, 3 row height is 15 and so on
+};
+
+type ITextAreaLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // rows * 5, 1 row height is 5, 2 row height is 10, 3 row height is 15 and so on
+};
+
+type IButtonLayout = {
+  x: GridUnit;
+  width: ColumnSpan;
+  y: Pixel8Multiplier;
+  height: Pixel8Multiplier; // default 5, 40px
+};
+
+interface IPageProps {
+  backgroundColor: var(--canvas-bg-color);
 }
 
-type ITableActionButtonLayout = {} // 表格操作列中的按钮的布局类型，不需要设置任何布局
-
-// 容器组件的布局类型是 ContainerLayout
-
-// 除了 TableActionButton 组件的布局类型是 TableActionButtonLayout，其他的非容器组件的布局类型都是 ItemLayout
-
-type IWeightLayout = IContainerLayout | IFormLayout | ITableActionButtonLayout;
-
-type IPageStyle = {
-  backgroundColor: string;
+interface IContainerProps {
+  border?: boolean;
+  radius?: "none" | "sm" | "md" | "lg";
+  backgroundColor: var(--container-bg-color);
 }
 
-type IContainerStyle = {
-  backgroundColor: string;
-  borderRadius: string;
-  border: string;
-}
-
-type IFormStyle = {
-  backgroundColor: string;
-  borderRadius: string;
-  border: string;
-}
-
-type IModalStyle = {}
-
-type ITableStyle = {
-  border: string;
-  borderRadius: string;
-  backgroundColor: string;
-}
-
-type ITextStyle = {
-  fontSize: string;
-  fontWeight: string;
-  color: string;
-}
-
-type IButtonStyle = {}
-
-type IFormInputStyle = {}
-type IInputStyle = {
-
-type IFormSelectStyle = {}
-type ISelectStyle = {}
-
-type IFormCheckboxStyle = {}
-type ICheckboxStyle = {}
-
-type IFormRadioListStyle = {}
-type IRadioListStyle = {}
-
-type IFormSwitchStyle = {}
-type ISwitchStyle = {}
-
-type IFormSliderStyle = {}
-type ISliderStyle = {}
-
-type IFormDatePickerStyle = {}
-type IDatePickerStyle = {}
-
-type IFormTextAreaStyle = {}
-type ITextAreaStyle = {}
-type ITableActionButtonStyle = {}
-
-type IWeightStyle = IPageStyle | IContainerStyle | ITextStyle | IFormStyle | IModalStyle | ITableStyle
-    | IButtonStyle | IInputStyle | ISelectStyle | ICheckboxStyle | IRadioListStyle | ISwitchStyle
-    | ISliderStyle | IDatePickerStyle | ITextAreaStyle | IFormInputStyle | IFormSelectStyle | IFormCheckboxStyle | IFormRadioListStyle | IFormSwitchStyle | IFormSliderStyle | IFormDatePickerStyle | IFormTextAreaStyle | ITableActionButtonStyle;
-
-interface IPageProps {}
-
-interface IContainerProps {}
-
-interface IFormProps { 
+interface IFormProps {
+  border?: boolean;
+  radius?: "none" | "sm" | "md" | "lg";
+  backgroundColor: var(--container-bg-color);
 }
 
 interface IModalProps {
   title: string;
+  backgroundColor: var(--modal-bg-color);
 }
 
-interface ITableColumnBase {
+interface ITableColumnText {
   title: string;
   dataIndex: string;
-  key: string;
-}
-
-interface ITableColumnText extends ITableColumnBase {
   renderType: 'text';
 }
 
-interface ITableColumnTag extends ITableColumnBase {
+interface ITableColumnTag {
+  title: string;
+  dataIndex: string;
   renderType: 'tag';
   colorsMap: Record<string, "success" | "warning" | "danger" | "info" | "secondary" | "contrast">;
 }
 
-interface ITableColumnActions extends ITableColumnBase {
+interface ITableColumnActions {
   title: string;
   dataIndex: 'ai-site-actions'; // 固定值，用于标识 actions 列
-  key: 'ai-site-actions'; // 固定值，用于标识 actions 列
   renderType: 'actions'; // 根据表格中 TableActionButton，决定是否生成生成 actions 列，一个表格最多只能有一个 actions 列，必须放在表格的最后一列
 }
 
 interface ITableProps {
   columns: <ITableColumnText | ITableColumnTag | ITableColumnActions>[];
+  border?: boolean;
+  radius?: "none" | "sm" | "md" | "lg";
+  backgroundColor: var(--container-bg-color);
 }
 
 interface IButtonProps {
@@ -193,6 +221,14 @@ interface IFormRadioListProps {
   fieldName: string;
   options: { label: string; value: string }[];
   disabled?: boolean;
+  optionLayout: 'horizontal' | 'vertical';
+}
+
+interface IRadioListProps {
+  label: string;
+  options: { label: string; value: string }[];
+  disabled?: boolean;
+  optionLayout: 'horizontal' | 'vertical';
 }
 
 interface ICheckboxProps {
@@ -203,12 +239,6 @@ interface ICheckboxProps {
 interface IFormCheckboxProps {
   label: string;
   fieldName: string;
-  disabled?: boolean;
-}
-
-interface IRadioListProps {
-  label: string;
-  options: { label: string; value: string }[];
   disabled?: boolean;
 }
 
@@ -247,33 +277,32 @@ interface IDatePickerProps {
   type: 'date' | 'datetime' | 'time' | 'date-range' | 'datetime-range' | 'time-range';
 }
 
-type IWeightProps = IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps
-    | IInputProps | IButtonProps | ITableActionButtonProps | ISelectProps | ICheckboxProps | IRadioListProps | ISwitchProps
-    | ISliderProps | IDatePickerProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxProps
-    | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps | ITextProps;
+interface ITextAreaProps {
+  label: string;
+  placeholder: string;
+  disabled?: boolean;
+  rows?: number; // default 3
+}
 
-${WeightType}
+interface IFormTextAreaProps {
+  label: string;
+  fieldName: string;
+  placeholder: string;
+  disabled?: boolean;
+  rows?: number; // default 3
+}
 
 type IWeight = {
-  type: IWeightType;
-  parent: WeightName | null;
-  layout: IWeightLayout;
-  style: IWeightStyle;
-  props: IWeightProps;
+  id: WeightId;
+  type: 'Page' | 'Container' | 'Form' | 'Modal' | 'Table' | 'Input' | 'Button' | 'TableActionButton' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckbox' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'FormTextArea' | 'RadioList' | 'Select' | 'Checkbox' | 'Switch' | 'Slider' | 'DatePicker' | 'TextArea';
+  parentId: WeightId | null;
+  layout: IPageLayout | IContainerLayout | IFormLayout | IModalLayout | ITableLayout | IInputLayout | IButtonLayout | ITableActionButtonLayout | IFormInputLayout | IFormSelectLayout | IFormRadioListLayout | IFormCheckboxLayout | IFormSwitchLayout | IFormSliderLayout | IFormDatePickerLayout | IFormTextAreaLayout | IRadioListLayout | ISelectLayout | ICheckboxLayout | ISwitchLayout | ISliderLayout | IDatePickerLayout | ITextAreaLayout;
+  props: IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps | IInputProps | IButtonProps | ITableActionButtonProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxProps | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps | IFormTextAreaProps | IRadioListProps | ISelectProps | ICheckboxProps | ISwitchProps | ISliderProps | IDatePickerProps | ITextAreaProps;
 };
 
-type IOutput = Record<WeightName, IWeight>;
+type IOutput = Record<WeightId, IWeight>;
 \`\`\`
 </outputDefinition>
-
-<example>
-\`\`\`json
-{
-  "Container1":{"type":"Container","parent":"Page1","layout":{"x":0,"width":24,"heightMode":"auto","y":0,"height":16,"marginX":1,"marginY":1,"paddingX":1,"paddingY":1},"style":{"backgroundColor":"#000","borderRadius":"0","border":"0"}},
-  "Button1":{"type":"Button","parent":"Container1","layout":{"x":0,"width":2,"y":0,"height":5},"style":{}}
-}
-\`\`\`
-</example>
 
 <output>
 1. 输出合法的 json，不允许包含解释

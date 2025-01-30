@@ -24,9 +24,8 @@ export const schemaMerge = (options: {
     const weightExpressions = weights[key];
     finalSchemaJSON[key] = {
       type: schemaLayoutsJSON[key].type,
-      parent: schemaLayoutsJSON[key].parent,
+      parentId: schemaLayoutsJSON[key].parentId,
       layout: schemaLayoutsJSON[key]?.layout,
-      style: schemaLayoutsJSON[key]?.style,
       props: schemaLayoutsJSON[key]?.props,
       events: schemaEventsJSON[key],
     };

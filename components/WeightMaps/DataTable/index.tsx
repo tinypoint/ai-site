@@ -25,7 +25,9 @@ import {
 } from "@/components/ui/pagination"
 import { useMemo } from "react";
 import { LoaderCircle } from "lucide-react";
-import { IWeightStyle } from "@/types";
+import { LayoutContainerContent, LayoutContainerPosition } from "@/components/LayoutSystem";
+import { IContainerWeightLayoutForRender } from "@/types";
+import clsx from "clsx";
 
 interface IColumn {
   dataIndex: string;
@@ -34,21 +36,25 @@ interface IColumn {
   renderType?: string;
 }
 
-interface DataTableProps {
+export function DataTable({
+  children,
+  layout,
+  columns,
+  dataSource,
+  loading,
+  border,
+  radius,
+  backgroundColor,
+}: {
+  children: React.ReactNode;
+  layout: IContainerWeightLayoutForRender;
   columns: IColumn[];
   dataSource: any[];
-  loading?: boolean;
-  style?: IWeightStyle;
-  children?: React.ReactNode;
-}
-
-export function DataTable({
-  dataSource,
-  columns,
-  loading,
-  style,
-  children,
-}: DataTableProps) {
+  loading: boolean;
+  border: boolean;
+  radius: 'sm' | 'md' | 'lg';
+  backgroundColor: string;
+}) {
   const columnsForRender = useMemo(() => {
     return Array.isArray(columns) ? columns.map(column => {
       if (column.renderType === 'actions') {
@@ -81,100 +87,120 @@ export function DataTable({
   })
 
   return (
-    <div className="w-full h-full flex flex-col" style={style}>
-      <div className="h-0 flex-1">
-        <Table className="h-full">
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody className="[&_tr:last-child]:border-1">
-            {
-              loading ? (
-                null
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => {
+    <LayoutContainerPosition
+      weightType="Table"
+      layout={layout}
+    >
+      <LayoutContainerContent
+        weightType="Table"
+        layout={{
+          ...(layout || {}),
+          heightMode: 'fixed'
+        }}
+        className={clsx("bg-white p-2", {
+          'border': border,
+          'rounded-sm': radius === 'sm',
+          'rounded-md': radius === 'md',
+          'rounded-lg': radius === 'lg',
+        })}
+      >
+        <div className="w-full h-full flex flex-col">
+          <div className="h-0 flex-1">
+            <Table className="h-full">
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
                       return (
-                        <TableCell key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </TableCell>
+                        <TableHead key={header.id}>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        </TableHead>
                       )
                     })}
                   </TableRow>
-                ))
-              ) : (
-                <TableRow className="border-b-0">
-                  <TableCell colSpan={columnsForRender.length} className="h-24 text-center">
-                    No results.
-                  </TableCell>
-                </TableRow>
-              )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 p-2 shrink-0 border-t m-[-1px]">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => table.previousPage()}
-              />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink>1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink>2</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink>9</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => table.nextPage()}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
-      {loading && (
-        (
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-white/50"
-          >
-            <div
-              className="flex items-center gap-2"
-            >
-              <LoaderCircle
-                className='text-gray-500 animate-spin w-4 h-4'
-              />
-              loading
-            </div>
+                ))}
+              </TableHeader>
+              <TableBody className="[&_tr:last-child]:border-1">
+                {
+                  loading ? (
+                    null
+                  ) : table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <TableCell key={cell.id}>
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          )
+                        })}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow className="border-b-0">
+                      <TableCell colSpan={columnsForRender.length} className="h-24 text-center">
+                        No results.
+                      </TableCell>
+                    </TableRow>
+                  )}
+              </TableBody>
+            </Table>
           </div>
-        )
-      )}
-    </div>
+          <div className="flex items-center justify-end space-x-2 p-2 shrink-0 border-t m-[-1px]">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => table.previousPage()}
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink>1</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink>2</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink>9</PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => table.nextPage()}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+          {loading && (
+            (
+              <div
+                className="absolute inset-0 flex items-center justify-center bg-white/50"
+              >
+                <div
+                  className="flex items-center gap-2"
+                >
+                  <LoaderCircle
+                    className='text-gray-500 animate-spin w-4 h-4'
+                  />
+                  loading
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      </LayoutContainerContent>
+
+    </LayoutContainerPosition>
   )
 }

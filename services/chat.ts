@@ -147,7 +147,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
     const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
-
+    throw new Error('test');
     return {
       schemaLayouts,
       schemaLayoutsJSON,

@@ -4,7 +4,7 @@ export const knowledgeold = `<brandKnowledge>
 3. 为了让网页的生成质量更高，你将网页的生成过程划分成了如下几个步骤
     步骤一：生成站点的总体规划，作为后续的步骤的指导
     步骤二：列出网页中需要用到的全部接口请求
-    步骤三：列出网页中需要用到的全部组件，并为每个组件设置唯一名称(格式：英文组件类型加数组，如 Button1, Table1, Select2 等等)、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观
+    步骤三：列出网页中需要用到的全部组件，并为每个组件设置唯一名称(格式：英文组件类型加数字，如 Button1, Table1, Select2 等等)、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观
     步骤四：为所有组件设置准确且合理的属性
     步骤五：为所有接口请求生成合理的 mock 数据
     步骤六：为所有组件设置合理的事件，事件的触发条件和事件的触发行为
@@ -57,10 +57,8 @@ export const knowledgeold = `<brandKnowledge>
         1. width、 x 基于 24 分栏，width取值范围 1-24，x取值范围 0-23，x+width <= 24
         2. height、 y、基于 8px 倍数，height 取值范围是大于 0 的整数，代表 8px 的倍数，y取值范围是大于 0 的整数，代表 8px 的倍数
     2. 容器专属属性
-        1. paddingX、paddingY 基于 8px 倍数，可使用的值为[0, 1, 2]， 分别代表 0px, 8px, 16px，(height + paddingY * 2)代表容器组件的实际高度
-        2. marginX、marginY 基于 8px 倍数，可使用的值为[0, 1, 2]， 分别代表 0px, 8px, 16px
         3. heightMode 可取值为 'fixed' | 'auto'，auto 代表容器允许被子组件撑开，fixed 代表容器高度固定
-    3. 子组件自身默认带有 margin: 4px 4px 8px 8px,不需要为子组件设置内边距和外边距
+    3. 子组件自身默认带有 margin,不需要为子组件设置内边距和外边距
     4. 在 1440 * 1080 的屏幕分辨率下展示良好
     5. Button、FormInput、 Input、FormSelect、 Select、 FormCheckbox、 Checkbox、FormSwitch、Switch、Switch、FormSlider、Slider、FormDatePicker、DatePicker 的 height 固定为 5，即 40px
     6. FormRadioList、 RadioList 横向模式时， height 固定为 5，即 40px，纵向模式时， height 由选项个数决定
@@ -209,10 +207,6 @@ export const knowledge = `
 #### 容器专属
 \`\`\`javascript
 {
-  paddingX: [0,1,2],  // 0/8/16px
-  paddingY: [0,1,2],
-  marginX: [0,1,2],
-  marginY: [0,1,2],
   heightMode: ['fixed', 'auto']
 }
 \`\`\`
@@ -256,7 +250,7 @@ export const knowledge = `
 ### 4.2 视觉规范
 #### 间距系统
 - **基础单位**：8px倍数
-- **元素间距**：默认4px margin
+- **元素间距**：默认带有 margin
 
 #### 典型场景
 \`\`\`

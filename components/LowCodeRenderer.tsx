@@ -121,7 +121,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
     const Component = weightMaps[type];
     if (!Component) return null;
 
-    const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parent === name);
+    const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parentId === name);
     let rowStartIndex = 0;
     let rowBottom = 0;
     let maxRowBottom = 0;

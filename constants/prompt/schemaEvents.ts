@@ -21,7 +21,7 @@ interface IExecuteQueryActionNode {
   id: string; // 动作节点的唯一标识，格式为：英文动作类型加数字，比如 startQuery1, startQuery2
   type: 'executeQuery';
   options: {
-    queryName: string; // 查询的唯一标识，格式为：英文查询类型加数组
+    queryName: string; // 查询的唯一标识，格式为：英文查询类型加数字
   };
   inputHandle: ['trigger']; // 输入端点名称
   outputHandle: ['success', 'error', 'next']; // 输出端点名称列表
@@ -31,7 +31,7 @@ interface ISetComponentPropsActionNode {
   id: string; // 动作节点的唯一标识，格式为：英文动作类型加数字，比如 setComponentProps1, setComponentProps2
   type: 'setComponentProps';
   options: {
-    weightName: string; // 组件的唯一标识，格式为：英文组件类型加数组
+    weightName: string; // 组件的唯一标识，格式为：英文组件类型加数字
     props: Record<string, any>; // 组件的 props
   };
   inputHandle: ['trigger']; // 输入端点名称
@@ -42,7 +42,7 @@ interface IControlComponentActionNode {
   id: string; // 动作节点的唯一标识，格式为：英文动作类型加数字，比如 controlComponent1, controlComponent2
   type: 'controlComponent';
   options: {
-    weightName: string; // 组件的唯一标识，格式为：英文组件类型加数组
+    weightName: string; // 组件的唯一标识，格式为：英文组件类型加数字
     method: string; // Modal 组件的 method 有 'open' | 'close',  Form 组件的 method 有 'submit' | 'reset'
   };
   inputHandle: ['trigger']; // 输入端点名称
@@ -160,7 +160,7 @@ interface ITextAreaEvents {
   onChange: IWeightEventFlow;
 }
 
-type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
+type WeightName = string; // 组件的唯一标识，格式为：英文组件类型加数字
 
 type IWeightEvents = IPageEvents | IContainerEvents | IFormEvents | IModalEvents | ITableEvents
     | IInputEvents | IButtonEvents | ITableActionButtonEvents | ISelectEvents | ICheckboxEvents | IRadioListEvents | ISwitchEvents

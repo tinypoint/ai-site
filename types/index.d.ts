@@ -20,20 +20,13 @@ export interface IWeightLayoutForRender extends IWeightLayout {
 export interface IContainerWeightLayoutForRender extends IWeightLayout {
   gridRow: number;
   yToRow: number;
-  marginX: number;
-  marginY: number;
-  paddingX: number;
-  paddingY: number;
 }
-
-export type IWeightStyle = Pick<CSSProperties, 'color' | 'fontSize' | 'fontWeight' | 'border' | 'borderRadius' | 'backgroundColor' | 'boxShadow' | 'opacity'>;
 
 export type IWeight = {
   type: IWeightType;
-  parent?: IWeightName | null;
+  parentId?: IWeightName | null;
   props?: any;
   layout?: IWeightLayout;
-  style?: IWeightStyle;
   events?: any;
 }
 
@@ -77,7 +70,7 @@ export type IQuerys = Record<IQueryName, IQuery>;
 
 export type IQueryMockResponse = Record<IQueryName, any>;
 
-export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'type' | 'parent' | 'layout' | 'style' | 'props'>>;
+export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'type' | 'parentId' | 'layout' | 'props'>>;
 
 export type IFinalSchema = Record<IWeightName, IWeight>;
 

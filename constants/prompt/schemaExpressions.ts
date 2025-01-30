@@ -14,8 +14,8 @@ export const schemaExpressionsPrompt = `${knowledge}
 \`\`\`typescript
 
 
-type IWeightName = string; // 组件的唯一标识，格式为：英文组件类型加数组
-type IQueryName = string; // 查询的唯一标识，格式为：英文组件类型加数组
+type IWeightName = string; // 组件的唯一标识，格式为：英文组件类型加字
+type IQueryName = string; // 查询的唯一标识，格式为：英文组件类型加字
 
 type IExpression = string; // 语法是 双花括号包裹的javascript表达式，例如 {{ Input1.value }} {{ Query1.data.list }}
 
