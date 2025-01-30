@@ -10,10 +10,10 @@ import {
 import { ChatInput } from "@/components/ui/chat/chat-input"
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list"
 
-import { ChevronRight, CircleCheck, LoaderCircle, Maximize2, MessageCirclePlus, Minimize2, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { CircleCheck, LoaderCircle, MessageCirclePlus, PanelLeftClose, PanelLeftOpen } from "lucide-react"
 import { toast } from "sonner"
 import useChatStore from "@/hooks/useChatStore";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   CopyIcon,
   CornerDownLeft,
@@ -22,11 +22,16 @@ import {
   RefreshCcw,
   Volume2,
 } from "lucide-react";
-import { MouseEventHandler, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { AIMessage, UserMessage } from "@/types";
 import ReactMarkdown from "react-markdown";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
+const prompts = [
+  '仪表盘页面，上方是4个图表，然后是表格操作区，有输入框，选择框，查询按钮，然后下方左侧是表格，右侧是一个表单可以提交数据',
+  '学生列表管理页'
+]
 
 const ChatAiIcons = [
   {
@@ -166,9 +171,9 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
         return [];
       });
       if (inputRef.current) {
-        inputRef.current.value = '学生列表管理页';
+        inputRef.current.value = prompts[0];
       }
-      setInput('学生列表管理页');
+      setInput(prompts[0]);
     } catch (error) {
       toast('Failed to reset messages');
     }
@@ -176,9 +181,9 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
 
   useEffect(() => {
     if (inputRef.current) {
-      inputRef.current.value = '学生列表管理页';
+      inputRef.current.value = prompts[0];
     }
-    setInput('学生列表管理页');
+    setInput(prompts[0]);
   }, []);
 
   useEffect(() => {
