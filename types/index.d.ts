@@ -77,7 +77,7 @@ export type IQuerys = Record<IQueryName, IQuery>;
 
 export type IQueryMockResponse = Record<IQueryName, any>;
 
-export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'type' | 'parent' | 'layout' | 'style'>>;
+export type ISchemaLayout = Record<IWeightName, Pick<IWeight, 'type' | 'parent' | 'layout' | 'style' | 'props'>>;
 
 export type IFinalSchema = Record<IWeightName, IWeight>;
 

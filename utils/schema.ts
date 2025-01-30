@@ -6,7 +6,6 @@ import { ISchemaEvents, ISchemaProps, IFinalSchema, ISchemaExpressions, ISchemaL
 export const schemaMerge = (options: {
   schemaExpressionsJSON: ISchemaExpressions,
   schemaLayoutsJSON: ISchemaLayout,
-  schemaPropsJSON: ISchemaProps,
   schemaEventsJSON: ISchemaEvents,
   querysJSON: IQuerys,
   queryMockResponseJSON: IQueryMockResponse
@@ -15,7 +14,6 @@ export const schemaMerge = (options: {
   const {
     schemaExpressionsJSON = { querys: {}, weights: {} },
     schemaLayoutsJSON = {},
-    schemaPropsJSON = {},
     schemaEventsJSON = {},
     querysJSON = {},
     queryMockResponseJSON = {}
@@ -29,7 +27,7 @@ export const schemaMerge = (options: {
       parent: schemaLayoutsJSON[key].parent,
       layout: schemaLayoutsJSON[key]?.layout,
       style: schemaLayoutsJSON[key]?.style,
-      props: schemaPropsJSON[key]?.props,
+      props: schemaLayoutsJSON[key]?.props,
       events: schemaEventsJSON[key],
     };
 

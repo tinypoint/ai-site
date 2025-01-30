@@ -24,8 +24,6 @@ const StateAnnotation = Annotation.Root({
   querysJSON: Annotation<IQuerys>,
   schemaLayouts: Annotation<string>,
   schemaLayoutsJSON: Annotation<ISchemaLayout>,
-  schemaProps: Annotation<string>,
-  schemaPropsJSON: Annotation<ISchemaProps>,
   schemaEvents: Annotation<string>,
   schemaEventsJSON: Annotation<ISchemaEvents>,
   queryMockResponse: Annotation<string>,
@@ -73,9 +71,8 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(queryPrompt),
       ...messages,
-      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
-现在开始进行步骤二：列出网页中需要用到全部接口请求
-`)
+      new AIMessage(`站点的总体规划为：\n${sitePlan}\n`),
+      new HumanMessage(`现在开始进行步骤二：列出网页中需要用到全部接口请求`)
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'querys' }) })}\n\n`));
@@ -105,9 +102,8 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(schemaLayoutPrompt),
       ...messages,
-      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
-现在开始进行步骤三：列出网页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观
-`)
+      new AIMessage(`站点的总体规划为：\n${sitePlan}\n`),
+      new HumanMessage(`现在开始进行步骤三：列出网页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观，以及合理设置组件的属性`)
     ]);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaLayouts' }) })}\n\n`));
     let schemaLayouts = '';
@@ -143,7 +139,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const finalJSON = schemaMerge({
       schemaExpressionsJSON: { querys: {}, weights: {} },
       schemaLayoutsJSON,
-      schemaPropsJSON: {},
       schemaEventsJSON: {},
       querysJSON,
       queryMockResponseJSON: {}
@@ -163,55 +158,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     }
   }
 
-  const schemaPropsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, querysJSON, final, schemaLayoutsJSON } = state;
-
-    const model = new ChatDeepSeek({
-      temperature: 0,
-    });
-    const stream = model.stream([
-      new SystemMessage(schemaPropsPrompt),
-      ...messages,
-      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
-网页中的接口请求和组件为：\n${final}\n
-现在开始进行步骤四：为所有组件设置准确且合理的属性
-`)
-    ]);
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaProps' }) })}\n\n`));
-    let schemaProps = '';
-    for await (const chunk of await stream) {
-      if (chunk.content) {
-        schemaProps += chunk.content;
-        writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'schemaProps', data: chunk.content })}\n\n`));
-      }
-    }
-
-    const schemaPropsJSON = llmJsonParse(schemaProps);
-
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ compeleteStep: 'schemaProps' }) })}\n\n`));
-
-    const finalJSON = schemaMerge({
-      schemaExpressionsJSON: { querys: {}, weights: {} },
-      schemaLayoutsJSON,
-      schemaPropsJSON,
-      schemaEventsJSON: {},
-      querysJSON,
-      queryMockResponseJSON: {}
-    });
-
-    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
-    const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
-    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
-
-    return {
-      schemaProps,
-      schemaPropsJSON,
-      final: nextFinal,
-      finalJSON,
-    };
-  }
-
   const queryMockResponseAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, sitePlan, final } = state;
 
@@ -222,10 +168,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(queryMockResponsePrompt),
       ...messages,
-      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
+      new AIMessage(`站点的总体规划为：\n${sitePlan}\n
 网页中的接口请求和组件为：\n${final}\n
-步骤五：为所有接口请求生成合理的 mock 数据
 `),
+      new HumanMessage(`现在开始进行步骤四：为所有接口请求生成合理的 mock 数据`)
     ]);
 
     let queryMockResponse = '';
@@ -256,10 +202,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(schemaEventsPrompt),
       ...messages,
-      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
+      new AIMessage(`站点的总体规划为：\n${sitePlan}\n
 网页中的接口请求和组件为：\n${final}\n
-现在开始进行步骤六：为所有组件设置合理的事件，事件的触发条件和事件的触发行为
 `),
+      new HumanMessage(`现在开始进行步骤五：为所有组件设置合理的事件，事件的触发条件和事件的触发行为`)
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaEvents' }) })}\n\n`));
@@ -282,7 +228,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const eventsAndMockResponse = async (state: typeof StateAnnotation.State) => {
-    const { querysJSON, schemaLayoutsJSON, schemaPropsJSON } = state;
+    const { querysJSON, schemaLayoutsJSON } = state;
 
     const [{
       schemaEvents,
@@ -298,7 +244,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const finalJSON = schemaMerge({
       schemaExpressionsJSON: { querys: {}, weights: {} },
       schemaLayoutsJSON,
-      schemaPropsJSON,
       schemaEventsJSON,
       querysJSON,
       queryMockResponseJSON,
@@ -319,7 +264,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   }
 
   const schemaExpressionsAgent = async (state: typeof StateAnnotation.State) => {
-    const { messages, sitePlan, final, schemaLayoutsJSON, schemaPropsJSON, querysJSON, querys, schemaEventsJSON, queryMockResponseJSON } = state;
+    const { messages, sitePlan, final, schemaLayoutsJSON, querysJSON, querys, schemaEventsJSON, queryMockResponseJSON } = state;
 
     const model = new ChatDeepSeek({
       temperature: 0,
@@ -328,10 +273,10 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(schemaExpressionsPrompt),
       ...messages,
-      new HumanMessage(`站点的总体规划为：\n${sitePlan}\n
+      new AIMessage(`站点的总体规划为：\n${sitePlan}\n
 网页中的接口请求和组件为：\n${final}\n
-步骤七：为所有的接口请求的参数、url、请求体 和 所有组件的属性，设置合理的表达式用于进行数据关联
 `),
+      new HumanMessage(`现在开始进行步骤六：为所有的接口请求的参数、url、请求体 和 所有组件的属性，设置合理的表达式用于进行数据关联`)
     ]);
 
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaExpressions' }) })}\n\n`));
@@ -349,7 +294,6 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const finalJSON = schemaMerge({
       schemaExpressionsJSON,
       schemaLayoutsJSON,
-      schemaPropsJSON,
       schemaEventsJSON,
       querysJSON,
       queryMockResponseJSON
@@ -370,13 +314,11 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const workflow = new StateGraph(StateAnnotation)
     .addNode("sitePlanAgent", sitePlanAgent)
     .addNode("schemaLayoutsAndQuerys", schemaLayoutsAndQuerys)
-    .addNode("schemaPropsAgent", schemaPropsAgent)
     .addNode("eventsAndMockResponse", eventsAndMockResponse)
     .addNode("schemaExpressionsAgent", schemaExpressionsAgent)
     .addEdge(START, "sitePlanAgent")
     .addEdge("sitePlanAgent", "schemaLayoutsAndQuerys")
-    .addEdge("schemaLayoutsAndQuerys", "schemaPropsAgent")
-    .addEdge("schemaPropsAgent", "eventsAndMockResponse")
+    .addEdge("schemaLayoutsAndQuerys", "eventsAndMockResponse")
     .addEdge("eventsAndMockResponse", "schemaExpressionsAgent")
     .addEdge("schemaExpressionsAgent", END);
 
