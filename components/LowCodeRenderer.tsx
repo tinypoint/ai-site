@@ -7,6 +7,19 @@ import { createEventHandlers } from '@/utils/event';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
 import { parseObjectExpressions } from '@/utils/expression';
 import { ReplyOptions, Vessel, VesselMessage } from '@opensea/vessel';
+import Link from "next/link"
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu"
+import { Bot, Search } from "lucide-react"
+import { Avatar } from "@/components/ui/avatar"
+import { Input } from "@/components/ui/input"
 
 const ComponentWrapper = (context: {
   component: React.ComponentType<any>,
@@ -61,9 +74,9 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
   const updateExpressionContext = useLowCodeStore(state => state.updateExpressionContext);
 
 
-  const { siteLayout = {}, routes = [] } = useMemo(() => {
+  const { routes = [] } = useMemo(() => {
     const parsedData = llmJsonParse(lastAIMessage?.artifact?.navigation || '{}');
-    return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalData : {} as IFinalData;
+    return typeof parsedData === 'object' && parsedData !== null ? parsedData as { routes: any[] } : {} as { routes: any[] };
   }, [lastAIMessage?.artifact?.navigation])
 
   const data: IFinalData = useMemo(() => {
@@ -122,7 +135,7 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
 
 
-  const root = useMemo(() => transformWeightsMapToTree(siteLayout), [siteLayout]);
+
   useEffect(() => {
     updateExpressionContext('routes', routes)
   }, [routes])
@@ -148,14 +161,48 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
 
   return (
     <div className="low-code-renderer">
-      {root && renderComponent(root)}
+      <div className="w-screen h-screen flex">
+        <div className='w-60 h-full border-r shrink-0 flex flex-col justify-between'>
+          <div className="flex flex-col gap-2">
+            <div className="flex h-14 items-center">
+              <Bot className='ml-8 w-12 h-12' />
+            </div>
+            <NavigationMenu className='pl-4'>
+              <NavigationMenuList className="flex flex-col items-start space-x-0">
+                {
+                  Array.isArray(routes) && routes.map((route) => {
+                    return (
+                      <NavigationMenuItem key={route.pageId}>
+                        <Link href={route.path} legacyBehavior passHref>
+                          <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            {route.title}
+                          </NavigationMenuLink>
+                        </Link>
+                      </NavigationMenuItem>
+                    )
+                  })
+                }
+              </NavigationMenuList>
+            </NavigationMenu>
+          </div>
+          <div className="flex items-center h-14 border-t">
+            <Avatar className="w-8 h-8 bg-gray-200 ml-8 mr-2">
+              U
+            </Avatar>
+            Username
+          </div>
+        </div>
+        <div className='flex-1 flex flex-col'>
+          <div className='h-14 px-2 py-1 border-b'>
+
+          </div>
+          <div className='h-0 flex-1 overflow-y-auto overflow-x-hidden'>
+            {rootWeight && renderComponent(rootWeight)}
+          </div>
+        </div>
+      </div>
     </div>
-  )
-  // return (
-  //   <div className="low-code-renderer">
-  //     {rootWeight && renderComponent(rootWeight)}
-  //   </div>
-  // );
+  );
 };
 
 export default LowCodeRenderer; 

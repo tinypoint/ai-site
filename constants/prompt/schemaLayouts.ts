@@ -3,15 +3,14 @@ import { knowledge } from "./knowledge";
 export const schemaLayoutPrompt = `${knowledge}
 
 <task>
-1. 深入理解用户的真实需求和页面规划中给出的布局建议
-2. 输出json格式的组件映射表，为每个组件设置唯一ID，类型，父级，布局，属性
+1. 深入理解用户的真实需求和系统蓝图为页面生成指定页面的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观，以及合理设置组件的属性
+2. 页面级别最外层组件是Page，而非其他组件
 </task>
 
 <outputDefinition>
 \`\`\`typescript
 
 type WeightId = string; // 组件的唯一标识，格式为：英文组件类型加数字
-
 
 type IPageLayout = {
   // define self position and size

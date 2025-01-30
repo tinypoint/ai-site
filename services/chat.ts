@@ -48,7 +48,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new SystemMessage(planPrompt),
       ...messages,
       new AIMessage('好的'),
-      new HumanMessage('现在进行步骤一：生成系统的蓝图，作为后续的步骤的指导')
+      new HumanMessage('现在进行步骤一：生成系统蓝图，作为后续步骤的指导')
     ]);
 
     let sitePlan = '';
@@ -74,7 +74,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
       new SystemMessage(navigationPrompt),
       ...messages,
       new AIMessage(`系统的蓝图为：\n${sitePlan}\n`),
-      new HumanMessage(`现在开始进行步骤二：定义系统的布局和页面路由的详细信息`)
+      new HumanMessage(`现在开始进行系统级别的步骤二：定义页面路由的详细信息`)
     ]);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'navigation' }) })}\n\n`));
     let navigation = '';
@@ -133,8 +133,8 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     const stream = model.stream([
       new SystemMessage(schemaLayoutPrompt),
       ...messages,
-      new AIMessage(`站点的总体规划为：\n${sitePlan}\n`),
-      new HumanMessage(`现在开始进行步骤三：列出首页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局和样式，保证页面整体美观，以及合理设置组件的属性`)
+      new AIMessage(`系统蓝图为：\n${sitePlan}\n`),
+      new HumanMessage(`现在开始页面级别的步骤二：列出首页中需要的全部组件，并为每个组件设置唯一名称、类型、父子关系，并为组件设置精美的布局，保证页面整体美观，以及合理设置组件的属性`)
     ]);
     writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'progress', data: JSON.stringify({ runningStep: 'schemaLayouts' }) })}\n\n`));
     let schemaLayouts = '';
@@ -150,6 +150,32 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
     return {
       schemaLayouts,
       schemaLayoutsJSON,
+    }
+  }
+
+  const homeLayoutAgent = async (state: typeof StateAnnotation.State) => {
+    const {
+      schemaLayouts,
+      schemaLayoutsJSON,
+    } = await schemaLayoutsAgent(state);
+
+    const finalJSON = schemaMerge({
+      schemaExpressionsJSON: { querys: {}, weights: {} },
+      schemaLayoutsJSON,
+      schemaEventsJSON: {},
+      querysJSON: {},
+      queryMockResponseJSON: {}
+    });
+
+    const nextFinal = `\`\`\`json\n${JSON.stringify(finalJSON)}\n\`\`\``;
+    const nextFinalView = `\`\`\`json\n${JSON.stringify(finalJSON, null, 2)}\n\`\`\``;
+    writer.write(new TextEncoder().encode(`data: ${JSON.stringify({ type: 'finalJSON', data: nextFinalView })}\n\n`));
+
+    return {
+      schemaLayouts,
+      schemaLayoutsJSON,
+      final: nextFinal,
+      finalJSON,
     }
   }
 
@@ -345,13 +371,13 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const workflow = new StateGraph(StateAnnotation)
     .addNode("sitePlanAgent", sitePlanAgent)
     .addNode("navigationAgent", navigationAgent)
-    // .addNode("schemaLayoutsAndQuerys", schemaLayoutsAndQuerys)
+    .addNode("homeLayoutAgent", homeLayoutAgent)
     // .addNode("eventsAndMockResponse", eventsAndMockResponse)
     // .addNode("schemaExpressionsAgent", schemaExpressionsAgent)
     .addEdge(START, "sitePlanAgent")
     .addEdge("sitePlanAgent", "navigationAgent")
-    .addEdge("navigationAgent", END);
-  // .addEdge("sitePlanAgent", "schemaLayoutsAndQuerys")
+    .addEdge("navigationAgent", 'homeLayoutAgent')
+    .addEdge("homeLayoutAgent", END);
   // .addEdge("schemaLayoutsAndQuerys", "eventsAndMockResponse")
   // .addEdge("eventsAndMockResponse", "schemaExpressionsAgent")
   // .addEdge("schemaExpressionsAgent", END);
