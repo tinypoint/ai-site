@@ -17,6 +17,7 @@ type IPageLayout = {
   // define self position and size
   display: 'grid';
   gridTemplateColumns: 'repeat(24, 1fr)';
+  alignItems: 'start';
   gridTemplateRows: 'auto';
   padding: '8px';
   rowGap: '8px';
@@ -31,6 +32,7 @@ type IContainerLayout = {
   // define self grid
   display: 'grid';
   gridTemplateColumns: 'repeat(24, 1fr)';
+  alignItems: 'start';
   gridTemplateRows: 'auto';
   padding: '8px';
   rowGap: '8px';
@@ -45,6 +47,7 @@ type IFormLayout = {
   // define self grid
   display: 'grid';
   gridTemplateColumns: 'repeat(24, 1fr)';
+  alignItems: 'start';
   gridTemplateRows: 'auto';
   padding: '8px';
   rowGap: '8px';
@@ -59,6 +62,7 @@ type IModalLayout = {
   // define self grid
   display: 'grid';
   gridTemplateColumns: 'repeat(24, 1fr)';
+  alignItems: 'start';
   gridTemplateRows: 'auto';
   padding: '8px';
   rowGap: '8px';

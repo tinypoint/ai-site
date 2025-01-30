@@ -116,7 +116,7 @@ export const knowledge = `
 
 ### 3.2 布局系统
 #### 基于 css grid 布局，但是做了如下限制
-1. Page Container Form Modal gridTemplateColumns 固定为 repeat(24, 1fr)，gridTemplateRows 固定为 auto
+1. Page Container Form Modal gridTemplateColumns 固定为 repeat(24, 1fr)，gridTemplateRows 固定为 auto，alignItems 固定为 start
 2. Page Container Form Modal gridTemplateRows gap 固定为 8px
 3. Page Container Form Modal gridTemplateRows padding 固定为 8px
 4. 使用 gridColumn gridRow 来定义组件位置

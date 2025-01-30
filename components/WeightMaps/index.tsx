@@ -28,7 +28,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       <div
         data-weight="Page"
         data-layout={JSON.stringify(layout)}
-        className={clsx('grid gap-2 p-2 bg-gray-100')}
+        className={clsx('grid gap-2 p-2 bg-gray-100 items-start')}
         style={{
           gridTemplateColumns: 'repeat(24, 1fr)',
         }}
@@ -42,7 +42,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
       <div
         data-weight="Container"
         data-layout={JSON.stringify(layout)}
-        className={clsx('grid gap-2 p-2 bg-white', {
+        className={clsx('grid gap-2 p-2 bg-white items-start', {
           border: border,
           'rounded-sm': radius === 'sm',
           'rounded-md': radius === 'md',
@@ -148,7 +148,7 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
             <div
               data-weight="Modal"
               data-layout={JSON.stringify(layout)}
-              className={clsx('grid gap-2 p-2')}
+              className={clsx('grid gap-2 p-2 items-start')}
               style={{
                 gridTemplateColumns: 'repeat(24, 1fr)',
                 gridColumn: layout.gridColumn,

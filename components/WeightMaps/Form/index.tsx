@@ -85,7 +85,7 @@ export const WeightForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={clsx("w-full grid gap-2 p-2 bg-white", {
+        className={clsx("w-full grid gap-2 p-2 bg-white items-start", {
           border: border,
           'rounded-sm': radius === 'sm',
           'rounded-md': radius === 'md',
@@ -107,14 +107,10 @@ export const WeightForm = ({
 export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, disabled }: FormWeightProps) => {
   const form = useFormContext()
   return (
-    <div
-      data-weight="FormInput"
-      data-layout={JSON.stringify(layout)}
-      className={clsx('')}
-      style={{
-        gridColumn: layout.gridColumn,
-        gridRow: layout.gridRow,
-      }}
+    <LayoutItem
+      weightType="FormInput"
+      layout={layout}
+      weightId={name}
     >
       <FormField
         control={form.control}
@@ -131,7 +127,7 @@ export const WeightFormInput = ({ name, placeholder, fieldName, label, layout, d
           )
         }}
       />
-    </div>
+    </LayoutItem>
   )
 }
 export const WeightInput = ({ name, label, layout, placeholder, eventHandlers, disabled }: FormWeightProps) => {
