@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { LayoutContainerPosition, LayoutContainerContent, AISiteLayoutSystemItem } from '@/components/LayoutSystem';
+import { LayoutItem } from '@/components/LayoutSystem';
 import { WeightCheckbox, WeightFormSelect, WeightSelect, WeightFormRadioList, WeightRadioList, WeightFormSwitch, WeightSwitch, WeightFormSlider, WeightSlider, WeightFormDatePicker, WeightDatePicker, WeightForm, WeightFormInput, WeightInput, WeightFormCheckbox } from './Form';
 import { WeightChart } from './Chart';
 import clsx from 'clsx';
@@ -25,41 +25,48 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     }, [children]);
 
     return (
-      <LayoutContainerContent
-        weightType="Page"
-        layout={layout}
-        className="bg-gray-100 min-h-screen p-2"
+      <div
+        data-weight="Page"
+        data-layout={JSON.stringify(layout)}
+        className={clsx('grid gap-2 p-2 bg-gray-100')}
+        style={{
+          gridTemplateColumns: 'repeat(24, 1fr)',
+        }}
       >
         {children}
-      </LayoutContainerContent>
+      </div>
     )
   },
   Container: ({ children, layout, border, radius }) => {
     return (
-      <LayoutContainerPosition
-        weightType="Container"
-        layout={layout}
+      <div
+        data-weight="Container"
+        data-layout={JSON.stringify(layout)}
+        className={clsx('grid gap-2 p-2 bg-white', {
+          border: border,
+          'rounded-sm': radius === 'sm',
+          'rounded-md': radius === 'md',
+          'rounded-lg': radius === 'lg',
+        })}
+        style={{
+          gridTemplateColumns: 'repeat(24, 1fr)',
+          gridColumn: layout.gridColumn,
+          gridRow: layout.gridRow,
+        }}
       >
-        <LayoutContainerContent
-          weightType="Container"
-          layout={layout}
-          className={clsx("bg-white p-2", {
-            'border': border,
-            'rounded-sm': radius === 'sm',
-            'rounded-md': radius === 'md',
-            'rounded-lg': radius === 'lg',
-          })}
-        >
-          {children}
-        </LayoutContainerContent>
-      </LayoutContainerPosition>
+        {children}
+      </div>
     )
   },
-  Text: ({ content, layout, style }) => {
+  Text: ({ content, layout }) => {
     return (
-      <AISiteLayoutSystemItem weightType='Text' layout={layout}>
-        <div style={style}>{content}</div>
-      </AISiteLayoutSystemItem>
+      <LayoutItem
+        weightType='Text'
+        layout={layout}
+        weightId="text"
+      >
+        <div>{content}</div>
+      </LayoutItem>
     )
   },
 
@@ -67,43 +74,44 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
     name,
     text,
     layout,
-    style,
     eventHandlers,
     variant
   }) => {
     return (
-      <AISiteLayoutSystemItem weightType='Button' layout={layout} className='items-center'>
+      <LayoutItem
+        weightType='Button'
+        layout={layout}
+        weightId={name}
+      >
         <Button
-          className='flex-1 w-0'
+          className='flex-1 w-full'
           onClick={eventHandlers.onClick || undefined}
-          style={style}
           variant={variant}
         >
           {text}
         </Button>
-      </AISiteLayoutSystemItem>
-    )
+      </LayoutItem>
+    );
   },
   TableActionButton: ({
     name,
     text,
-    layout,
-    style,
     eventHandlers,
     variant,
   }) => {
     return (
       <Button
+        data-weight-id={name}
+        data-weight-type="TableActionButton"
         size="sm"
         onClick={eventHandlers.onClick || undefined}
-        style={style}
         variant={variant}
       >
         {text}
       </Button>
     )
   },
-  Modal: ({ name, title, children, style, eventHandlers, layout }) => {
+  Modal: ({ name, title, children, eventHandlers, layout }) => {
     const registerWeight = useLowCodeStore(state => state.registerWeight);
     const unregisterWeight = useLowCodeStore(state => state.unregisterWeight);
     const [open, setOpen] = useState(false);
@@ -137,13 +145,18 @@ export const weightMaps: Record<IWeightType, React.FC<ComponentProps>> = {
         <DialogContent className='space-y-0'>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            <LayoutContainerContent
-              weightType='Modal'
-              layout={layout}
-              style={style}
+            <div
+              data-weight="Modal"
+              data-layout={JSON.stringify(layout)}
+              className={clsx('grid gap-2 p-2')}
+              style={{
+                gridTemplateColumns: 'repeat(24, 1fr)',
+                gridColumn: layout.gridColumn,
+                gridRow: layout.gridRow,
+              }}
             >
               {children}
-            </LayoutContainerContent>
+            </div>
           </DialogHeader>
         </DialogContent>
       </Dialog>

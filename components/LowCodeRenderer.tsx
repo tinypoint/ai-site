@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { llmJsonParse, transformWeightsMapToTree } from '@/utils';
-import { IFinalData, IQuerys, IWeight, IWeightLayoutForRender, IWeightTreeNode, Message } from '@/types';
+import { IFinalData, IQuerys, IWeight, IWeightTreeNode, Message } from '@/types';
 import { weightMaps } from './WeightMaps';
 import { createEventHandlers } from '@/utils/event';
 import useLowCodeStore from '@/hooks/useLowCodeStore';
@@ -16,7 +16,7 @@ const ComponentWrapper = (context: {
   querys: IQuerys
 }) => {
   const { component: Component, node, name, children, querys } = context;
-  const { layout, style, props = {}, events } = node;
+  const { layout, props = {}, events } = node;
 
   const expressionContext = useLowCodeStore(state => state.expressionContext);
   const callWeightMethod = useLowCodeStore(state => state.callWeightMethod);
@@ -44,7 +44,6 @@ const ComponentWrapper = (context: {
     <Component
       name={name}
       layout={layout || {}}
-      style={style || {}}
       eventHandlers={eventHandlers}
       {...parsedProps}
     >
@@ -121,47 +120,6 @@ const LowCodeRenderer: React.FC<{}> = ({ }) => {
     const Component = weightMaps[type];
     if (!Component) return null;
 
-    const childrenKeys = Object.keys(weights).filter(childKey => weights[childKey].parentId === name);
-    let rowStartIndex = 0;
-    let rowBottom = 0;
-    let maxRowBottom = 0;
-    const childrenList = childrenKeys.sort((a, b) => {
-      return (weights[a]?.layout?.y || 0) - (weights[b]?.layout?.y || 0);
-    });
-    childrenList.reduce<IWeightLayoutForRender | undefined>((prevLayout, childKey) => {
-      const currentLayout = weights[childKey]?.layout as IWeightLayoutForRender;
-      if (currentLayout) {
-        if (weights[childKey].type !== 'Modal') {
-          if (prevLayout) {
-            let prevBottom = 0;
-
-            prevBottom = prevLayout.y + (prevLayout.heightMode === 'auto' ? (prevLayout.height ?? 0) : prevLayout.height ?? 0);
-            if (currentLayout.y >= prevBottom) {
-              rowStartIndex += 1
-              currentLayout.gridRow = rowStartIndex
-              rowBottom = maxRowBottom
-              currentLayout.yToRow = currentLayout.y - rowBottom
-              maxRowBottom = currentLayout.y + (currentLayout.height ?? 0);
-            } else {
-              currentLayout.gridRow = prevLayout.gridRow
-              currentLayout.yToRow = currentLayout.y - rowBottom
-              const currentBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.height ?? 0) : currentLayout.height ?? 0);
-              if (currentBottom > maxRowBottom) {
-                maxRowBottom = currentBottom
-              }
-            }
-          } else {
-            rowStartIndex += 1
-            currentLayout.gridRow = rowStartIndex
-            currentLayout.yToRow = currentLayout.y;
-            maxRowBottom = currentLayout.y + (currentLayout.heightMode === 'auto' ? (currentLayout.height ?? 0) : currentLayout.height ?? 0);
-          }
-        } else {
-          return prevLayout;
-        }
-      }
-      return currentLayout || prevLayout;
-    }, undefined);
     return (
       <ComponentWrapper
         component={Component}

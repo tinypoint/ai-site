@@ -5,69 +5,88 @@ export const schemaLayoutPrompt = `${knowledge}
 <task>
 1. 深入理解用户的真实需求和页面规划中给出的布局建议
 2. 输出json格式的组件映射表，为每个组件设置唯一ID，类型，父级，布局，属性
-3. 确保组件布局符合AI SITE的布局规范
-4. 组件布局属性中width是相对于父组件的宽度的24分栏，而不是相对于屏幕的宽度，这点要格外注意
 </task>
 
 <outputDefinition>
 \`\`\`typescript
 
-type GridUnit = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23;
-type ColumnSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 23 | 24;
-type Pixel8Multiplier = number & { __brand: '8px-multiplier' }; // 品牌类型确保只接受8的倍数
-
 type WeightId = string; // 组件的唯一标识，格式为：英文组件类型加数字
 
-// x + width <= 24
 
 type IPageLayout = {
-  x: 0;
-  width: 24; // full width of screen
-  heightMode: 'auto';
-  y: 0;
-  height: 135; // 1080px
+  // define self position and size
+  display: 'grid';
+  gridTemplateColumns: 'repeat(24, 1fr)';
+  gridTemplateRows: 'auto';
+  padding: '8px';
+  rowGap: '8px';
+  columnGap: '8px';
 }
 
 type IContainerLayout = {
-  x: GridUnit;
-  width: ColumnSpan; // percent of "parent" width, not percent of screen width, 1 means 1 / 24 of "parent" width, 12 means half of "parent" width, 24 means full width of "parent"
-  heightMode: 'auto' | 'fixed';
-  y: Pixel8Multiplier;
-  height: Pixel8Multiplier;
+  // define self position and size
+  gridColumn: string;
+  gridRow: string;
+
+  // define self grid
+  display: 'grid';
+  gridTemplateColumns: 'repeat(24, 1fr)';
+  gridTemplateRows: 'auto';
+  padding: '8px';
+  rowGap: '8px';
+  columnGap: '8px';
 }
 
 type IFormLayout = {
-  x: GridUnit;
-  width: ColumnSpan;
-  heightMode: 'auto' | 'fixed';
-  y: Pixel8Multiplier;
-  height: Pixel8Multiplier;
+  // define self position and size
+  gridColumn: string;
+  gridRow: string;
+
+  // define self grid
+  display: 'grid';
+  gridTemplateColumns: 'repeat(24, 1fr)';
+  gridTemplateRows: 'auto';
+  padding: '8px';
+  rowGap: '8px';
+  columnGap: '8px';
 }
 
 // center of screen
 type IModalLayout = {
-  x: 6; // center of screen
-  width: 12; // half of screen
-  heightMode: 'auto' | 'fixed';
-  y: 22; // 176px
-  height: 60; // 480px
+  // define self size
+  width: '600px';
+
+  // define self grid
+  display: 'grid';
+  gridTemplateColumns: 'repeat(24, 1fr)';
+  gridTemplateRows: 'auto';
+  padding: '8px';
+  rowGap: '8px';
+  columnGap: '8px';
 }
 
 type ITableLayout = {
-  x: GridUnit;
-  width: ColumnSpan;
-  heightMode: 'auto' | 'fixed';
-  y: Pixel8Multiplier;
-  height: Pixel8Multiplier; // default 50, 400px
+  // define self position and size
+  gridColumn: string;
+  gridRow: string;
+  minHeight: string;
+}
+
+// 占位组件, 不显示，占据空间
+type ISpaceLayout = {
+  // define self position and size
+  gridColumn: string;
+  gridRow: string;
+  height: string;
 }
 
 type ITableActionButtonLayout = {} // don not need to set layout
 
 type IInputLayout = {
-  x: GridUnit;
-  width: ColumnSpan;
-  y: Pixel8Multiplier;
-  height: Pixel8Multiplier; // default 5, 40px
+  // define self position and size
+  gridColumn: string;
+  gridRow: string;
+  height: '40px'; // default 40px
 }
 
 type IFormInputLayout = IInputLayout;
@@ -296,7 +315,7 @@ type IWeight = {
   id: WeightId;
   type: 'Page' | 'Container' | 'Form' | 'Modal' | 'Table' | 'Input' | 'Button' | 'TableActionButton' | 'FormInput' | 'FormSelect' | 'FormRadioList' | 'FormCheckbox' | 'FormSwitch' | 'FormSlider' | 'FormDatePicker' | 'FormTextArea' | 'RadioList' | 'Select' | 'Checkbox' | 'Switch' | 'Slider' | 'DatePicker' | 'TextArea';
   parentId: WeightId | null;
-  layout: IPageLayout | IContainerLayout | IFormLayout | IModalLayout | ITableLayout | IInputLayout | IButtonLayout | ITableActionButtonLayout | IFormInputLayout | IFormSelectLayout | IFormRadioListLayout | IFormCheckboxLayout | IFormSwitchLayout | IFormSliderLayout | IFormDatePickerLayout | IFormTextAreaLayout | IRadioListLayout | ISelectLayout | ICheckboxLayout | ISwitchLayout | ISliderLayout | IDatePickerLayout | ITextAreaLayout;
+  layout: IPageLayout | IContainerLayout | IFormLayout | IModalLayout | ITableLayout | IInputLayout | IButtonLayout | ISpaceLayout | ITableActionButtonLayout | IFormInputLayout | IFormSelectLayout | IFormRadioListLayout | IFormCheckboxLayout | IFormSwitchLayout | IFormSliderLayout | IFormDatePickerLayout | IFormTextAreaLayout | IRadioListLayout | ISelectLayout | ICheckboxLayout | ISwitchLayout | ISliderLayout | IDatePickerLayout | ITextAreaLayout;
   props: IPageProps | IContainerProps | IFormProps | IModalProps | ITableProps | IInputProps | IButtonProps | ITableActionButtonProps | IFormInputProps | IFormSelectProps | IFormRadioListProps | IFormCheckboxProps | IFormSwitchProps | IFormSliderProps | IFormDatePickerProps | IFormTextAreaProps | IRadioListProps | ISelectProps | ICheckboxProps | ISwitchProps | ISliderProps | IDatePickerProps | ITextAreaProps;
 };
 

@@ -1,20 +1,19 @@
-import { AISiteLayoutSystemItem } from "@/components/LayoutSystem"
-import { IWeightLayoutForRender } from "@/types"
+import { LayoutItem } from "@/components/LayoutSystem"
 
 export const WeightChart = ({
   layout,
-  style
 }: {
-  layout: IWeightLayoutForRender
+  layout: React.CSSProperties
 }) => {
   return (
-    <AISiteLayoutSystemItem
+    <LayoutItem
       weightType="chart"
       layout={layout}
+      weightId="chart"
     >
       <div className="w-full h-full border rounded-md">
         chart
       </div>
-    </AISiteLayoutSystemItem>
+    </LayoutItem>
   )
 }

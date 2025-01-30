@@ -91,7 +91,7 @@ export default function AIEditorPage() {
           </div>
         </div>
         <div className="w-full h-full overflow-x-auto">
-          <div className='min-w-[600px] w-full h-full bg-white'>
+          <div className='min-w-[1280px] w-full h-full bg-white'>
             <iframe
               ref={iframeRef}
               src="/ai-preview"

@@ -4,29 +4,11 @@ export type IWeightName = string;
 
 export type IWeightType = string;
 
-export interface IWeightLayout {
-  x: number;
-  width: number;
-  y: number;
-  height: number;
-  heightMode: 'auto' | 'fixed';
-}
-
-export interface IWeightLayoutForRender extends IWeightLayout {
-  gridRow: number;
-  yToRow: number;
-}
-
-export interface IContainerWeightLayoutForRender extends IWeightLayout {
-  gridRow: number;
-  yToRow: number;
-}
-
 export type IWeight = {
   type: IWeightType;
   parentId?: IWeightName | null;
   props?: any;
-  layout?: IWeightLayout;
+  layout?: React.CSSProperties;
   events?: any;
 }
 
