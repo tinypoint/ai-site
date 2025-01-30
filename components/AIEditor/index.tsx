@@ -74,7 +74,7 @@ export default function AIEditorPage() {
 
   return (
     <div className='h-screen w-screen p-4 bg-gray-100'>
-      <div className="mx-auto w-full max-w-[1440px] h-full bg-gray-200 border rounded-md shadow-md overflow-hidden flex flex-col">
+      <div className="mx-auto w-full max-w-[1442px] h-full bg-gray-200 border rounded-md shadow-md overflow-hidden flex flex-col">
         <div className="h-8 w-full p-2 bg-gray-200 flex">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-red-500 rounded-full"></div>
@@ -91,7 +91,7 @@ export default function AIEditorPage() {
           </div>
         </div>
         <div className="w-full h-0 flex-1 overflow-x-auto">
-          <div className='min-w-[1280px] w-full h-full bg-white'>
+          <div className='w-full h-full bg-white'>
             <iframe
               ref={iframeRef}
               src="/ai-preview"
