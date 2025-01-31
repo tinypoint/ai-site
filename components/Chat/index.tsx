@@ -275,48 +275,79 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
                           </AvatarFallback>
                         </Avatar>
                         <ReactMarkdown className="prose prose-sm">{message.content}</ReactMarkdown>
-                        {message.role === 'ai' && message.progress && (
+                        {message.role === 'ai' && (
                           <div>
                             <Accordion type="multiple" className="w-full">
-                              {[...message.progress.compeleteSteps, ...message.progress.runningSteps].map(step => {
-                                return (
-                                  <AccordionItem key={step} value={step}>
-                                    <AccordionTrigger>
-                                      <div className="flex items-center gap-2">
-                                        {
-                                          message.progress!.compeleteSteps.includes(step) ?
-                                            <CircleCheck
-                                              className='text-green-500 w-4 h-4'
-                                            /> : message.progress!.runningSteps.includes(step) ?
-                                              <LoaderCircle
-                                                className='text-gray-500 animate-spin w-4 h-4'
-                                              /> : null
-                                        }
-                                        {step}
-                                      </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                      <ReactMarkdown className="prose prose-sm">{message.artifact?.[step as keyof typeof message.artifact] || ''}</ReactMarkdown>
-                                    </AccordionContent>
-                                  </AccordionItem>
-                                )
-                              })}
                               {
-                                message.artifact?.finalJSON ? (
-                                  <AccordionItem key="final" value="final">
-                                    <AccordionTrigger>
-                                      <div className="flex items-center gap-2">
-                                        <CircleCheck
-                                          className='text-green-500 w-4 h-4'
-                                        />
-                                        schema
-                                      </div>
-                                    </AccordionTrigger>
-                                    <AccordionContent>
-                                      <ReactMarkdown className="prose prose-sm">{message.artifact?.finalJSON || ''}</ReactMarkdown>
-                                    </AccordionContent>
-                                  </AccordionItem>
-                                ) : null
+                                (message.artifact?.compeleteSteps?.includes('navigation')
+                                  || message.artifact?.compeleteSteps?.includes('navigation'))
+                                && <AccordionItem key="navigation" value="navigation">
+                                  <AccordionTrigger>
+                                    <div className="flex items-center gap-2">
+                                      {
+                                        message.artifact?.compeleteSteps?.includes('navigation') ?
+                                          <CircleCheck
+                                            className='text-green-500 w-4 h-4'
+                                          /> : message.artifact?.runningSteps.includes('navigation') ?
+                                            <LoaderCircle
+                                              className='text-gray-500 animate-spin w-4 h-4'
+                                            /> : null
+                                      }
+                                      路由信息
+                                    </div>
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <ReactMarkdown className="prose prose-sm">{message.artifact?.navigation || ''}</ReactMarkdown>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              }
+                              {
+                                Object.entries(message.artifact?.pages || {}).map(([pageId, page]) => {
+                                  return (
+                                    <>
+                                      {[...page.compeleteSteps, ...page.runningSteps].map(step => {
+                                        return (
+                                          <AccordionItem key={step} value={step}>
+                                            <AccordionTrigger>
+                                              <div className="flex items-center gap-2">
+                                                {
+                                                  page!.compeleteSteps?.includes(step) ?
+                                                    <CircleCheck
+                                                      className='text-green-500 w-4 h-4'
+                                                    /> : page!.runningSteps?.includes(step) ?
+                                                      <LoaderCircle
+                                                        className='text-gray-500 animate-spin w-4 h-4'
+                                                      /> : null
+                                                }
+                                                {step}
+                                              </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent>
+                                              <ReactMarkdown className="prose prose-sm">{page![step as keyof typeof message.artifact] || ''}</ReactMarkdown>
+                                            </AccordionContent>
+                                          </AccordionItem>
+                                        )
+                                      })}
+                                      {
+                                        page?.dsl ? (
+                                          <AccordionItem key="final" value="final">
+                                            <AccordionTrigger>
+                                              <div className="flex items-center gap-2">
+                                                <CircleCheck
+                                                  className='text-green-500 w-4 h-4'
+                                                />
+                                                schema
+                                              </div>
+                                            </AccordionTrigger>
+                                            <AccordionContent>
+                                              <ReactMarkdown className="prose prose-sm">{JSON.stringify(page?.dsl || '{}', null, 2)}</ReactMarkdown>
+                                            </AccordionContent>
+                                          </AccordionItem>
+                                        ) : null
+                                      }
+                                    </>
+                                  )
+                                })
                               }
                             </Accordion>
                           </div>

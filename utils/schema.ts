@@ -1,6 +1,6 @@
 import { mergeObjects } from ".";
 
-import { ISchemaEvents, ISchemaProps, IFinalSchema, ISchemaExpressions, ISchemaLayout, IQuerys, IQueryMockResponse } from "@/types";
+import { ISchemaEvents, IFinalSchema, ISchemaExpressions, ISchemaLayout, IQuerys, IQueryMockResponse } from "@/types";
 
 
 export const schemaMerge = (options: {
@@ -9,7 +9,6 @@ export const schemaMerge = (options: {
   schemaEventsJSON: ISchemaEvents,
   querysJSON: IQuerys,
   queryMockResponseJSON: IQueryMockResponse
-
 }) => {
   const {
     schemaExpressionsJSON = { querys: {}, weights: {} },

@@ -15,8 +15,10 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
-import { Bot } from "lucide-react"
+import { Bot, Settings, Home } from "lucide-react"
 import { Avatar } from "@/components/ui/avatar"
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
 
 const ComponentWrapper = (context: {
   component: React.ComponentType<any>,
@@ -76,12 +78,8 @@ export default function AIPreview() {
     return typeof parsedData === 'object' && parsedData !== null ? parsedData as { routes: any[] } : {} as { routes: any[] };
   }, [lastAIMessage?.artifact?.navigation])
 
-  const data: IFinalData = useMemo(() => {
-    const parsedData = llmJsonParse(lastAIMessage?.artifact?.finalJSON || '{}');
-    return typeof parsedData === 'object' && parsedData !== null ? parsedData as IFinalData : {} as IFinalData;
-  }, [lastAIMessage?.artifact?.finalJSON]);
+  const data = Object.values(lastAIMessage?.artifact?.pages || {}).map(page => page.dsl)[0] || ({} as IFinalData);
   const { weights = {}, querys = {} } = data;
-
 
   useEffect(() => {
     if (!vessel.current) {
@@ -172,6 +170,7 @@ export default function AIPreview() {
                       <NavigationMenuItem key={route.pageId}>
                         <Link href={route.path} legacyBehavior passHref>
                           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+                            <Home className='w-4 h-4 mr-2' />
                             {route.title}
                           </NavigationMenuLink>
                         </Link>
@@ -182,16 +181,20 @@ export default function AIPreview() {
               </NavigationMenuList>
             </NavigationMenu>
           </div>
-          <div className="flex items-center h-14 border-t">
-            <Avatar className="w-8 h-8 bg-gray-200 ml-8 mr-2">
-              U
-            </Avatar>
-            Username
+          <div className="flex justify-end items-center h-14 border-t">
+            <Button variant='outline' size='icon' className='mr-4'>
+              <Settings className='w-4 h-4' />
+            </Button>
           </div>
         </div>
         <div className='flex-1 flex flex-col'>
           <div className='h-14 px-2 py-1 border-b'>
-
+            <div className='flex items-center justify-between h-full'>
+              <Input placeholder='Search' className='w-60 rounded-full'></Input>
+              <Avatar className="w-8 h-8 bg-gray-200 ml-8 mr-2">
+                U
+              </Avatar>
+            </div>
           </div>
           <div className='h-0 flex-1 overflow-y-auto overflow-x-hidden'>
             {rootWeight && renderComponent(rootWeight)}

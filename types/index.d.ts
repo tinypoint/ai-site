@@ -17,8 +17,6 @@ export interface IWeightTreeNode extends IWeight {
   children?: IWeightTreeNode[];
 }
 
-export type ISchemaProps = Record<IWeightName, Pick<IWeight, 'props'>>;
-
 export type ISchemaEvents = Record<IWeightName, Pick<IWeight, 'events'>>;
 
 export type IQueryName = string;
@@ -78,16 +76,21 @@ export interface AIMessage {
   role: 'ai';
   content: string;
   artifact?: {
-    schemaTypes?: string;
-    querys?: string;
-    schemaProps?: string;
-    schemaLayouts?: string;
-    finalJSON?: string;
+    systemDescription?: string;
     navigation?: string;
-  };
-  progress?: {
     runningSteps: string[];
     compeleteSteps: string[];
+    pages?: Record<string, {
+      pageDescription?: string;
+      querys?: string;
+      layouts?: string;
+      mockData?: string;
+      events?: string;
+      expressions?: string;
+      dsl?: IFinalData;
+      runningSteps: string[];
+      compeleteSteps: string[];
+    }>;
   };
   avatar?: string;
   name?: string;
@@ -95,3 +98,16 @@ export interface AIMessage {
 }
 
 export type Message = SystemMessage | UserMessage | AIMessage;
+
+type IRoute = {
+  path: string;
+  isHome: boolean;
+  pageId: string;
+  title: string;
+  children?: IRoute[];
+  showInSidebar: boolean;
+}
+
+export type INavigation = {
+  routes: IRoute[];
+}
