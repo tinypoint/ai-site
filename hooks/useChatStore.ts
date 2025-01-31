@@ -122,7 +122,6 @@ const useChatStore = create<State & Actions>()((set, get) => ({
                     schemaEventsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaEvents || '{}'),
                     schemaExpressionsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaExpressions || '{}'),
                   });
-                  console.log('dsl', dsl);
                   aiMessageReceived.pages[jsonData.pageId].dsl = dsl;
                 }
               } else {

@@ -340,7 +340,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
                                               </div>
                                             </AccordionTrigger>
                                             <AccordionContent>
-                                              <ReactMarkdown className="prose prose-sm">{JSON.stringify(page?.dsl || '{}', null, 2)}</ReactMarkdown>
+                                              <ReactMarkdown className="prose prose-sm">{`\`\`\`json\n${JSON.stringify(page?.dsl || '{}', null, 2)}\n\`\`\``}</ReactMarkdown>
                                             </AccordionContent>
                                           </AccordionItem>
                                         ) : null
