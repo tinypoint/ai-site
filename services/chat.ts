@@ -1,5 +1,5 @@
 import { AIMessage, BaseMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
-import { ChatDeepSeek } from "@/services/common/deepseek";
+import { Chat } from "@/services/common/deepseek";
 import { schemaLayoutPrompt } from "@/constants/prompt/schemaLayouts";
 import { llmJsonParse } from "@/utils";
 import type { ISchemaLayout, ISchemaEvents, ISchemaExpressions, IQuerys, IQueryMockResponse, INavigation } from "@/types";
@@ -39,7 +39,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const siteAgent = async (state: typeof StateAnnotation.State) => {
     const { messages } = state;
 
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 1.3,
     });
 
@@ -91,7 +91,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const pageAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, systemDescription, navigation, navigationJSON, currentPageId } = state;
 
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 1.3,
     });
 
@@ -122,7 +122,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
 
   const querysAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, systemDescription, navigation, navigationJSON, currentPageId, pageDescription } = state;
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 0,
     });
 
@@ -169,7 +169,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaLayoutsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, systemDescription, navigation, navigationJSON, currentPageId, pageDescription } = state;
 
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 0,
     });
 
@@ -251,7 +251,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const queryMockResponseAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, pageDescription, final } = state;
 
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 0.3,
     });
 
@@ -286,7 +286,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaEventsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, pageDescription, final } = state;
 
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 0,
     });
     const stream = model.stream([
@@ -356,7 +356,7 @@ export const schemaAgent = async (messages: BaseMessage[], writer: WritableStrea
   const schemaExpressionsAgent = async (state: typeof StateAnnotation.State) => {
     const { messages, pageDescription, final, schemaLayoutsJSON, querysJSON, querys, schemaEventsJSON, queryMockResponseJSON } = state;
 
-    const model = new ChatDeepSeek({
+    const model = new Chat({
       temperature: 0,
     });
 

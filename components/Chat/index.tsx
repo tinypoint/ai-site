@@ -280,7 +280,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
                             <Accordion type="multiple" className="w-full">
                               {
                                 (message.artifact?.compeleteSteps?.includes('navigation')
-                                  || message.artifact?.compeleteSteps?.includes('navigation'))
+                                  || message.artifact?.runningSteps?.includes('navigation'))
                                 && <AccordionItem key="navigation" value="navigation">
                                   <AccordionTrigger>
                                     <div className="flex items-center gap-2">

@@ -2,14 +2,28 @@ import { IWeight, IWeightTreeNode } from '@/types';
 import { jsonrepair } from 'jsonrepair';
 
 export function llmJsonParse(input: string): any {
-
   try {
-    // 预处理 input
-    const preprocessedInput = input
-      .replace(/```json/g, '') // 去除 ```json 标记
-      .replace(/```/g, '') // 去除 ``` 标记
-      .replace(/\n/g, '') // 去除不合理的换行符
-      .replace(/\\/g, '\\'); // 处理转义符号
+    // 尝试在文本中寻找 JSON 内容
+    let jsonContent = input;
+    
+    // 1. 首先尝试提取 ```json 或 ``` 包裹的内容
+    const jsonMatch = input.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonMatch) {
+      jsonContent = jsonMatch[1].trim();
+    } else {
+      // 2. 如果没有完整的标记，尝试处理不完整的情况
+      if (input.includes('```json')) {
+        jsonContent = input.split('```json')[1].trim();
+      } else if (input.includes('```')) {
+        jsonContent = input.split('```')[1].trim();
+      }
+    }
+
+    // 预处理提取的内容
+    const preprocessedInput = jsonContent
+      .replace(/```/g, '') // 清理可能残留的 ``` 标记
+      .replace(/\\/g, '\\') // 处理转义符号
+      .trim();
 
     const repairedJson = jsonrepair(preprocessedInput);
     return JSON.parse(repairedJson);
