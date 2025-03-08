@@ -115,14 +115,18 @@ const useChatStore = create<State & Actions>()((set, get) => ({
                   }
                   // pageDescription querys layouts mockData events expressions
                   aiMessageReceived.pages[jsonData.pageId][jsonData.type] += jsonData.data;
-                  const dsl = schemaMerge({
-                    querysJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].querys || '{}'),
-                    schemaLayoutsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaLayouts || '{}'),
-                    queryMockResponseJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].queryMockResponse || '{}'),
-                    schemaEventsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaEvents || '{}'),
-                    schemaExpressionsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaExpressions || '{}'),
-                  });
-                  aiMessageReceived.pages[jsonData.pageId].dsl = dsl;
+                  try {
+                    const dsl = schemaMerge({
+                      querysJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].querys || '{}'),
+                      schemaLayoutsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaLayouts || '{}'),
+                      queryMockResponseJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].queryMockResponse || '{}'),
+                      schemaEventsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaEvents || '{}'),
+                      schemaExpressionsJSON: llmJsonParse(aiMessageReceived.pages[jsonData.pageId].schemaExpressions || '{}'),
+                    });
+                    aiMessageReceived.pages[jsonData.pageId].dsl = dsl;
+                  } catch (e) {
+
+                  }
                 }
               } else {
                 if (jsonData.type === 'progress') {

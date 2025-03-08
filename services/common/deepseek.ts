@@ -1,16 +1,13 @@
 import { ChatOpenAI, ChatOpenAIFields } from "@langchain/openai";
-import { ChatOllama, ChatOllamaInput } from "@langchain/ollama";
 
-const CHAT = 'deepseek-chat'
-const REASONER = 'deepseek-reasoner'
-const useOllama = true;
+const useSiliconFlow = true;
 
 class ChatDeepSeekAPI extends ChatOpenAI {
   constructor(fields: ChatOpenAIFields) {
     const { configuration, model, ...rest } = fields || {};
     super({
       apiKey: process.env.OPENAI_API_KEY,
-      model: model || CHAT,
+      model: model || 'deepseek-chat',
       ...rest,
       configuration: {
         ...(configuration || {}),
@@ -20,13 +17,20 @@ class ChatDeepSeekAPI extends ChatOpenAI {
   }
 }
 
-class ChatDeepSeekOllama extends ChatOllama {
-  constructor(fields?: ChatOllamaInput) {
+class ChatSiliconFlow extends ChatOpenAI {
+  constructor(fields: ChatOpenAIFields) {
+    const { configuration, model, ...rest } = fields || {};
     super({
-      model: fields?.model || "deepseek-r1:8b",
-      ...(fields || {}),
+      apiKey: process.env.SILICONFLOW_API_KEY,
+      model: model || 'deepseek-ai/DeepSeek-V3',
+      ...rest,
+      configuration: {
+        ...(configuration || {}),
+        basePath: 'https://api.siliconflow.cn/v1',
+      }
     });
   }
 }
 
-export const Chat = useOllama ? ChatDeepSeekOllama : ChatDeepSeekAPI;
+
+export const Chat = useSiliconFlow ? ChatSiliconFlow : ChatDeepSeekAPI;

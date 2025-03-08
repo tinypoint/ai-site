@@ -57,7 +57,7 @@ export function Navbar({
                   Array.isArray(routes) && routes.map((route) => {
                     return (
                       <NavigationMenuItem key={route.pageId}>
-                        <Link href={route.path} legacyBehavior passHref>
+                        <Link href={route.path || ''} legacyBehavior passHref>
                           <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                             {route.title}
                           </NavigationMenuLink>
@@ -91,7 +91,7 @@ export function Navbar({
                 Array.isArray(routes) && routes.map((route) => {
                   return (
                     <NavigationMenuItem key={route.pageId}>
-                      <Link href={route.path} legacyBehavior passHref>
+                      <Link href={route.path || ''} legacyBehavior passHref>
                         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
                           {route.title}
                         </NavigationMenuLink>

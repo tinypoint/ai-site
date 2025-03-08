@@ -153,6 +153,7 @@ export default function Chat({ refreshPreview }: { refreshPreview: () => void })
           body: JSON.stringify(lastAIMessage),
         });
       } catch (error) {
+        console.log('error', error);
         toast('Failed to get AI response');
       } finally {
         setisLoading(false);
